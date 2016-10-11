@@ -5,6 +5,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "pstat.h"
 
 struct {
   struct spinlock lock;
@@ -34,6 +35,7 @@ allocproc(void)
 {
   struct proc *p;
   char *sp;
+  int i = 0;
 
   acquire(&ptable.lock);
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++)
@@ -45,6 +47,10 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
+  p->priority = 0;      // Start off in top state
+  for (i = 0; i < NPRI; i++) {
+    p->ticks[i] = 0;    // Set all ticks to zero
+  }
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -443,4 +449,22 @@ procdump(void)
   }
 }
 
+void
+pinfo(struct pstat *info) {
+  struct proc *p;
+  int i = 0;
+  int j;
 
+  acquire(&ptable.lock);
+  for (p = ptable.proc; p < &ptable.proc[NPROC]; p++) {
+    info->inuse[i] = (p->state) != UNUSED;
+    info->pid[i] = p->pid;
+    info->priority[i] = p->priority;
+    info->state[i] = p->state;
+    for (j = 0; j < NPRI; j++) {  // Copy all tick values for all priority levels
+       info->ticks[i][j] = p->ticks[j];
+    }
+    i++;
+  }
+  release(&ptable.lock);
+}

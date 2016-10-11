@@ -390,3 +390,17 @@ sys_pipe(void)
   fd[1] = fd1;
   return 0;
 }
+
+// return status of all processes within process table
+int
+sys_getpinfo(void)
+{
+  struct pstat *info;
+  char *input;
+
+  if(argstr(0, &input) < 0) // TODO(bambrough) fix this, using char *
+    return -1;
+  info = (struct pstat*)input;
+  pinfo(info);
+  return 0;
+}
