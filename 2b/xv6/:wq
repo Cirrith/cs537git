@@ -8,8 +8,8 @@
 #include "pstat.h"
 
 struct {
-  int pos;  
-  int total;
+  int pos;  // TODO(bambrough) Init 
+  int total;  // TODO(bambrough) Init
   struct proc *proc[NPROC];
 } level;
 
@@ -30,12 +30,7 @@ static void wakeup1(void *chan);
 void
 pinit(void)
 {
-  int i;
   initlock(&ptable.lock, "ptable");
-  for(i = 0; i < NPRI; i++) {
-    ptable.queues[i].pos = 0;
-    ptable.queues[i].total = 0;
-  }
 }
 
 // Look in the process table for an UNUSED proc.
@@ -66,7 +61,7 @@ found:
   }
   p->hasrun = 0;
   pri0 = ptable.queues;  // Setup process on queue 0
-  pri0->proc[pri0->total]; = p;
+  pri0->pid[total]; = p->pid;
   pri0->total++;  // Increase number on queue 0
   release(&ptable.lock);
 
@@ -219,9 +214,6 @@ exit(void)
     }
   }
 
-  // Take care of cleaning up ptable MLFQ
-  
-
   // Jump into the scheduler, never to return.
   proc->state = ZOMBIE;
   sched();
@@ -293,24 +285,24 @@ scheduler(void)
     acquire(&ptable.lock);
 
     // Assign the next proc RR in highest populated level
-    for(level = ptable.queues; level < &ptable.queues[NPRI]; level++) {  // Go through all the queues
-      if(level->total > 0) {  // If it isn't empty        
-        for(lpos = level->pos; lpos < (level->total + level->pos); lpos++) {  // Starting at pos go through all proccess on that level
-          if(level->proc[lpos % level->total]->state == RUNNABLE) {  // Found process to run
-            if((lpos % level->total) == level->total) {  // Set pos to next process in list, looping if necessary
-              level->pos = 0;
-            } else {
-              level->pos++;
-            }
-            p = level->proc[lpos % level->total];
-            p->hasrun = 1;
-            goto sproc;  // Jump out of loop
-          }
+    for(level = ptable.queues; level < &ptable.queues[NPRI]; level++) {
+      if(level->total > 0) {
+        p = level->proc[level->pos];
+        
+        for(lpos = level->pos; lpos < (level->total + level->pos); lpos++) {
+          if(level->proc[lpos % level->pos]->state == RUNNABLE) {
+            
+
+        p = level->proc[level->pos];
+        if(level->pos == (level->total-1) {
+          level->pos = 0;
+        }  else {
+          level->pos++;
         }
+        break;
       }
     }
 
-sproc:
     // Switch to chosen process.  It is the process's job
     // to release ptable.lock and then reacquire it
     // before jumping back to us.

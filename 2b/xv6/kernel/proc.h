@@ -76,7 +76,8 @@ struct proc {
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
   int priority;                // Priority within MLPQ (0-3) *NEW
-  int ticks[NPRI];             // Number of ticks accrued through lifespan *NEW 
+  int ticks[NPRI];             // Number of ticks accrued through lifespan *NEW
+  int hasrun;                  // If non-zero process has run within 1 sec *NEW 
 };
 
 // Process memory is laid out contiguously, low addresses first:

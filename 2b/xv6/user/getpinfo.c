@@ -15,6 +15,9 @@ main(int argc, char *argv[])
 
   getpinfo(&data);
 
-  printf(1, "pid: %d", data.pid[0]);
+  int i;
+  for (i = 0; i < NPROC; i++) {
+    printf(1, "Use: %d, PID: %d, Priority: %d, State: %d, Tick1: %d\n", data.inuse[i], data.pid[i], data.priority[i], data.state[i], data.ticks[i][0]);
+  }
   exit();
 }
