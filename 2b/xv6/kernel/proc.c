@@ -7,14 +7,15 @@
 #include "spinlock.h"
 #include "pstat.h"
 
-struct {
+struct level {
   int pos;  
   int total;
   struct proc *proc[NPROC];
-} level;
+};
 
 struct {
   struct spinlock lock;
+  int sectick;
   struct level queues[NPRI];
   struct proc proc[NPROC];
 } ptable;
@@ -36,6 +37,7 @@ pinit(void)
     ptable.queues[i].pos = 0;
     ptable.queues[i].total = 0;
   }
+  ptable.sectick = 0;
 }
 
 // Look in the process table for an UNUSED proc.
@@ -66,7 +68,7 @@ found:
   }
   p->hasrun = 0;
   pri0 = ptable.queues;  // Setup process on queue 0
-  pri0->proc[pri0->total]; = p;
+  pri0->proc[pri0->total] = p;
   pri0->total++;  // Increase number on queue 0
   release(&ptable.lock);
 
@@ -190,7 +192,10 @@ exit(void)
 {
   struct proc *p;
   int fd;
+  int i;
 
+  cprintf("Entered Exit: %s\n", proc->name);
+ 
   if(proc == initproc)
     panic("init exiting");
 
@@ -220,10 +225,19 @@ exit(void)
   }
 
   // Take care of cleaning up ptable MLFQ
-  
+  struct level *pri = &ptable.queues[p->priority];
+  if(pri->pos != pri->total-1) {
+    for(i = pri->pos; i < pri->total-1; i++) {
+      pri->proc[i] = pri->proc[i+1];
+    }
+    pri->pos--;
+  }
+
+  pri->total--;
 
   // Jump into the scheduler, never to return.
   proc->state = ZOMBIE;
+  cprintf("Exiting Exit: %s\n", proc->name);
   sched();
   panic("zombie exit");
 }
@@ -309,7 +323,8 @@ scheduler(void)
         }
       }
     }
-
+    release(&ptable.lock);
+    continue;
 sproc:
     // Switch to chosen process.  It is the process's job
     // to release ptable.lock and then reacquire it
@@ -502,6 +517,75 @@ pinfo(struct pstat *info) {
        info->ticks[i][j] = p->ticks[j];
     }
     i++;
+  }
+  release(&ptable.lock);
+}
+
+// Return 1 if it needs to yield
+int
+checkyield(struct proc *p) {
+
+  struct proc *curr;
+
+  acquire(&ptable.lock);
+  // Shit got caught yo
+  p->currticks++;
+  p->ticks[p->priority]++;
+
+  // See if there is a higher priority proccess
+  for(curr = ptable.proc; curr != &ptable.proc[NPROC]; curr++) {
+    if(curr->priority > p->priority) {
+      return 1;
+    }
+  }
+
+  // See if it has used its ticks at priority
+  switch(p->priority) {
+    case 0:
+      if(p->currticks == 5) {
+        p->priority--;
+        p->currticks = 0;
+        return 1;
+      }
+      break;
+    case 1:
+      if(p->currticks == 5) {
+        p->priority--;
+        p->currticks = 0;
+        return 1;
+      }
+      break;
+    case 2:
+      if(p->currticks == 10) {
+        p->priority--;
+        p->currticks = 0;
+        return 1;
+      }
+      break;
+    case 3:
+      if(p->currticks == 20) {
+        p->currticks = 0;
+        return 1;
+      }
+      break;
+  }
+  release(&ptable.lock);
+  return 0;
+}
+
+void
+tickinc(void) {
+  struct proc *p;
+
+  acquire(&ptable.lock);
+  ptable.sectick++;
+  if(ptable.sectick++ == 100) {
+    for(p = ptable.proc; p != &ptable.proc[NPROC]; p++) {
+      if((p->hasrun == 0) && (p->priority != 0) && (p->state == RUNNABLE) ) {
+        p->priority--;
+        p->currticks = 0;
+      }
+    }
   }
   release(&ptable.lock);
 }

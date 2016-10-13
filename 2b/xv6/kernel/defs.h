@@ -111,6 +111,8 @@ int             wait(void);
 void            wakeup(void*);
 void            yield(void);
 void            pinfo(struct pstat*);
+int             checkyield(struct proc*);
+void            tickinc(void);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
