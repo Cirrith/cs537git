@@ -28,7 +28,7 @@ extern void trapret(void);
 
 static void wakeup1(void *chan);
 
-void
+  void
 pinit(void)
 {
   int i;
@@ -44,7 +44,7 @@ pinit(void)
 // If found, change state to EMBRYO and initialize
 // state required to run in the kernel.
 // Otherwise return 0.
-static struct proc*
+  static struct proc*
 allocproc(void)
 {
   struct proc *p;
@@ -78,11 +78,11 @@ found:
     return 0;
   }
   sp = p->kstack + KSTACKSIZE;
-  
+
   // Leave room for trap frame.
   sp -= sizeof *p->tf;
   p->tf = (struct trapframe*)sp;
-  
+
   // Set up new context to start executing at forkret,
   // which returns to trapret.
   sp -= 4;
@@ -97,12 +97,12 @@ found:
 }
 
 // Set up first user process.
-void
+  void
 userinit(void)
 {
   struct proc *p;
   extern char _binary_initcode_start[], _binary_initcode_size[];
-  
+
   p = allocproc();
   acquire(&ptable.lock);
   initproc = p;
@@ -128,11 +128,11 @@ userinit(void)
 
 // Grow current process's memory by n bytes.
 // Return 0 on success, -1 on failure.
-int
+  int
 growproc(int n)
 {
   uint sz;
-  
+
   sz = proc->sz;
   if(n > 0){
     if((sz = allocuvm(proc->pgdir, sz, sz + n)) == 0)
@@ -149,7 +149,7 @@ growproc(int n)
 // Create a new process copying p as the parent.
 // Sets up stack to return as if from system call.
 // Caller must set state of returned proc to RUNNABLE.
-int
+  int
 fork(void)
 {
   int i, pid;
@@ -177,7 +177,7 @@ fork(void)
     if(proc->ofile[i])
       np->ofile[i] = filedup(proc->ofile[i]);
   np->cwd = idup(proc->cwd);
- 
+
   pid = np->pid;
   np->state = RUNNABLE;
   safestrcpy(np->name, proc->name, sizeof(proc->name));
@@ -187,15 +187,12 @@ fork(void)
 // Exit the current process.  Does not return.
 // An exited process remains in the zombie state
 // until its parent calls wait() to find out it exited.
-void
+  void
 exit(void)
 {
   struct proc *p;
   int fd;
-  int i;
-
-  cprintf("Entered Exit: %s\n", proc->name);
- 
+  
   if(proc == initproc)
     panic("init exiting");
 
@@ -224,31 +221,20 @@ exit(void)
     }
   }
 
-  // Take care of cleaning up ptable MLFQ
-  struct level *pri = &ptable.queues[p->priority];
-  if(pri->pos != pri->total-1) {
-    for(i = pri->pos; i < pri->total-1; i++) {
-      pri->proc[i] = pri->proc[i+1];
-    }
-    pri->pos--;
-  }
-
-  pri->total--;
-
   // Jump into the scheduler, never to return.
   proc->state = ZOMBIE;
-  cprintf("Exiting Exit: %s\n", proc->name);
   sched();
   panic("zombie exit");
 }
 
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
-int
+  int
 wait(void)
 {
   struct proc *p;
   int havekids, pid;
+  int i;
 
   acquire(&ptable.lock);
   for(;;){
@@ -260,6 +246,15 @@ wait(void)
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
+        struct level *pri = &ptable.queues[p->priority];
+        if(pri->pos != pri->total-1) {
+          for(i = pri->pos; i < pri->total-1; i++) {
+            pri->proc[i] = pri->proc[i+1];
+          }
+          pri->pos--;
+        }
+
+        pri->total--;  
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
@@ -292,7 +287,7 @@ wait(void)
 //  - swtch to start running that process
 //  - eventually that process transfers control
 //      via swtch back to the scheduler.
-void
+  void
 scheduler(void)
 {
   struct proc *p;
@@ -335,8 +330,8 @@ sproc:
     swtch(&cpu->scheduler, proc->context);
     switchkvm();
 
-      // Process is done running for now.
-      // It should have changed its p->state before coming back.
+    // Process is done running for now.
+    // It should have changed its p->state before coming back.
     proc = 0;
     release(&ptable.lock);
 
@@ -345,7 +340,7 @@ sproc:
 
 // Enter scheduler.  Must hold only ptable.lock
 // and have changed proc->state.
-void
+  void
 sched(void)
 {
   int intena;
@@ -364,7 +359,7 @@ sched(void)
 }
 
 // Give up the CPU for one scheduling round.
-void
+  void
 yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
@@ -375,18 +370,18 @@ yield(void)
 
 // A fork child's very first scheduling by scheduler()
 // will swtch here.  "Return" to user space.
-void
+  void
 forkret(void)
 {
   // Still holding ptable.lock from scheduler.
   release(&ptable.lock);
-  
+
   // Return to "caller", actually trapret (see allocproc).
 }
 
 // Atomically release lock and sleep on chan.
 // Reacquires lock when awakened.
-void
+  void
 sleep(void *chan, struct spinlock *lk)
 {
   if(proc == 0)
@@ -423,7 +418,7 @@ sleep(void *chan, struct spinlock *lk)
 
 // Wake up all processes sleeping on chan.
 // The ptable lock must be held.
-static void
+  static void
 wakeup1(void *chan)
 {
   struct proc *p;
@@ -434,7 +429,7 @@ wakeup1(void *chan)
 }
 
 // Wake up all processes sleeping on chan.
-void
+  void
 wakeup(void *chan)
 {
   acquire(&ptable.lock);
@@ -445,7 +440,7 @@ wakeup(void *chan)
 // Kill the process with the given pid.
 // Process won't exit until it returns
 // to user space (see trap in trap.c).
-int
+  int
 kill(int pid)
 {
   struct proc *p;
@@ -468,22 +463,22 @@ kill(int pid)
 // Print a process listing to console.  For debugging.
 // Runs when user types ^P on console.
 // No lock to avoid wedging a stuck machine further.
-void
+  void
 procdump(void)
 {
   static char *states[] = {
-  [UNUSED]    "unused",
-  [EMBRYO]    "embryo",
-  [SLEEPING]  "sleep ",
-  [RUNNABLE]  "runble",
-  [RUNNING]   "run   ",
-  [ZOMBIE]    "zombie"
+    [UNUSED]    "unused",
+    [EMBRYO]    "embryo",
+    [SLEEPING]  "sleep ",
+    [RUNNABLE]  "runble",
+    [RUNNING]   "run   ",
+    [ZOMBIE]    "zombie"
   };
   int i;
   struct proc *p;
   char *state;
   uint pc[10];
-  
+
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->state == UNUSED)
       continue;
@@ -514,7 +509,7 @@ pinfo(struct pstat *info) {
     info->priority[i] = p->priority;
     info->state[i] = p->state;
     for (j = 0; j < NPRI; j++) {  // Copy all tick values for all priority levels
-       info->ticks[i][j] = p->ticks[j];
+      info->ticks[i][j] = p->ticks[j];
     }
     i++;
   }
@@ -526,6 +521,7 @@ int
 checkyield(struct proc *p) {
 
   struct proc *curr;
+  int retur = 0;
 
   acquire(&ptable.lock);
   // Shit got caught yo
@@ -535,7 +531,7 @@ checkyield(struct proc *p) {
   // See if there is a higher priority proccess
   for(curr = ptable.proc; curr != &ptable.proc[NPROC]; curr++) {
     if(curr->priority > p->priority) {
-      return 1;
+      retur = 1;
     }
   }
 
@@ -545,32 +541,32 @@ checkyield(struct proc *p) {
       if(p->currticks == 5) {
         p->priority--;
         p->currticks = 0;
-        return 1;
+        retur = 1;
       }
       break;
     case 1:
       if(p->currticks == 5) {
         p->priority--;
         p->currticks = 0;
-        return 1;
+        retur = 1;
       }
       break;
     case 2:
       if(p->currticks == 10) {
         p->priority--;
         p->currticks = 0;
-        return 1;
+        retur = 1;
       }
       break;
     case 3:
       if(p->currticks == 20) {
         p->currticks = 0;
-        return 1;
+        retur = 1;
       }
       break;
   }
   release(&ptable.lock);
-  return 0;
+  return retur;
 }
 
 void
@@ -578,7 +574,9 @@ tickinc(void) {
   struct proc *p;
 
   acquire(&ptable.lock);
+
   ptable.sectick++;
+
   if(ptable.sectick++ == 100) {
     for(p = ptable.proc; p != &ptable.proc[NPROC]; p++) {
       if((p->hasrun == 0) && (p->priority != 0) && (p->state == RUNNABLE) ) {

@@ -8,8 +8,6 @@ build xv6 using make
 **********************************************************************
 Trying to clean project using make clean
 make clean
-gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
-		-M -MG kernel/proc.c -MF kernel/proc.d -MT kernel/proc.d -MT kernel/proc.o
 rm -rf kernel/bio.o kernel/console.o kernel/exec.o kernel/file.o kernel/fs.o kernel/ide.o kernel/ioapic.o kernel/kalloc.o kernel/kbd.o kernel/lapic.o kernel/main.o kernel/mp.o kernel/picirq.o kernel/pipe.o kernel/proc.o kernel/spinlock.o kernel/string.o kernel/swtch.o kernel/syscall.o kernel/sysfile.o kernel/sysproc.o kernel/timer.o kernel/trapasm.o kernel/trap.o kernel/uart.o kernel/vectors.o kernel/vm.o kernel/bootmain.o kernel/bootasm.o kernel/multiboot.o kernel/data.o kernel/bootother.o kernel/initcode.o kernel/bio.d kernel/console.d kernel/exec.d kernel/file.d kernel/fs.d kernel/ide.d kernel/ioapic.d kernel/kalloc.d kernel/kbd.d kernel/lapic.d kernel/main.d kernel/mp.d kernel/picirq.d kernel/pipe.d kernel/proc.d kernel/spinlock.d kernel/string.d kernel/swtch.d kernel/syscall.d kernel/sysfile.d kernel/sysproc.d kernel/timer.d kernel/trapasm.d kernel/trap.d kernel/uart.d kernel/vectors.d kernel/vm.d kernel/bootmain.d kernel/bootasm.d kernel/multiboot.d kernel/data.d kernel/bootother.d kernel/initcode.d kernel/vectors.S kernel/bootblock kernel/bootblock.out kernel/bootother.out kernel/initcode.out kernel/kernel bootother initcode xv6.img user/bin user/cat user/echo user/forktest user/grep user/init user/kill user/ln user/ls user/getpinfo user/mkdir user/rm user/sh user/stressfs user/tester user/usertests user/wc user/zombie user/cat.o user/echo.o user/forktest.o user/grep.o user/init.o user/kill.o user/ln.o user/ls.o user/getpinfo.o user/mkdir.o user/rm.o user/sh.o user/stressfs.o user/tester.o user/usertests.o user/wc.o user/zombie.o user/ulib.o user/usys.o user/printf.o user/umalloc.o user/cat.d user/echo.d user/forktest.d user/grep.d user/init.d user/kill.d user/ln.d user/ls.d user/getpinfo.d user/mkdir.d user/rm.d user/sh.d user/stressfs.d user/tester.d user/usertests.d user/wc.d user/zombie.d user/ulib.d user/usys.d user/printf.d user/umalloc.d tools/mkfs tools/mkfs.o tools/mkfs.d fs fs.img .gdbinit .bochsrc dist
 Trying to build project using make
 make
@@ -234,15 +232,15 @@ ld  -m    elf_i386 -nostdlib --omagic \
 dd if=/dev/zero of=xv6.img count=10000
 10000+0 records in
 10000+0 records out
-5120000 bytes (5.1 MB) copied, 0.013908 s, 368 MB/s
+5120000 bytes (5.1 MB) copied, 0.011471 s, 446 MB/s
 dd if=kernel/bootblock of=xv6.img conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes (512 B) copied, 6.6918e-05 s, 7.7 MB/s
+512 bytes (512 B) copied, 6.3937e-05 s, 8.0 MB/s
 dd if=kernel/kernel of=xv6.img seek=1 conv=notrunc
 250+1 records in
 250+1 records out
-128085 bytes (128 kB) copied, 0.000290564 s, 441 MB/s
+128125 bytes (128 kB) copied, 0.000269585 s, 475 MB/s
 gcc -c  -iquote include -Wall -Werror -ggdb  -o tools/mkfs.o tools/mkfs.c
 gcc  tools/mkfs.o -o tools/mkfs
 mkdir -p fs
@@ -305,24 +303,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/zombie fs/zombie
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 429 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/ls user/bin/stressfs user/bin/grep user/bin/tester user/bin/kill user/bin/cat user/bin/mkdir user/bin/init user/bin/rm user/bin/echo user/bin/ln user/bin/usertests user/bin/sh user/bin/wc user/bin/zombie user/bin/getpinfo
@@ -350,24 +348,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 431 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -381,7 +379,7 @@ init: starting sh
 $ tester
 tester
 pid: 1 priority: 0
- 	 level 0 ticks used 2
+ 	 level 0 ticks used 0
 	 level 1 ticks used 0
 	 level 2 ticks used 0
 	 level 3 ticks used 0
@@ -395,7 +393,7 @@ pid: 3 priority: 0
 	 level 1 ticks used 0
 	 level 2 ticks used 0
 	 level 3 ticks used 0
-TEST PASSEDunexpected trap 14 
+TEST PASSED
 
 test getpinfo PASSED (10 of 10)
  (Workload: Check getpinfo works
@@ -420,24 +418,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 431 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -475,24 +473,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 434 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -505,13 +503,28 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-cpu0: panic: acquire
- 104ae5 1044ce 1064ee 1060a6 0 0 0 0 0 0
+pid: 1
+	 level 0 ticks used 0
+	 level 1 ticks used 0
+	 level 2 ticks used 0
+	 level 3 ticks used 0
+pid: 2
+	 level 0 ticks used 0
+	 level 1 ticks used 0
+	 level 2 ticks used 0
+	 level 3 ticks used 0
+pid: 3
+	 level 0 ticks used 5
+	 level 1 ticks used 0
+	 level 2 ticks used 0
+	 level 3 ticks used 0
+user/tester.c:39 check (st.ticks[i][1] == 5) failed: current process should run for 5 ticks in the second level
+$ 
 
 test single_job_long FAILED (0 of 10)
  (Workload: Single long running process (spinning)
   Expected: No priority upgrade occurred for running process)
- xv6 kernel panic
+ tester failed
 
 starting new_process
 
@@ -532,24 +545,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 433 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -562,13 +575,12 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-cpu0: panic: acquire
- 104ae5 1044ce 1064ee 1060a6 0 0 0 0 0 0
+
 
 test new_process FAILED (0 of 10)
  (Workload: Parent process runs until at lowest, fork child process
   Expected: Parent process does not run until new process is at the lowest priority)
- xv6 kernel panic
+ Timelimit (30.0s) exceeded
 
 starting multiple_jobs_io
 
@@ -589,24 +601,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 433 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -644,24 +656,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 432 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -674,13 +686,12 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-cpu0: panic: acquire
- 104ae5 1044ce 1064ee 1060a6 10784e 107d74 103
+
 
 test stress_test FAILED (0 of 10)
  (Workload: Fill the ptable multiple times with new processes.
   Expected: OS does not fail to allocate processes)
- xv6 kernel panic
+ Timelimit (30.0s) exceeded
 
 starting stress_test_io
 
@@ -701,24 +712,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 431 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -731,13 +742,11 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-cpu0: panic: acquire
- 104ae5 1044ce 1064ee 1060a6 10784e 107d74 103ee
+TEST PASSED
 
-test stress_test_io FAILED (0 of 10)
+test stress_test_io PASSED (10 of 10)
  (Workload: Run multiple concurrent i/o requests
   Expected: No regression in i/o and scheduler does not fail)
- xv6 kernel panic
 
 starting test_round_robin
 
@@ -758,24 +767,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 432 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -788,13 +797,11 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-cpu0: panic: acquire
- 104ae5 1044ce 1064ee 1060a6 0 0 0 0 0 0
+TEST PASSED
 
-test test_round_robin FAILED (0 of 10)
+test test_round_robin PASSED (10 of 10)
  (Workload: 4 processes running long running workloads (spinning)
   Expected: No process is upgraded and lowest priority are running in % 20)
- xv6 kernel panic
 
 starting test_upgrade
 
@@ -815,24 +822,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 432 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -845,13 +852,12 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-cpu0: panic: acquire
- 104ae5 1044ce 1064ee 1060a6 0 0 0 0 0 0
+TEST FAILED
 
 test test_upgrade FAILED (0 of 10)
  (Workload: 7 long running processes
   Expected: At least 1 process gets upgraded to priority 2)
- xv6 kernel panic
+ tester failed
 
 starting multiple_jobs
 
@@ -872,24 +878,24 @@ ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --o
 cp user/bin/tester fs/tester
 ./tools/mkfs fs.img fs
 used 29 (bit 1 ninode 26) free 29 total 1024
-echo
-ln
 grep
+wc
+init
+zombie
 cat
 mkdir
-tester
-stressfs
-forktest
-kill
-ls
+usertests
+ln
+getpinfo
 rm
 sh
+tester
+forktest
+echo
 README
-init
-getpinfo
-usertests
-zombie
-wc
+stressfs
+ls
+kill
 balloc: first 433 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
@@ -902,13 +908,11 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-cpu0: panic: acquire
- 104ae5 1044ce 1064ee 1060a6 0 0 0 0 0 0
+TEST PASSED
 
-test multiple_jobs FAILED (0 of 10)
+test multiple_jobs PASSED (10 of 10)
  (Workload: Synchronous workload varying tick workload. (Spin duration)
   Expected: Verify each process only runs for the allotted amount of time at each level. (ie. p0 - 5 ticks, p1 - 5 ticks, p2 - 10 ticks, etc.))
- xv6 kernel panic
 
 **********************************************************************
 Summary:
@@ -926,12 +930,12 @@ test test_ptable PASSED (10 of 10)
 test single_job_long FAILED (0 of 10)
  (Workload: Single long running process (spinning)
   Expected: No priority upgrade occurred for running process)
- xv6 kernel panic
+ tester failed
 
 test new_process FAILED (0 of 10)
  (Workload: Parent process runs until at lowest, fork child process
   Expected: Parent process does not run until new process is at the lowest priority)
- xv6 kernel panic
+ Timelimit (30.0s) exceeded
 
 test multiple_jobs_io PASSED (10 of 10)
  (Workload: Just checks i/o functionality still works
@@ -940,28 +944,25 @@ test multiple_jobs_io PASSED (10 of 10)
 test stress_test FAILED (0 of 10)
  (Workload: Fill the ptable multiple times with new processes.
   Expected: OS does not fail to allocate processes)
- xv6 kernel panic
+ Timelimit (30.0s) exceeded
 
-test stress_test_io FAILED (0 of 10)
+test stress_test_io PASSED (10 of 10)
  (Workload: Run multiple concurrent i/o requests
   Expected: No regression in i/o and scheduler does not fail)
- xv6 kernel panic
 
-test test_round_robin FAILED (0 of 10)
+test test_round_robin PASSED (10 of 10)
  (Workload: 4 processes running long running workloads (spinning)
   Expected: No process is upgraded and lowest priority are running in % 20)
- xv6 kernel panic
 
 test test_upgrade FAILED (0 of 10)
  (Workload: 7 long running processes
   Expected: At least 1 process gets upgraded to priority 2)
- xv6 kernel panic
+ tester failed
 
-test multiple_jobs FAILED (0 of 10)
+test multiple_jobs PASSED (10 of 10)
  (Workload: Synchronous workload varying tick workload. (Spin duration)
   Expected: Verify each process only runs for the allotted amount of time at each level. (ie. p0 - 5 ticks, p1 - 5 ticks, p2 - 10 ticks, etc.))
- xv6 kernel panic
 
-Passed 4 of 11 tests.
-Overall 4 of 11
-Points 30 of 100
+Passed 7 of 11 tests.
+Overall 7 of 11
+Points 60 of 100
