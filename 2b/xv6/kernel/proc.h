@@ -81,6 +81,13 @@ struct proc {
   int hasrun;                  // If non-zero process has run within 1 sec *NEW 
 };
 
+struct level {
+  int pos;
+  int total;
+  struct proc *proc[NPROC];
+};
+
+
 // Process memory is laid out contiguously, low addresses first:
 //   text
 //   original data and bss

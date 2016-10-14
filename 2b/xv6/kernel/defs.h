@@ -7,6 +7,7 @@ struct file;
 struct inode;
 struct pipe;
 struct proc;
+struct level;
 struct spinlock;
 struct stat;
 struct pstat;
@@ -113,6 +114,8 @@ void            yield(void);
 void            pinfo(struct pstat*);
 int             checkyield(struct proc*);
 void            tickinc(void);
+void            removeproc(struct level*, struct proc*);
+void            addproc(struct level*, struct proc*);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

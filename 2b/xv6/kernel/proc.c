@@ -7,12 +7,6 @@
 #include "spinlock.h"
 #include "pstat.h"
 
-struct level {
-  int pos;  
-  int total;
-  struct proc *proc[NPROC];
-};
-
 struct {
   struct spinlock lock;
   int sectick;
@@ -68,8 +62,7 @@ found:
   }
   p->hasrun = 0;
   pri0 = ptable.queues;  // Setup process on queue 0
-  pri0->proc[pri0->total] = p;
-  pri0->total++;  // Increase number on queue 0
+  addproc(pri0, p);  // Add process to queue
   release(&ptable.lock);
 
   // Allocate kernel stack if possible.
@@ -235,7 +228,6 @@ wait(void)
   struct proc *p;
   int havekids, pid;
   int i;
-  int j;
 
   acquire(&ptable.lock);
   for(;;){
@@ -247,21 +239,11 @@ wait(void)
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
-        struct level *pri = &ptable.queues[p->priority];
+
+        struct level *pri = &ptable.queues[p->priority];  // Grab level this process is on
         
-        for(i = 0; i < pri->total; i++) {
-          if(pri->proc[i]->pid == p->pid) {
-            for(j = i; j < pri->total-1; j++) {
-              pri->proc[j] = pri->proc[j+1];
-            }
-            if(pri->pos == pri->total-1) {
-              pri->pos = 0;
-            } else if (i <= pri->pos) {
-              pri->pos--;
-            }
-          }
-        }
-        pri->total--;  
+        removeproc(pri, p); // Remove process from queue
+
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
@@ -271,6 +253,12 @@ wait(void)
         p->parent = 0;
         p->name[0] = 0;
         p->killed = 0;
+        p->priority = 0;
+        p->hasrun = 0;
+        p->currticks = 0;
+        for(i = 0; i < NPRI; i++) {
+          p->ticks[i] = 0;
+        }
         release(&ptable.lock);
         return pid;
       }
@@ -310,17 +298,19 @@ scheduler(void)
 
     // Assign the next proc RR in highest populated level
     for(level = ptable.queues; level < &ptable.queues[NPRI]; level++) {  // Go through all the queues
-      if(level->total > 0) {  // If it isn't empty        
+      if(level->total > 0) {  // If it isn't empty
         for(lpos = level->pos; lpos < (level->total + level->pos); lpos++) {  // Starting at pos go through all proccess on that level
           if(level->proc[lpos % level->total]->state == RUNNABLE) {  // Found process to run  CHANGE
-            if((lpos % level->total) == 0) {  // Set pos to next process in list, looping if necessary
-              level->pos = 0;
-            } else {
-              level->pos++;
-            }
-            p = level->proc[lpos % level->total];
+            int index = lpos % level->total;
+            p = level->proc[index];  // Selected Process
             p->hasrun = 1;
-            //cprintf("Switching to Process %d, Pos: %d\n", p->pid, ptable.queues[p->priority]);
+            if(level->total == 1) {  // If only one process
+              level->pos = index;  // Shouldn't be anything but 0
+            } else if(index == (level->total-1)) {  // If at the end of the array
+              level->pos = 0;
+            } else {  // Increment to next position array to start search
+              level->pos = index+1;
+            }
             goto sproc;  // Jump out of loop
           }
         }
@@ -529,7 +519,10 @@ int
 checkyield(struct proc *p) {
 
   struct proc *curr;
+  struct level *priold;
+  struct level *prinew;
   int retur = 0;
+  int inc = 0;
 
   acquire(&ptable.lock);
   // Shit got caught yo
@@ -543,27 +536,25 @@ checkyield(struct proc *p) {
     }
   }
 
-
-
   // See if it has used its ticks at priority
   switch(p->priority) {
     case 0:
       if(p->currticks == 5) {
-        p->priority++;
+        inc++;
         p->currticks = 0;
         retur = 1;
       }
       break;
     case 1:
       if(p->currticks == 5) {
-        p->priority++;
+        inc++;
         p->currticks = 0;
         retur = 1;
       }
       break;
     case 2:
       if(p->currticks == 10) {
-        p->priority++;
+        inc++;
         p->currticks = 0;
         retur = 1;
       }
@@ -575,6 +566,15 @@ checkyield(struct proc *p) {
       }
       break;
   }
+
+  if(inc) {
+    priold = &ptable.queues[p->priority];
+    prinew = &ptable.queues[++p->priority];
+
+    removeproc(priold, p);
+    addproc(prinew, p);
+  }
+
   release(&ptable.lock);
   return retur;
 }
@@ -582,6 +582,8 @@ checkyield(struct proc *p) {
 void
 tickinc(void) {
   struct proc *p;
+  struct level *priold;
+  struct level *prinew;
 
   acquire(&ptable.lock);
 
@@ -589,10 +591,11 @@ tickinc(void) {
 
   if(ptable.sectick == 100) {
     for(p = ptable.proc; p != &ptable.proc[NPROC]; p++) {
-      //cprintf("Proccess: %s, Priority: %d, State: %d, Hasrun: %d\n", p->name, p->priority, p->state, p->hasrun);
       if((p->hasrun != 1) && (p->priority != 0) && (p->state == RUNNABLE) ) {
-        cprintf("Upgraded Process: %d from Pri: %d to Pri: %d\n", p->pid, p->priority, (p->priority - 1));
-        p->priority--;
+        priold = &ptable.queues[p->priority];
+        prinew = &ptable.queues[--p->priority];
+        removeproc(priold, p);
+        addproc(prinew, p);
         p->currticks = 0;
       }
       p->hasrun = 0;
@@ -600,4 +603,32 @@ tickinc(void) {
     ptable.sectick = 0;
   }
   release(&ptable.lock);
+}
+
+// Assumes ptable lock is held
+void
+removeproc(struct level *level, struct proc *p) {
+  int i;
+  int j;
+
+  for(i = 0; i < level->total; i++) {  // Go through processes looking for process
+    if(level->proc[i]->pid == p->pid) {
+      for(j = i; j < (level->total-1); j++) {  // Move processes down
+        level->proc[j] = level->proc[j+1];
+      }
+      if((level->total == 1) || (i == (level->total-1))) { // If only 1 process or zombie is at end
+        level->pos = 0;
+      } else if(i <= level->pos) {  // Removing earlier than current pos
+        level->pos = level->pos - 1;
+      }  // Else it should stay where it is
+    }
+  }
+  level->total--;
+}
+
+// Assumes ptable lock is held
+void
+addproc(struct level *level, struct proc *p) {
+  level->proc[level->total] = p;
+  level->total++;
 }

@@ -10,9 +10,7 @@ USER_PROGS := \
 	ln\
 	ls\
 	getpinfo\
-  test_upgrade\
-  test_round_robin\
-	mkdir\
+  mkdir\
 	rm\
 	sh\
 	stressfs\
