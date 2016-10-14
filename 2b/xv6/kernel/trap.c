@@ -100,7 +100,7 @@ trap(struct trapframe *tf)
   // If the tick when off then increment the variable
   if(tf->trapno == T_IRQ0+IRQ_TIMER)
     tickinc();
-
+ 
   // Force process to give up CPU on clock tick.
   // If interrupts were on while locks held, would need to check nlock.
   if(proc && proc->state == RUNNING && tf->trapno == T_IRQ0+IRQ_TIMER)

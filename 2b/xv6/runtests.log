@@ -8,7 +8,7 @@ build xv6 using make
 **********************************************************************
 Trying to clean project using make clean
 make clean
-rm -rf kernel/bio.o kernel/console.o kernel/exec.o kernel/file.o kernel/fs.o kernel/ide.o kernel/ioapic.o kernel/kalloc.o kernel/kbd.o kernel/lapic.o kernel/main.o kernel/mp.o kernel/picirq.o kernel/pipe.o kernel/proc.o kernel/spinlock.o kernel/string.o kernel/swtch.o kernel/syscall.o kernel/sysfile.o kernel/sysproc.o kernel/timer.o kernel/trapasm.o kernel/trap.o kernel/uart.o kernel/vectors.o kernel/vm.o kernel/bootmain.o kernel/bootasm.o kernel/multiboot.o kernel/data.o kernel/bootother.o kernel/initcode.o kernel/bio.d kernel/console.d kernel/exec.d kernel/file.d kernel/fs.d kernel/ide.d kernel/ioapic.d kernel/kalloc.d kernel/kbd.d kernel/lapic.d kernel/main.d kernel/mp.d kernel/picirq.d kernel/pipe.d kernel/proc.d kernel/spinlock.d kernel/string.d kernel/swtch.d kernel/syscall.d kernel/sysfile.d kernel/sysproc.d kernel/timer.d kernel/trapasm.d kernel/trap.d kernel/uart.d kernel/vectors.d kernel/vm.d kernel/bootmain.d kernel/bootasm.d kernel/multiboot.d kernel/data.d kernel/bootother.d kernel/initcode.d kernel/vectors.S kernel/bootblock kernel/bootblock.out kernel/bootother.out kernel/initcode.out kernel/kernel bootother initcode xv6.img user/bin user/cat user/echo user/forktest user/grep user/init user/kill user/ln user/ls user/getpinfo user/mkdir user/rm user/sh user/stressfs user/tester user/usertests user/wc user/zombie user/cat.o user/echo.o user/forktest.o user/grep.o user/init.o user/kill.o user/ln.o user/ls.o user/getpinfo.o user/mkdir.o user/rm.o user/sh.o user/stressfs.o user/tester.o user/usertests.o user/wc.o user/zombie.o user/ulib.o user/usys.o user/printf.o user/umalloc.o user/cat.d user/echo.d user/forktest.d user/grep.d user/init.d user/kill.d user/ln.d user/ls.d user/getpinfo.d user/mkdir.d user/rm.d user/sh.d user/stressfs.d user/tester.d user/usertests.d user/wc.d user/zombie.d user/ulib.d user/usys.d user/printf.d user/umalloc.d tools/mkfs tools/mkfs.o tools/mkfs.d fs fs.img .gdbinit .bochsrc dist
+rm -rf kernel/bio.o kernel/console.o kernel/exec.o kernel/file.o kernel/fs.o kernel/ide.o kernel/ioapic.o kernel/kalloc.o kernel/kbd.o kernel/lapic.o kernel/main.o kernel/mp.o kernel/picirq.o kernel/pipe.o kernel/proc.o kernel/spinlock.o kernel/string.o kernel/swtch.o kernel/syscall.o kernel/sysfile.o kernel/sysproc.o kernel/timer.o kernel/trapasm.o kernel/trap.o kernel/uart.o kernel/vectors.o kernel/vm.o kernel/bootmain.o kernel/bootasm.o kernel/multiboot.o kernel/data.o kernel/bootother.o kernel/initcode.o kernel/bio.d kernel/console.d kernel/exec.d kernel/file.d kernel/fs.d kernel/ide.d kernel/ioapic.d kernel/kalloc.d kernel/kbd.d kernel/lapic.d kernel/main.d kernel/mp.d kernel/picirq.d kernel/pipe.d kernel/proc.d kernel/spinlock.d kernel/string.d kernel/swtch.d kernel/syscall.d kernel/sysfile.d kernel/sysproc.d kernel/timer.d kernel/trapasm.d kernel/trap.d kernel/uart.d kernel/vectors.d kernel/vm.d kernel/bootmain.d kernel/bootasm.d kernel/multiboot.d kernel/data.d kernel/bootother.d kernel/initcode.d kernel/vectors.S kernel/bootblock kernel/bootblock.out kernel/bootother.out kernel/initcode.out kernel/kernel bootother initcode xv6.img user/bin user/cat user/echo user/forktest user/grep user/init user/kill user/ln user/ls user/getpinfo user/test_upgrade user/test_round_robin user/mkdir user/rm user/sh user/stressfs user/tester user/usertests user/wc user/zombie user/cat.o user/echo.o user/forktest.o user/grep.o user/init.o user/kill.o user/ln.o user/ls.o user/getpinfo.o user/test_upgrade.o user/test_round_robin.o user/mkdir.o user/rm.o user/sh.o user/stressfs.o user/tester.o user/usertests.o user/wc.o user/zombie.o user/ulib.o user/usys.o user/printf.o user/umalloc.o user/cat.d user/echo.d user/forktest.d user/grep.d user/init.d user/kill.d user/ln.d user/ls.d user/getpinfo.d user/test_upgrade.d user/test_round_robin.d user/mkdir.d user/rm.d user/sh.d user/stressfs.d user/tester.d user/usertests.d user/wc.d user/zombie.d user/ulib.d user/usys.d user/printf.d user/umalloc.d tools/mkfs tools/mkfs.o tools/mkfs.d fs fs.img .gdbinit .bochsrc dist
 Trying to build project using make
 make
 Makefile:149: kernel/bio.d: No such file or directory
@@ -53,6 +53,8 @@ Makefile:149: user/kill.d: No such file or directory
 Makefile:149: user/ln.d: No such file or directory
 Makefile:149: user/ls.d: No such file or directory
 Makefile:149: user/getpinfo.d: No such file or directory
+Makefile:149: user/test_upgrade.d: No such file or directory
+Makefile:149: user/test_round_robin.d: No such file or directory
 Makefile:149: user/mkdir.d: No such file or directory
 Makefile:149: user/rm.d: No such file or directory
 Makefile:149: user/sh.d: No such file or directory
@@ -92,6 +94,10 @@ gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-
 		-M -MG user/rm.c -MF user/rm.d -MT user/rm.d -MT user/rm.o
 gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
 		-M -MG user/mkdir.c -MF user/mkdir.d -MT user/mkdir.d -MT user/mkdir.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/test_round_robin.c -MF user/test_round_robin.d -MT user/test_round_robin.d -MT user/test_round_robin.o
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
+		-M -MG user/test_upgrade.c -MF user/test_upgrade.d -MT user/test_upgrade.d -MT user/test_upgrade.o
 gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
 		-M -MG user/getpinfo.c -MF user/getpinfo.d -MT user/getpinfo.d -MT user/getpinfo.o
 gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 \
@@ -232,15 +238,15 @@ ld  -m    elf_i386 -nostdlib --omagic \
 dd if=/dev/zero of=xv6.img count=10000
 10000+0 records in
 10000+0 records out
-5120000 bytes (5.1 MB) copied, 0.011471 s, 446 MB/s
+5120000 bytes (5.1 MB) copied, 0.0124386 s, 412 MB/s
 dd if=kernel/bootblock of=xv6.img conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes (512 B) copied, 6.3937e-05 s, 8.0 MB/s
+512 bytes (512 B) copied, 7.5337e-05 s, 6.8 MB/s
 dd if=kernel/kernel of=xv6.img seek=1 conv=notrunc
 250+1 records in
 250+1 records out
-128125 bytes (128 kB) copied, 0.000269585 s, 475 MB/s
+128165 bytes (128 kB) copied, 0.000279486 s, 459 MB/s
 gcc -c  -iquote include -Wall -Werror -ggdb  -o tools/mkfs.o tools/mkfs.c
 gcc  tools/mkfs.o -o tools/mkfs
 mkdir -p fs
@@ -277,6 +283,12 @@ cp user/bin/ls fs/ls
 gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/getpinfo.o user/getpinfo.c
 ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/getpinfo user/getpinfo.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
 cp user/bin/getpinfo fs/getpinfo
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/test_upgrade.o user/test_upgrade.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/test_upgrade user/test_upgrade.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/test_upgrade fs/test_upgrade
+gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/test_round_robin.o user/test_round_robin.c
+ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/test_round_robin user/test_round_robin.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
+cp user/bin/test_round_robin fs/test_round_robin
 gcc  -I include -nostdinc -Wall -Werror -ggdb -fno-pic -fno-builtin -fno-strict-aliasing -fno-stack-protector -m32 -c -o user/mkdir.o user/mkdir.c
 ld  -m    elf_i386 -nostdlib --omagic --entry=main --section-start=.text=0x0 --output=user/bin/mkdir user/mkdir.o user/ulib.o user/usys.o user/printf.o user/umalloc.o
 cp user/bin/mkdir fs/mkdir
@@ -312,18 +324,20 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 429 blocks have been allocated
+balloc: first 474 blocks have been allocated
 balloc: write bitmap block at sector 28
-rm user/bin/ls user/bin/stressfs user/bin/grep user/bin/tester user/bin/kill user/bin/cat user/bin/mkdir user/bin/init user/bin/rm user/bin/echo user/bin/ln user/bin/usertests user/bin/sh user/bin/wc user/bin/zombie user/bin/getpinfo
+rm user/bin/ls user/bin/stressfs user/bin/grep user/bin/tester user/bin/kill user/bin/cat user/bin/mkdir user/bin/init user/bin/rm user/bin/test_upgrade user/bin/test_round_robin user/bin/echo user/bin/ln user/bin/usertests user/bin/sh user/bin/wc user/bin/zombie user/bin/getpinfo
 
 
 test build PASSED
@@ -357,16 +371,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 431 blocks have been allocated
+balloc: first 476 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -427,16 +443,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 431 blocks have been allocated
+balloc: first 476 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -482,16 +500,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 434 blocks have been allocated
+balloc: first 479 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -515,16 +535,14 @@ pid: 2
 	 level 3 ticks used 0
 pid: 3
 	 level 0 ticks used 5
-	 level 1 ticks used 0
-	 level 2 ticks used 0
-	 level 3 ticks used 0
-user/tester.c:39 check (st.ticks[i][1] == 5) failed: current process should run for 5 ticks in the second level
-$ 
+	 level 1 ticks used 5
+	 level 2 ticks used 10
+	 level 3 ticks used 38
+TEST PASSED
 
-test single_job_long FAILED (0 of 10)
+test single_job_long PASSED (10 of 10)
  (Workload: Single long running process (spinning)
   Expected: No priority upgrade occurred for running process)
- tester failed
 
 starting new_process
 
@@ -554,16 +572,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 433 blocks have been allocated
+balloc: first 478 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -575,12 +595,11 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
+TEST PASSED
 
-
-test new_process FAILED (0 of 10)
+test new_process PASSED (10 of 10)
  (Workload: Parent process runs until at lowest, fork child process
   Expected: Parent process does not run until new process is at the lowest priority)
- Timelimit (30.0s) exceeded
 
 starting multiple_jobs_io
 
@@ -610,16 +629,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 433 blocks have been allocated
+balloc: first 478 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -665,16 +686,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 432 blocks have been allocated
+balloc: first 477 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -686,12 +709,11 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
+TEST PASSED
 
-
-test stress_test FAILED (0 of 10)
+test stress_test PASSED (10 of 10)
  (Workload: Fill the ptable multiple times with new processes.
   Expected: OS does not fail to allocate processes)
- Timelimit (30.0s) exceeded
 
 starting stress_test_io
 
@@ -721,16 +743,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 431 blocks have been allocated
+balloc: first 476 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -776,16 +800,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 432 blocks have been allocated
+balloc: first 477 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -797,11 +823,15 @@ cpu0: starting
 init: starting sh
 $ tester
 tester
-TEST PASSED
+Upgraded Process: 6 from Pri: 3 to Pri: 2
+Upgraded Process: 7 from Pri: 3 to Pri: 2
+Upgraded Process: 3 from Pri: 3 to Pri: 2
+TEST FAILED
 
-test test_round_robin PASSED (10 of 10)
+test test_round_robin FAILED (0 of 10)
  (Workload: 4 processes running long running workloads (spinning)
   Expected: No process is upgraded and lowest priority are running in % 20)
+ tester failed
 
 starting test_upgrade
 
@@ -831,16 +861,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 432 blocks have been allocated
+balloc: first 477 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -887,16 +919,18 @@ mkdir
 usertests
 ln
 getpinfo
+test_upgrade
 rm
 sh
 tester
 forktest
 echo
+test_round_robin
 README
 stressfs
 ls
 kill
-balloc: first 433 blocks have been allocated
+balloc: first 478 blocks have been allocated
 balloc: write bitmap block at sector 28
 rm user/bin/tester
 make qemu-nox CPUS=1
@@ -927,32 +961,30 @@ test test_ptable PASSED (10 of 10)
  (Workload: Checks getpinfo mirrors ptable
   Expected: init, sh, tester are in the ptable)
 
-test single_job_long FAILED (0 of 10)
+test single_job_long PASSED (10 of 10)
  (Workload: Single long running process (spinning)
   Expected: No priority upgrade occurred for running process)
- tester failed
 
-test new_process FAILED (0 of 10)
+test new_process PASSED (10 of 10)
  (Workload: Parent process runs until at lowest, fork child process
   Expected: Parent process does not run until new process is at the lowest priority)
- Timelimit (30.0s) exceeded
 
 test multiple_jobs_io PASSED (10 of 10)
  (Workload: Just checks i/o functionality still works
   Expected: No regression in i/o and scheduler does not fail)
 
-test stress_test FAILED (0 of 10)
+test stress_test PASSED (10 of 10)
  (Workload: Fill the ptable multiple times with new processes.
   Expected: OS does not fail to allocate processes)
- Timelimit (30.0s) exceeded
 
 test stress_test_io PASSED (10 of 10)
  (Workload: Run multiple concurrent i/o requests
   Expected: No regression in i/o and scheduler does not fail)
 
-test test_round_robin PASSED (10 of 10)
+test test_round_robin FAILED (0 of 10)
  (Workload: 4 processes running long running workloads (spinning)
   Expected: No process is upgraded and lowest priority are running in % 20)
+ tester failed
 
 test test_upgrade FAILED (0 of 10)
  (Workload: 7 long running processes
@@ -963,6 +995,6 @@ test multiple_jobs PASSED (10 of 10)
  (Workload: Synchronous workload varying tick workload. (Spin duration)
   Expected: Verify each process only runs for the allotted amount of time at each level. (ie. p0 - 5 ticks, p1 - 5 ticks, p2 - 10 ticks, etc.))
 
-Passed 7 of 11 tests.
-Overall 7 of 11
-Points 60 of 100
+Passed 9 of 11 tests.
+Overall 9 of 11
+Points 80 of 100

@@ -235,6 +235,7 @@ wait(void)
   struct proc *p;
   int havekids, pid;
   int i;
+  int j;
 
   acquire(&ptable.lock);
   for(;;){
@@ -247,13 +248,19 @@ wait(void)
       if(p->state == ZOMBIE){
         // Found one.
         struct level *pri = &ptable.queues[p->priority];
-        if(pri->pos != pri->total-1) {
-          for(i = pri->pos; i < pri->total-1; i++) {
-            pri->proc[i] = pri->proc[i+1];
+        
+        for(i = 0; i < pri->total; i++) {
+          if(pri->proc[i]->pid == p->pid) {
+            for(j = i; j < pri->total-1; j++) {
+              pri->proc[j] = pri->proc[j+1];
+            }
+            if(pri->pos == pri->total-1) {
+              pri->pos = 0;
+            } else if (i <= pri->pos) {
+              pri->pos--;
+            }
           }
-          pri->pos--;
         }
-
         pri->total--;  
         pid = p->pid;
         kfree(p->kstack);
@@ -305,14 +312,15 @@ scheduler(void)
     for(level = ptable.queues; level < &ptable.queues[NPRI]; level++) {  // Go through all the queues
       if(level->total > 0) {  // If it isn't empty        
         for(lpos = level->pos; lpos < (level->total + level->pos); lpos++) {  // Starting at pos go through all proccess on that level
-          if(level->proc[lpos % level->total]->state == RUNNABLE) {  // Found process to run
-            if((lpos % level->total) == level->total) {  // Set pos to next process in list, looping if necessary
+          if(level->proc[lpos % level->total]->state == RUNNABLE) {  // Found process to run  CHANGE
+            if((lpos % level->total) == 0) {  // Set pos to next process in list, looping if necessary
               level->pos = 0;
             } else {
               level->pos++;
             }
             p = level->proc[lpos % level->total];
             p->hasrun = 1;
+            //cprintf("Switching to Process %d, Pos: %d\n", p->pid, ptable.queues[p->priority]);
             goto sproc;  // Jump out of loop
           }
         }
@@ -535,25 +543,27 @@ checkyield(struct proc *p) {
     }
   }
 
+
+
   // See if it has used its ticks at priority
   switch(p->priority) {
     case 0:
       if(p->currticks == 5) {
-        p->priority--;
+        p->priority++;
         p->currticks = 0;
         retur = 1;
       }
       break;
     case 1:
       if(p->currticks == 5) {
-        p->priority--;
+        p->priority++;
         p->currticks = 0;
         retur = 1;
       }
       break;
     case 2:
       if(p->currticks == 10) {
-        p->priority--;
+        p->priority++;
         p->currticks = 0;
         retur = 1;
       }
@@ -577,13 +587,17 @@ tickinc(void) {
 
   ptable.sectick++;
 
-  if(ptable.sectick++ == 100) {
+  if(ptable.sectick == 100) {
     for(p = ptable.proc; p != &ptable.proc[NPROC]; p++) {
-      if((p->hasrun == 0) && (p->priority != 0) && (p->state == RUNNABLE) ) {
+      //cprintf("Proccess: %s, Priority: %d, State: %d, Hasrun: %d\n", p->name, p->priority, p->state, p->hasrun);
+      if((p->hasrun != 1) && (p->priority != 0) && (p->state == RUNNABLE) ) {
+        cprintf("Upgraded Process: %d from Pri: %d to Pri: %d\n", p->pid, p->priority, (p->priority - 1));
         p->priority--;
         p->currticks = 0;
       }
+      p->hasrun = 0;
     }
+    ptable.sectick = 0;
   }
   release(&ptable.lock);
 }
