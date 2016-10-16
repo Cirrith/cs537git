@@ -241,7 +241,7 @@ wait(void)
         // Found one.
 
         struct level *pri = &ptable.queues[p->priority];  // Grab level this process is on
-        
+        cprintf("Cleaned up: %d\n", p->pid);        
         removeproc(pri, p); // Remove process from queue
 
         pid = p->pid;
@@ -303,8 +303,8 @@ scheduler(void)
           if(level->proc[lpos % level->total]->state == RUNNABLE) {  // Found process to run  CHANGE
             int index = lpos % level->total;
             p = level->proc[index];  // Selected Process
-            // cprintf("PID: %d State: %d Priority: %d Tick0: %d Tick1: %d Tick2: %d Tick3: %d\n", p->pid, p->state, p->priority, p->ticks[0], p->ticks[1], p->ticks[2], p->ticks[3]);
             p->hasrun = 1;
+            cprintf("PID: %d, Priority: %d, Pos: %d, Total: %d, Index: %d\n", p->pid, p->priority, level->pos, level->total, index);
             if(level->total == 1) {  // If only one process
               level->pos = index;  // Shouldn't be anything but 0
             } else if(index == (level->total-1)) {  // If at the end of the array
@@ -328,7 +328,8 @@ sproc:
     p->state = RUNNING;
     swtch(&cpu->scheduler, proc->context);
     switchkvm();
-
+    cprintf("Scheduler\n");
+    
     // Process is done running for now.
     // It should have changed its p->state before coming back.
     proc = 0;
@@ -362,6 +363,7 @@ sched(void)
 yield(void)
 {
   acquire(&ptable.lock);  //DOC: yieldlock
+  cprintf("Yield %d\n", proc->pid);
   proc->state = RUNNABLE;
   sched();
   release(&ptable.lock);
@@ -516,14 +518,16 @@ pinfo(struct pstat *info) {
 }
 
 // Return 1 if it needs to yield
-int
+void
 checkyield(struct proc *p) {
 
   struct proc *curr;
   struct level *priold;
   struct level *prinew;
-  int retur = 0;
+  int stop = 0;
   int inc = 0;
+
+  cprintf("CheckYield\n");
 
   acquire(&ptable.lock);
   // Shit got caught yo
@@ -532,8 +536,8 @@ checkyield(struct proc *p) {
 
   // See if there is a higher priority proccess
   for(curr = ptable.proc; curr != &ptable.proc[NPROC]; curr++) {
-    if((curr->priority < p->priority) && (curr->state == RUNNABLE)) {
-      //retur = 1;
+    if(curr->priority > p->priority) {
+      stop = 1;
     }
   }
 
@@ -541,47 +545,45 @@ checkyield(struct proc *p) {
   switch(p->priority) {
     case 0:
       if(p->currticks == 5) {
-        inc = 1;
+        inc++;
         p->currticks = 0;
-        retur = 1;
+        stop = 1;
       }
       break;
     case 1:
       if(p->currticks == 5) {
-        inc = 1;
+        inc++;
         p->currticks = 0;
-        retur = 1;
+        stop = 1;
       }
       break;
     case 2:
       if(p->currticks == 10) {
-        inc = 1;
+        inc++;
         p->currticks = 0;
-        retur = 1;
+        stop = 1;
       }
       break;
     case 3:
       if(p->currticks == 20) {
         p->currticks = 0;
-        retur = 1;
+        stop = 1;
       }
       break;
   }
 
   if(inc) {
+    cprintf("Demoted %d\n", p->pid);
     priold = &ptable.queues[p->priority];
-    prinew = &ptable.queues[++(p->priority)];
+    prinew = &ptable.queues[++p->priority];
 
     removeproc(priold, p);
     addproc(prinew, p);
   }
 
   release(&ptable.lock);
-
-  // if(retur)
-    // cprintf("Yield\n");
-
-  return retur;
+  if(stop)
+    yield();  
 }
 
 void
@@ -593,13 +595,12 @@ tickinc(void) {
   acquire(&ptable.lock);
 
   ptable.sectick++;
-
   if(ptable.sectick == 100) {
     for(p = ptable.proc; p != &ptable.proc[NPROC]; p++) {
       if((p->hasrun != 1) && (p->priority != 0) && (p->state == RUNNABLE) ) {
+        cprintf("Promoted %d\n", p->pid);
         priold = &ptable.queues[p->priority];
-        prinew = &ptable.queues[p->priority-1];
-        p->priority = p->priority-1;
+        prinew = &ptable.queues[--p->priority];
         removeproc(priold, p);
         addproc(prinew, p);
         p->currticks = 0;
@@ -616,7 +617,7 @@ void
 removeproc(struct level *level, struct proc *p) {
   int i;
   int j;
-
+  cprintf("Removed %d\n", p->pid);
   for(i = 0; i < level->total; i++) {  // Go through processes looking for process
     if(level->proc[i]->pid == p->pid) {
       for(j = i; j < (level->total-1); j++) {  // Move processes down
@@ -624,17 +625,18 @@ removeproc(struct level *level, struct proc *p) {
       }
       if((level->total == 1) || (i == (level->total-1))) { // If only 1 process or zombie is at end
         level->pos = 0;
-      } else if(i < level->pos) {  // Removing earlier than current pos
+      } else if(i <= level->pos) {  // Removing earlier than current pos
         level->pos = level->pos - 1;
       }  // Else it should stay where it is
     }
   }
-  level->total = level->total-1;
+  level->total--;
 }
 
 // Assumes ptable lock is held
 void
 addproc(struct level *level, struct proc *p) {
+  cprintf("Added %d\n", p->pid);
   level->proc[level->total] = p;
   level->total++;
 }
