@@ -303,7 +303,7 @@ scheduler(void)
           if(level->proc[lpos % level->total]->state == RUNNABLE) {  // Found process to run  CHANGE
             int index = lpos % level->total;
             p = level->proc[index];  // Selected Process
-            // cprintf("PID: %d State: %d Priority: %d Tick0: %d Tick1: %d Tick2: %d Tick3: %d\n", p->pid, p->state, p->priority, p->ticks[0], p->ticks[1], p->ticks[2], p->ticks[3]);
+            cprintf("PID: %d State: %d Priority: %d Tick0: %d Tick1: %d Tick2: %d Tick3: %d\n", p->pid, p->state, p->priority, p->ticks[0], p->ticks[1], p->ticks[2], p->ticks[3]);
             p->hasrun = 1;
             if(level->total == 1) {  // If only one process
               level->pos = index;  // Shouldn't be anything but 0
