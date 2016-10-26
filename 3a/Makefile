@@ -1,7 +1,7 @@
 #Makefile for CS537
 
 CC=gcc
-CFLAGS=-c -Wall
+CFLAGS=-c -Wall -Werror
 LDFLAGS= -shared
 SOURCES=main.cpp a2.cpp trim.cpp
 DEPS=a2.hpp trim.hpp
