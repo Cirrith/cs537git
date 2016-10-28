@@ -2,7 +2,7 @@
 
 CC=gcc
 CFLAGS=-c -Wall -Werror
-LDFLAGS= -lstats -L. -pthread
+LDFLAGS= -lstats -L.
 SOURCES=stat_server.c
 LIB=libstats.c
 DEPS=libstats.h stats.h
@@ -10,9 +10,6 @@ OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=main
 
 all: $(SOURCES) $(DEPS) LIBRARY $(EXECUTABLE) 
-
-debug: CFLAGS += -g
-debug: all
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@

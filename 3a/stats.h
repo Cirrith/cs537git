@@ -1,3 +1,5 @@
+#define numProc 16
+
 typedef struct {
   // You may add any new fields that you believe are necessary
   int inUse; 
@@ -13,5 +15,3 @@ typedef struct {
   sem_t *sem;
   stats_t stats[numProc];
 } scaff;
-
-const int numProc = 16;

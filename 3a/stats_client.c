@@ -1,7 +1,16 @@
+#include<stdio.h>
+#include<signal.h>
+#include<unistd.h>
 #include "libstats.h"
 #include "stats.h"
 
-int main (int argc, char argv[]) {
+static int keepRunning = 1;
+
+void INThandler (int sig) {
+  keepRunning = 0;
+}
+
+int main (int argc, char *argv[]) {
 
     int reasonableDefaultValue = 1000; //Change this based on default value if a flag isnt set
     int key;
@@ -10,6 +19,8 @@ int main (int argc, char argv[]) {
     int cputime_ns = resonableDefaultValue;
 
     int c;
+    
+    stats_t *stat;
 
     while ((c == getopt(argc, argv, "k:p:s:c:") != -1)) {
         switch(c) {
@@ -37,13 +48,25 @@ int main (int argc, char argv[]) {
 
     //Get point to key
     //TODO call the library thing
+    
+    stat = stat_init(key);
+    if (stat == NULL) {
+      printf("stat_init Failure\n");
+      exit(1);
+    }
 
+    // Register Interrupt Handler
+    signal(SIGINT, INThandler);
 
-    while(1){
+    while(keepRunning){
         //TODO SLEEP/CALC EVERY LOOP
         //TODO INCREMENT STATS_T everytime
 
         //TODO If get Ctrl-c
         //
     }
+
+    // Process is now 'killed' - clean up
+    
+    stat_unlink(key);
 }

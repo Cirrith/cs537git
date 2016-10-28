@@ -1,11 +1,14 @@
-#include"stats.h"
 #include<stdio.h>
 #include<stdlib.h>
 #include<unistd.h>
 #include<sys/ipc.h>
 #include<sys/shm.h>
+#include<sys/stat.h>
 #include<semaphore.h>
 #include<string.h>
+#include<signal.h>
+#include<fcntl.h>
+#include"stats.h"
 
 static int keepRunning = 1;
 
@@ -13,42 +16,41 @@ void INThandler(int sig) {
   keepRunning = 0;
 }
 
-int main(int argc, char argv[]) {
+int main(int argc, char *argv[]) {
   int c;
-  int opterr = 0;
+  char *arg;
   int key = 0;
   int servIt = 1;  
   // Parse Command Inputs
 
-  if(argc > 3) {
-    printf("Usage: %s -k <key>", argv[0]);
+  if(argc != 3) {
+    printf("Usage: %s -k <key>\n", argv[0]);
     exit(1);
   }
 
   while ((c = getopt (argc, argv, "k:")) != -1) {
     switch(c) {
       case 'k':
-        key = atoi(optarg);
+        arg = optarg;
         break;
       default:
         exit(1);
     }
   }
 
-  if (key == 0) {
+  if ((key = atoi(arg)) ==  0) {
     printf("Invalid MemNumber");
   }
 
 // Setup Interrupt Handler
-  signal(SIGINT, INThandler)
+  signal(SIGINT, INThandler);
   
 // Setup Shared Memory
-
   int pgSize = getpagesize();
   int shmid;
   scaff *shm;
 
-  if ((shmid = shmget(key, pgSize, IPC_CREAT)) == -1) {  // Create shared memory segment
+  if ((shmid = shmget(key, pgSize, IPC_CREAT | 0660)) == -1) {  // Create shared memory segment
     perror("shmget");
     exit(1);
   }
@@ -61,8 +63,7 @@ int main(int argc, char argv[]) {
 // Setup Shared Memory Data (Semaphore, Table)
 
   // Init Data Inside Shared Memory
-
-  void *memset(shm, 0, sizeof(scaff));
+  memset(shm, 0, sizeof(scaff));
   
   // Init Semaphore at top of shared memory
   if ((shm->sem = sem_open("mysem", O_CREAT, 0644, 1)) == SEM_FAILED) {
@@ -71,8 +72,9 @@ int main(int argc, char argv[]) {
   }
 
 // Every 1 second go through memory and print out
-  stats_t stat;
+  stats_t *stat;
   while (keepRunning) {
+    printf("VROOOOM\n");
     for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
       if (stat->inUse) {
         printf("%d %d %s %d %f %d\n", servIt, stat->pid, stat->arg, stat->counter, stat->cpu_secs, stat->priority);
@@ -90,7 +92,7 @@ int main(int argc, char argv[]) {
     perror("sem_unlink");
     exit(1);
   }
-
+  return 0;
 }
 
 

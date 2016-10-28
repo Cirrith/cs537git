@@ -7,7 +7,7 @@
       else
         return NULL
   */
-  extern stat_t* stat_init(key_t key);
+  extern stats_t* stat_init(key_t key);
 
   /*
 
