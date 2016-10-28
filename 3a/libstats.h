@@ -1,5 +1,5 @@
-#ifndef libstat_h
-#define libstat_h
+#ifndef libstats_h
+#define libstats_h
   /*
     Attch to existing shared memory segment using key
       if sucessful
@@ -12,6 +12,6 @@
   /*
 
   */
-  extern int stat_unlink(key_t key);
+  extern int stats_unlink(key_t key);
 
 #endif
