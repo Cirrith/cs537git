@@ -2,6 +2,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include"libstats.h"
+#include<stdio.h>
 
 scaff* getMem(key_t);
 
@@ -13,8 +14,9 @@ stats_t* stats_init(key_t key) {
   if (shm == NULL) {
     return NULL;
   }
-
+  
   sem_wait(shm->sem);
+  
   for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
     if (stat->inUse == 0) {
       stat->inUse = 1;
@@ -33,7 +35,7 @@ int stats_unlink(key_t key) {
   scaff *shm;
   stats_t *stat;
   int pid;
-
+  
   shm = getMem(key);
 
   if (shm == NULL) {
@@ -41,7 +43,7 @@ int stats_unlink(key_t key) {
   }
 
   pid = getpid();
-
+  
   sem_wait(shm->sem);  // Don't think this is critical section
   for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
     if (stat->pid == pid) {
@@ -61,7 +63,7 @@ scaff* getMem(key_t key) {
   int shmid;
   scaff *shm;
 
-  if ((shmid = shmget(key, pgSize, 0)) == -1) {  // Get shared memory id
+  if ((shmid = shmget(key, pgSize, 0666)) == -1) {  // Get shared memory id
     return NULL;
   }
 
