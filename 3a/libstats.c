@@ -1,8 +1,6 @@
-#include<semaphore.h>
 #include<unistd.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#include"stats.h"
 #include"libstats.h"
 
 scaff* getMem(key_t);
@@ -10,7 +8,6 @@ scaff* getMem(key_t);
 stats_t* stats_init(key_t key) {
   scaff *shm;
   stats_t *stat;
-
   shm = getMem(key);
 
   if (shm == NULL) {
@@ -24,19 +21,18 @@ stats_t* stats_init(key_t key) {
       sem_post(shm->sem);
       return stat;
     }
-  }  
+  }
   sem_post(shm->sem);
 
   return NULL;
 }
-
 
 int stats_unlink(key_t key) {
   // If can remove return 0
   // Else return -1
   scaff *shm;
   stats_t *stat;
-  int pid;  
+  int pid;
 
   shm = getMem(key);
 
@@ -69,9 +65,9 @@ scaff* getMem(key_t key) {
     return NULL;
   }
 
-  if ((shm = shmat(shmid, NULL, 0)) == (scaff *) -1) {  // Get pointer to memory segment
+  // Get pointer to memory segment
+  if ((shm = shmat(shmid, NULL, 0)) == (scaff *) -1) {
     return NULL;
   }
-
   return shm;
 }

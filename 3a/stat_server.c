@@ -20,16 +20,16 @@ int main(int argc, char *argv[]) {
   int c;
   char *arg;
   int key = 0;
-  int servIt = 1;  
+  int servIt = 1;
   // Parse Command Inputs
 
-  if(argc != 3) {
+  if (argc != 3) {
     printf("Usage: %s -k <key>\n", argv[0]);
     exit(1);
   }
 
-  while ((c = getopt (argc, argv, "k:")) != -1) {
-    switch(c) {
+  while ((c = getopt(argc, argv, "k:")) != -1) {
+    switch (c) {
       case 'k':
         arg = optarg;
         break;
@@ -44,18 +44,20 @@ int main(int argc, char *argv[]) {
 
 // Setup Interrupt Handler
   signal(SIGINT, INThandler);
-  
+
 // Setup Shared Memory
   int pgSize = getpagesize();
   int shmid;
   scaff *shm;
 
-  if ((shmid = shmget(key, pgSize, IPC_CREAT | 0660)) == -1) {  // Create shared memory segment
+  // Create shared memory segment
+  if ((shmid = shmget(key, pgSize, IPC_CREAT | 0660)) == -1) {
     perror("shmget");
     exit(1);
   }
 
-  if ((shm = shmat(shmid, NULL, 0)) == (scaff *) -1) {  // Get pointer to memory segment
+  // Get pointer to memory segment
+  if ((shm = shmat(shmid, NULL, 0)) == (scaff *) -1) {
     perror("shmat");
     exit(1);
   }
@@ -64,9 +66,9 @@ int main(int argc, char *argv[]) {
 
   // Init Data Inside Shared Memory
   memset(shm, 0, sizeof(scaff));
-  
+
   // Init Semaphore at top of shared memory
-  if ((shm->sem = sem_open("mysem", O_CREAT, 0644, 1)) == SEM_FAILED) {
+  if ((shm->sem = sem_open("bambrough3", O_CREAT, 0644, 1)) == SEM_FAILED) {
     perror("sem_open");
     exit(1);
   }
@@ -77,37 +79,21 @@ int main(int argc, char *argv[]) {
     printf("VROOOOM\n");
     for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
       if (stat->inUse) {
-        printf("%d %d %s %d %f %d\n", servIt, stat->pid, stat->arg, stat->counter, stat->cpu_secs, stat->priority);
+        printf("%d %d %s %d %f %d\n", servIt, stat->pid, stat->arg,
+          stat->counter, stat->cpu_secs, stat->priority);
       }
     }
     servIt++;
   }
 
 // Mark Shared Memory Segment for Deletion
-  shmdt(shm); 
+  shmdt(shm);
   shmctl(shmid, IPC_RMID, 0);
 
 // Remove Semaphore
-  if(sem_unlink("mysem")) {
+  if (sem_unlink("bambrough3")) {
     perror("sem_unlink");
     exit(1);
   }
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

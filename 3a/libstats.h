@@ -1,5 +1,7 @@
 #ifndef libstats_h
 #define libstats_h
+
+  #include"stats.h"
   /*
     Attch to existing shared memory segment using key
       if sucessful

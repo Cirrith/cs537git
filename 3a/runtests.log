@@ -1,0 +1,57 @@
+starting build
+
+**********************************************************************
+
+Test build
+build project using make
+
+**********************************************************************
+Trying to clean project using make clean
+make clean
+rm *o main
+Trying to build project using make
+make
+gcc -c -Wall -Werror libstats.c -fpic -o libstats.o
+gcc -shared -o libstats.so libstats.o
+gcc -c -Wall -Werror stat_server.c -o stat_server.o
+gcc -lstats -L. -pthread stat_server.o -o main
+
+
+test build PASSED
+ (build project using make)
+
+starting linttest
+
+**********************************************************************
+
+Test linttest
+Lint test for C programming style
+
+**********************************************************************
+/u/c/s/cs537-1/ta/tests/3a/../../lint/cpplint.py --extensions c stat_server.c libstats.c stats_client.c
+Done processing stat_server.c
+Done processing libstats.c
+Done processing stats_client.c
+Total errors found: 0
+
+
+test linttest PASSED (6 of 6)
+ (Lint test for C programming style)
+
+starting clientnoservertest
+
+**********************************************************************
+
+Test clientnoservertest
+Client should exit gracefully if no server is running
+
+**********************************************************************
+OSError: [Errno 2] No such file or directory
+
+
+test clientnoservertest FAILED (0 of 6)
+ (Client should exit gracefully if no server is running)
+ Unexpected exception [Errno 2] No such file or directory
+
+Skipped 2 tests.
+To keep testing after failing a test, use flag '-c' or '--continue'

@@ -9,13 +9,16 @@ DEPS=libstats.h stats.h
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=main
 
-all: $(SOURCES) $(DEPS) LIBRARY $(EXECUTABLE) 
+all: $(SOURCES) $(DEPS) LIBRARY $(EXECUTABLE) CLIENT
 
 debug: CFLAGS += -g
 debug: all
 
 $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+
+CLIENT: stats_client.c
+  $(CC) -Wall -Werror $<
 
 LIBRARY: $(LIB)
 	$(CC) $(CFLAGS) $(LIB) -fpic -o libstats.o
