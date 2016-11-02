@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Get point to key
-    stat = stats_init(key);
+    stat = stat_init(key);
     if (stat == NULL) {
       printf("stat_init Failure\n");
       exit(1);

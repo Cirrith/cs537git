@@ -1,30 +1,8 @@
-#Makefile for CS537
-
-CC=gcc
-CFLAGS=-c -Wall -Werror
-LDFLAGS= -lstats -L. -pthread
-SOURCES=stat_server.c
-LIB=libstats.c
-DEPS=libstats.h stats.h
-OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=main
-
-all: $(SOURCES) $(DEPS) LIBRARY $(EXECUTABLE) CLIENT
-
-debug: CFLAGS += -g
-debug: all
-
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
-
-CLIENT: stats_client.c
-	$(CC) -Wall -Werror $<
-
-LIBRARY: $(LIB)
-	$(CC) $(CFLAGS) $(LIB) -fpic -o libstats.o
-	$(CC) -shared -o libstats.so libstats.o
-.c.o:
-	$(CC) $(CFLAGS) $< -o $@
+all:
+	gcc -c -fpic libstats.c -Wall -Werror
+	gcc -shared -o libstats.so libstats.o
+	gcc -o stats_client stats_client.c -Wall -Werror -lstats -L. -pthread -lm
+	gcc -o stats_server stats_server.c -Wall -Werror -lstats -L. -pthread -lm
 
 clean: 
 	rm *o $(EXECUTABLE)
