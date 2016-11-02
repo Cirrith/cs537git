@@ -18,7 +18,7 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
 CLIENT: stats_client.c
-  $(CC) -Wall -Werror $<
+	$(CC) -Wall -Werror $<
 
 LIBRARY: $(LIB)
 	$(CC) $(CFLAGS) $(LIB) -fpic -o libstats.o
