@@ -13,7 +13,7 @@
 CC=gcc
 EXFLAGS= -Wall -Werror -lstats -L. -pthread -lm
 
-all: LIBRARY SERVER CLIENT
+all: SERVER CLIENT LIBRARY
 
 debug: CFLAGS += -g
 debug: all

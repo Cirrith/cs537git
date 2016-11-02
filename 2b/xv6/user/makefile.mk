@@ -1,7 +1,8 @@
 
 # user programs
 USER_PROGS := \
-	cat\
+	graph0\
+  cat\
 	echo\
 	forktest\
 	grep\

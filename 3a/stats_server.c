@@ -76,7 +76,6 @@ int main(int argc, char *argv[]) {
 // Every 1 second go through memory and print out
   stats_t *stat;
   while (keepRunning) {
-    printf("VROOOOM\n");
     for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
       if (stat->inUse) {
         printf("%d %d %s %d %f %d\n", servIt, stat->pid, stat->arg,
@@ -87,7 +86,6 @@ int main(int argc, char *argv[]) {
   }
 
 // Mark Shared Memory Segment for Deletion
-  shmdt(shm);
   shmctl(shmid, IPC_RMID, 0);
 
 // Remove Semaphore
