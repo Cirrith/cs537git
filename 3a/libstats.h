@@ -16,4 +16,8 @@
   */
   extern int stats_unlink(key_t key);
 
+  extern int semInit(void);
+
+  extern int semDel(void);
+  
 #endif

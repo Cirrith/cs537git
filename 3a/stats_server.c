@@ -9,6 +9,7 @@
 #include<signal.h>
 #include<fcntl.h>
 #include"stats.h"
+#include"libstats.h"
 
 static int keepRunning = 1;
 
@@ -51,7 +52,7 @@ int main(int argc, char *argv[]) {
   scaff *shm;
 
   // Create shared memory segment
-  if ((shmid = shmget(key, pgSize, IPC_CREAT | 0666)) == -1) {
+  if ((shmid = shmget(key, pgSize, IPC_CREAT | 0644)) == -1) {
     perror("shmget");
     exit(1);
   }
@@ -63,23 +64,19 @@ int main(int argc, char *argv[]) {
   }
 
 // Setup Shared Memory Data (Semaphore, Table)
-
-  // Init Data Inside Shared Memory
-  memset(shm, 0, sizeof(scaff));
-
-  // Init Semaphore at top of shared memory
-  if ((shm->sem = sem_open("bambrough3", O_CREAT, 0666, 1)) == SEM_FAILED) {
+  
+  if(semInit() < 0) {
     perror("sem_open");
     exit(1);
   }
+  
+  // Init Data Inside Shared Memory
+  memset(shm, 0, sizeof(scaff));
 
 // Every 1 second go through memory and print out
   stats_t *stat;
   while (keepRunning) {
 	sleep(1);
-	int temp;
-	(void) sem_getvalue(shm->sem, &temp);
-	printf("Checking: ...%d\n", temp);
     for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
       if (stat->inUse) {
         printf("%d %d %s %d %f %d\n", servIt, stat->pid, stat->arg,
@@ -92,10 +89,10 @@ int main(int argc, char *argv[]) {
 // Mark Shared Memory Segment for Deletion
   shmctl(shmid, IPC_RMID, 0);
 
-// Remove Semaphore
-  if (sem_unlink("bambrough3")) {
+  if(semDel() < 0) {
     perror("sem_unlink");
     exit(1);
   }
+  
   return 0;
 }

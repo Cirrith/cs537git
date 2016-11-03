@@ -16,9 +16,7 @@
     } stats_t;
 
     typedef struct {
-	int test;
-    sem_t *sem;
-    stats_t stats[numProc];
+        stats_t stats[numProc];
     } scaff;
     
 #endif
