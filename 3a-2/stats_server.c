@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
   scaff *shm;
 
   // Create shared memory segment
-  if ((shmid = shmget(key, pgSize, IPC_EXCL | IPC_CREAT | 0666)) < 0) {
+  if ((shmid = shmget(key, pgSize, IPC_EXCL | IPC_CREAT | 0644)) < 0) {
     perror("shmget");
     exit(0);
   }

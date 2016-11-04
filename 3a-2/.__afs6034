@@ -1,0 +1,24 @@
+#Makefile for CS537
+
+CC=gcc
+CFLAGS=-c -Wall -Werror
+LDFLAGS= -lstats -L.
+SOURCES=stat_server.c
+LIB=libstats.c
+DEPS=libstats.h stats.h
+OBJECTS=$(SOURCES:.c=.o)
+EXECUTABLE=main
+
+all: $(SOURCES) $(DEPS) LIBRARY $(EXECUTABLE) 
+
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+
+LIBRARY: $(LIB)
+	$(CC) $(CFLAGS) $(LIB) -fpic -o libstats.o
+	$(CC) -shared -o libstats.so libstats.o
+.c.o:
+	$(CC) $(CFLAGS) $< -o $@
+
+clean: 
+	rm *o $(EXECUTABLE)

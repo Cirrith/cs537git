@@ -24,9 +24,8 @@ stats_t* stats_init(key_t key) {
   if ((shm = getMem(key)) == NULL) {
     return NULL;
   }
-  if (sem_wait(sem) < 0) {
-    return NULL;
-  }
+
+  sem_wait(sem);
 
   for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
     if (stat->inUse == 0) {
@@ -59,7 +58,7 @@ int stats_unlink(key_t key) {
   if ((shm = getMem(key)) == NULL) {
     return -1;
   }
-
+    
   for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
     if (stat->pid == pid) {
       stat->inUse = 0;
