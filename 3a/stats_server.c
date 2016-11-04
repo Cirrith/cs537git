@@ -4,7 +4,7 @@
 #include<sys/ipc.h>
 #include<sys/shm.h>
 #include<sys/stat.h>
-#include<semaphore.h>
+#include<semaphore.h>  // sem_t
 #include<string.h>
 #include<signal.h>
 #include<fcntl.h>
@@ -12,6 +12,8 @@
 #include"libstats.h"
 
 static int keepRunning = 1;
+
+sem_t *sem;
 
 void INThandler(int sig) {
   keepRunning = 0;
@@ -68,7 +70,7 @@ int main(int argc, char *argv[]) {
   // Init Data Inside Shared Memory
   memset(shm, 0, sizeof(scaff));
 
-  if (semInit() < 0) {
+  if (semInit(key) < 0) {
     perror("sem_open");
     exit(1);
   }
@@ -91,7 +93,7 @@ int main(int argc, char *argv[]) {
 // Mark Shared Memory Segment for Deletion
   shmctl(shmid, IPC_RMID, 0);
 
-  if (semDel() < 0) {
+  if (semDel(key) < 0) {
     perror("sem_unlink");
     exit(1);
   }

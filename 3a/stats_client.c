@@ -6,16 +6,17 @@
 #include<sys/resource.h>
 #include<stdlib.h>
 #include<string.h>  // strncpy()
+#include<semaphore.h>  // sem_t
 #include"libstats.h"
 
 #define secNano 1000000000
 
 static int keepRunning = 1;
+sem_t *sem;
 
 void INThandler(int sig) {
     keepRunning = 0;
 }
-
 
 int main(int argc, char *argv[]) {
     // Change this based on default value if a flag isnt set
@@ -81,8 +82,6 @@ int main(int argc, char *argv[]) {
     }
     clock_gettime(clock, &procStart);
 
-    // printf("Start: %ld\n", procStart.tv_nsec);
-
 // Initalize all of the stat_t fields
     stat->pid = pid;
     stat->counter = 0;
@@ -95,9 +94,6 @@ int main(int argc, char *argv[]) {
     struct timespec sleepSpec;
     sleepSpec.tv_sec = sleeptime_ns / secNano;
     sleepSpec.tv_nsec = sleeptime_ns % secNano;
-
-    // printf("Sleep: %ld\n", sleepSpec.tv_nsec);
-    // printf("CPU: %d\n", cputime_ns);
 
     while (keepRunning) {
     // Sleep for specific amount of time
@@ -130,8 +126,6 @@ int main(int argc, char *argv[]) {
                                     cpuCurr.tv_nsec - cpuStart.tv_nsec)/secNano;
         stat->priority = currPriority;
         stat->counter++;
-
-        // printf("Counter: %d\n", stat->counter);
     }
 
     if (stats_unlink(key) < 0) {

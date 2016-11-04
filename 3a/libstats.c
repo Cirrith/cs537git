@@ -7,29 +7,24 @@
 #include<fcntl.h>
 
 scaff* getMem(key_t);
-sem_t *sem;
 
-int server = 0;
-
-char semKey[] = "bambrough3";
+char name[] = "bambrough";
 
 stats_t* stats_init(key_t key) {
   scaff *shm;
   stats_t *stat;
-  shm = getMem(key);
+  sem_t *sem;
+  char semKey[128];
 
-  if (shm == NULL) {
-    printf("shmfail\n");
-    return NULL;
-  }
-
+  sprintf(semKey, "%s%d", name, (int)key);
   if ((sem = sem_open(semKey, O_RDWR)) == SEM_FAILED) {
-    printf("sem_openfail\n");
     return NULL;
   }
 
+  if ((shm = getMem(key)) == NULL) {
+    return NULL;
+  }
   if (sem_wait(sem) < 0) {
-    printf("sem_waitfail\n");
     return NULL;
   }
 
@@ -41,40 +36,37 @@ stats_t* stats_init(key_t key) {
     }
   }
   sem_post(sem);
-  printf("allocatefail\n");
   return NULL;
 }
 
 int stats_unlink(key_t key) {
   scaff *shm;
   stats_t *stat;
-  int pid;
+  int pid = getpid();
+  sem_t *sem;
+  char semKey[128];
 
-  shm = getMem(key);
-
-  if (!server) {
-    shmdt(shm);
-    return 0;
-  }
-
-  if (shm == NULL) {
+  printf("Unlink\n");
+  sprintf(semKey, "%s%d", name, (int)key);
+  if ((sem = sem_open(semKey, O_RDWR)) == SEM_FAILED) {
     return -1;
   }
 
-  pid = getpid();
+  if (sem_close(sem) < 0) {
+    return -1;
+  }
 
-  if (sem_wait(sem) < 0)  // Don't think this is critical section
-    return 0;
+  if ((shm = getMem(key)) == NULL) {
+    return -1;
+  }
 
   for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
     if (stat->pid == pid) {
       stat->inUse = 0;
       shmdt(shm);  // Remove shm from Address Space
-      sem_post(sem);
       return 0;
     }
   }
-  sem_post(sem);
   return -1;
 }
 
@@ -84,29 +76,45 @@ scaff* getMem(key_t key) {
   int shmid;
   scaff *shm;
 
-  if ((shmid = shmget(key, pgSize, 0666)) == -1) {  // Get shared memory id
+  printf("key: %d\n", (int)key);
+  if ((shmid = shmget(key, pgSize, 0644)) == -1) {  // Get shared memory id
+    printf("shmget fail\n");
     return NULL;
   }
 
   // Get pointer to memory segment
   if ((shm = shmat(shmid, NULL, 0)) == (scaff *) -1) {
+    printf("shmat fail\n");
     return NULL;
   }
   return shm;
 }
 
-int semInit(void) {
-    if ((sem = sem_open(semKey, O_CREAT, 0666, 1)) == SEM_FAILED) {
-          return -1;
-    }
-    server = 1;
-    return 0;
+int semInit(key_t key) {
+  sem_t *sem;
+  char semKey[128];
+
+  sprintf(semKey, "%s%d", name, (int)key);
+  if ((sem = sem_open(semKey, O_CREAT, 0644, 1)) == SEM_FAILED) {
+    return -1;
+  }
+  return 0;
 }
 
-int semDel(void) {
-    server = 0;
-    if (sem_unlink(semKey)) {
-        return -1;
-    }
-    return 0;
+int semDel(key_t key) {
+  sem_t *sem;
+  char semKey[128];
+
+  sprintf(semKey, "%s%d", name, (int)key);
+  if ((sem = sem_open(semKey, O_RDWR)) == SEM_FAILED) {
+    return -1;
+  }
+
+  if (sem_close(sem) < 0) {
+      return -1;
+  }
+  if (sem_unlink(semKey) < 0) {
+      return -1;
+  }
+  return 0;
 }
