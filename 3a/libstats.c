@@ -9,7 +9,7 @@
 scaff* getMem(key_t);
 sem_t *sem;
 
-char semKey[] = "bambrough";
+char semKey[] = "bambrough3";
 
 stats_t* stats_init(key_t key) {
   scaff *shm;
@@ -20,7 +20,7 @@ stats_t* stats_init(key_t key) {
     return NULL;
   }
   
-  if((sem = sem_open(semKey, O_RDWR)) == SEM_FAILED) {
+  if((sem = sem_open("bradleyMillerP3", O_RDWR)) == SEM_FAILED) {
 	return NULL;
   }
   
@@ -88,7 +88,7 @@ scaff* getMem(key_t key) {
 
 int semInit(void){
   // Init Semaphore at top of shared memory
-  if ((sem = sem_open("bambrough3", O_CREAT, 0666, 1)) == SEM_FAILED) {
+  if ((sem = sem_open("bradleyMillerP3", O_CREAT, 0666, 1)) == SEM_FAILED) {
     return -1;
   }
   return 0;
@@ -97,7 +97,7 @@ int semInit(void){
 int semDel(void) 
 {  
     // Remove Semaphore
-    if (sem_unlink("bambrough3")) {
+    if (sem_unlink("bradleyMillerP3")) {
         return -1;
     }
     return 0;
