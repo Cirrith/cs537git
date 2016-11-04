@@ -52,47 +52,49 @@ int main(int argc, char *argv[]) {
   scaff *shm;
 
   // Create shared memory segment
-  if ((shmid = shmget(key, pgSize, IPC_CREAT | 0644)) == -1) {
+  if ((shmid = shmget(key, pgSize, IPC_EXCL | IPC_CREAT | 0644)) < 0) {
     perror("shmget");
-    exit(1);
+    exit(0);
   }
 
   // Get pointer to memory segment
-  if ((shm = shmat(shmid, NULL, 0)) == (scaff *) -1) {
+  if ((shm = shmat(shmid, NULL, 0)) < (scaff *) 0) {
     perror("shmat");
-    exit(1);
+    exit(0);
   }
 
 // Setup Shared Memory Data (Semaphore, Table)
-  
-  if(semInit() < 0) {
+
+  // Init Data Inside Shared Memory
+  memset(shm, 0, sizeof(scaff));
+
+  if (semInit() < 0) {
     perror("sem_open");
     exit(1);
   }
-  
-  // Init Data Inside Shared Memory
-  memset(shm, 0, sizeof(scaff));
 
 // Every 1 second go through memory and print out
   stats_t *stat;
   while (keepRunning) {
-	sleep(1);
+    sleep(1);
+    // printf("Checking ...\n");
     for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
       if (stat->inUse) {
-        printf("%d %d %s %d %f %d\n", servIt, stat->pid, stat->arg,
+        printf("%d %d %s %d %.2f %d\n", servIt, stat->pid, stat->arg,
           stat->counter, stat->cpu_secs, stat->priority);
       }
     }
     servIt++;
+    printf("\n");
   }
 
 // Mark Shared Memory Segment for Deletion
   shmctl(shmid, IPC_RMID, 0);
 
-  if(semDel() < 0) {
+  if (semDel() < 0) {
     perror("sem_unlink");
     exit(1);
   }
-  
+
   return 0;
 }

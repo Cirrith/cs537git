@@ -8,13 +8,13 @@ build project using make
 **********************************************************************
 Trying to clean project using make clean
 make clean
-rm *o main
+rm *o stats_server stats_client
 Trying to build project using make
 make
-gcc -c -Wall -Werror libstats.c -fpic -o libstats.o
+gcc -c libstats.c -Wall -Werror -fpic -o libstats.o
 gcc -shared -o libstats.so libstats.o
-gcc -c -Wall -Werror stat_server.c -o stat_server.o
-gcc -lstats -L. -pthread stat_server.o -o main
+gcc -o stats_server stats_server.c -Wall -Werror -lstats -L. -pthread -lm
+gcc -o stats_client stats_client.c -Wall -Werror -lstats -L. -pthread -lm
 
 
 test build PASSED
@@ -28,10 +28,10 @@ Test linttest
 Lint test for C programming style
 
 **********************************************************************
-/u/c/s/cs537-1/ta/tests/3a/../../lint/cpplint.py --extensions c stat_server.c libstats.c stats_client.c
-Done processing stat_server.c
+/u/c/s/cs537-1/ta/tests/3a/../../lint/cpplint.py --extensions c libstats.c stats_client.c stats_server.c
 Done processing libstats.c
 Done processing stats_client.c
+Done processing stats_server.c
 Total errors found: 0
 
 
@@ -46,12 +46,1308 @@ Test clientnoservertest
 Client should exit gracefully if no server is running
 
 **********************************************************************
-OSError: [Errno 2] No such file or directory
+stat_init Failure
+running client with: /tmp/tmp4qu0St/p/stats_client -c 100 -s 100 -p 1 -k 2919
 
 
-test clientnoservertest FAILED (0 of 6)
+test clientnoservertest PASSED (6 of 6)
  (Client should exit gracefully if no server is running)
- Unexpected exception [Errno 2] No such file or directory
 
-Skipped 2 tests.
+starting defaultargstest
+
+**********************************************************************
+
+Test defaultargstest
+Test that client chooses default values for unspecified args
+
+**********************************************************************
+running server with: /tmp/tmp4qu0St/p/stats_server -k 9093
+running client with: /tmp/tmp4qu0St/p/stats_client -k 9093
+server output:
+
+2 6806 /tmp/tmp4qu0St/ 0 0.00 1
+
+3 6806 /tmp/tmp4qu0St/ 1 0.50 1
+
+4 6806 /tmp/tmp4qu0St/ 2 1.00 1
+
+5 6806 /tmp/tmp4qu0St/ 3 1.50 1
+
+
+
+test defaultargstest PASSED (6 of 6)
+ (Test that client chooses default values for unspecified args)
+
+starting clientservertest
+
+**********************************************************************
+
+Test clientservertest
+Test basic functionality for one client & server
+
+**********************************************************************
+running server with: /tmp/tmp4qu0St/p/stats_server -k 3049
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -c 600000000 -s 400000000 -k 3049
+server output:
+
+2 6813 /tmp/tmp4qu0St/ 0 0.00 1
+
+3 6813 /tmp/tmp4qu0St/ 1 0.60 1
+
+4 6813 /tmp/tmp4qu0St/ 2 1.20 1
+
+5 6813 /tmp/tmp4qu0St/ 3 1.80 1
+
+
+
+test clientservertest PASSED (6 of 6)
+ (Test basic functionality for one client & server)
+
+starting twoservers1
+
+**********************************************************************
+
+Test twoservers1
+Check that two servers can run with different keys
+
+**********************************************************************
+running server with: /tmp/tmp4qu0St/p/stats_server -k 404
+running server with: /tmp/tmp4qu0St/p/stats_server -k 5997
+running client with: /tmp/tmp4qu0St/p/stats_client -s 600000000 -c 400000000 -k 404 -p 1
+running client with: /tmp/tmp4qu0St/p/stats_client -c 400000000 -s 100000000 -k 5997 -p 1
+server output:
+
+2 6822 /tmp/tmp4qu0St/ 0 0.00 1
+
+3 6822 /tmp/tmp4qu0St/ 1 0.40 1
+
+4 6822 /tmp/tmp4qu0St/ 2 0.80 1
+
+5 6822 /tmp/tmp4qu0St/ 3 1.20 1
+
+server output:
+
+2 6823 /tmp/tmp4qu0St/ 1 0.40 1
+
+3 6823 /tmp/tmp4qu0St/ 3 1.20 1
+
+4 6823 /tmp/tmp4qu0St/ 5 2.00 1
+
+5 6823 /tmp/tmp4qu0St/ 6 2.40 1
+
+
+
+test twoservers1 PASSED (6 of 6)
+ (Check that two servers can run with different keys)
+
+starting twoservers2
+
+**********************************************************************
+
+Test twoservers2
+Check that two servers with same key can't run concurrently
+
+**********************************************************************
+running server with: /tmp/tmp4qu0St/p/stats_server -k 4654
+running server with: /tmp/tmp4qu0St/p/stats_server -k 4654
+running client with: /tmp/tmp4qu0St/p/stats_client -c 300000000 -s 700000000 -p 1 -k 4654
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -s 300000000 -c 200000000 -k 4654
+server output:
+
+
+3 6833 /tmp/tmp4qu0St/ 0 0.00 1
+3 6834 /tmp/tmp4qu0St/ 1 0.20 1
+
+4 6833 /tmp/tmp4qu0St/ 1 0.30 1
+4 6834 /tmp/tmp4qu0St/ 3 0.60 1
+
+5 6833 /tmp/tmp4qu0St/ 2 0.60 1
+5 6834 /tmp/tmp4qu0St/ 5 1.00 1
+
+6 6833 /tmp/tmp4qu0St/ 3 0.90 1
+6 6834 /tmp/tmp4qu0St/ 6 1.20 1
+
+
+
+test twoservers2 PASSED (6 of 6)
+ (Check that two servers with same key can't run concurrently)
+
+starting twoservers3
+
+**********************************************************************
+
+Test twoservers3
+Check that two servers with same key can run in sequence
+
+**********************************************************************
+running server with: /tmp/tmp4qu0St/p/stats_server -k 243
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -s 300000000 -c 700000000 -k 243
+server output:
+
+2 6841 /tmp/tmp4qu0St/ 0 0.00 1
+
+3 6841 /tmp/tmp4qu0St/ 1 0.70 1
+
+4 6841 /tmp/tmp4qu0St/ 2 1.40 1
+
+5 6841 /tmp/tmp4qu0St/ 3 2.10 1
+
+running server with: /tmp/tmp4qu0St/p/stats_server -k 243
+running client with: /tmp/tmp4qu0St/p/stats_client -k 243 -c 300000000 -p 1 -s 700000000
+server output:
+
+2 6844 /tmp/tmp4qu0St/ 0 0.00 1
+
+3 6844 /tmp/tmp4qu0St/ 1 0.30 1
+
+4 6844 /tmp/tmp4qu0St/ 2 0.60 1
+
+5 6844 /tmp/tmp4qu0St/ 3 0.90 1
+
+
+
+test twoservers3 PASSED (6 of 6)
+ (Check that two servers with same key can run in sequence)
+
+starting manyclients
+
+**********************************************************************
+
+Test manyclients
+Check that up to 16 clients can run concurrently
+
+**********************************************************************
+stat_init Failure
+running server with: /tmp/tmp4qu0St/p/stats_server -k 3465
+running client with: /tmp/tmp4qu0St/p/stats_client -k 3465 -c 500000000 -p 1 -s 500000000
+running client with: /tmp/tmp4qu0St/p/stats_client -k 3465 -p 1 -s 300000000 -c 700000000
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -k 3465 -s 600000000 -c 400000000
+running client with: /tmp/tmp4qu0St/p/stats_client -c 300000000 -s 700000000 -k 3465 -p 1
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -s 400000000 -c 600000000 -k 3465
+running client with: /tmp/tmp4qu0St/p/stats_client -s 600000000 -p 1 -k 3465 -c 400000000
+running client with: /tmp/tmp4qu0St/p/stats_client -s 400000000 -c 600000000 -k 3465 -p 19
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -s 600000000 -c 400000000 -k 3465
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -c 500000000 -s 500000000 -k 3465
+running client with: /tmp/tmp4qu0St/p/stats_client -s 700000000 -c 300000000 -k 3465 -p 1
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -k 3465 -c 600000000 -s 400000000
+running client with: /tmp/tmp4qu0St/p/stats_client -k 3465 -s 500000000 -c 500000000 -p 1
+running client with: /tmp/tmp4qu0St/p/stats_client -s 400000000 -k 3465 -p 1 -c 600000000
+running client with: /tmp/tmp4qu0St/p/stats_client -k 3465 -c 700000000 -s 300000000 -p 1
+running client with: /tmp/tmp4qu0St/p/stats_client -s 400000000 -p 1 -k 3465 -c 600000000
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -s 200000000 -c 800000000 -k 3465
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -k 3465
+server output:
+
+2 6852 /tmp/tmp4qu0St/ 0 0.00 1
+2 6853 /tmp/tmp4qu0St/ 0 0.00 1
+2 6851 /tmp/tmp4qu0St/ 0 0.00 1
+2 6856 /tmp/tmp4qu0St/ 0 0.00 1
+2 6857 /tmp/tmp4qu0St/ 0 0.00 19
+2 6855 /tmp/tmp4qu0St/ 0 0.00 1
+2 6858 /tmp/tmp4qu0St/ 0 0.00 1
+2 6854 /tmp/tmp4qu0St/ 0 0.00 1
+2 6861 /tmp/tmp4qu0St/ 0 0.00 1
+2 6859 /tmp/tmp4qu0St/ 0 0.00 1
+2 6862 /tmp/tmp4qu0St/ 0 0.00 1
+2 6860 /tmp/tmp4qu0St/ 0 0.00 1
+2 6863 /tmp/tmp4qu0St/ 0 0.00 1
+2 6864 /tmp/tmp4qu0St/ 0 0.00 1
+2 6865 /tmp/tmp4qu0St/ 0 0.00 1
+2 6866 /tmp/tmp4qu0St/ 0 0.00 1
+
+3 6852 /tmp/tmp4qu0St/ 0 0.00 1
+3 6853 /tmp/tmp4qu0St/ 0 0.00 1
+3 6851 /tmp/tmp4qu0St/ 1 0.50 1
+3 6856 /tmp/tmp4qu0St/ 0 0.00 1
+3 6857 /tmp/tmp4qu0St/ 0 0.00 19
+3 6855 /tmp/tmp4qu0St/ 0 0.00 1
+3 6858 /tmp/tmp4qu0St/ 1 0.40 1
+3 6854 /tmp/tmp4qu0St/ 1 0.30 1
+3 6861 /tmp/tmp4qu0St/ 0 0.00 1
+3 6859 /tmp/tmp4qu0St/ 0 0.00 1
+3 6862 /tmp/tmp4qu0St/ 0 0.00 1
+3 6860 /tmp/tmp4qu0St/ 1 0.30 1
+3 6863 /tmp/tmp4qu0St/ 0 0.00 1
+3 6864 /tmp/tmp4qu0St/ 0 0.00 1
+3 6865 /tmp/tmp4qu0St/ 0 0.00 1
+3 6866 /tmp/tmp4qu0St/ 0 0.00 1
+
+4 6852 /tmp/tmp4qu0St/ 1 0.70 1
+4 6853 /tmp/tmp4qu0St/ 1 0.40 1
+4 6851 /tmp/tmp4qu0St/ 1 0.50 1
+4 6856 /tmp/tmp4qu0St/ 1 0.40 1
+4 6857 /tmp/tmp4qu0St/ 0 0.00 19
+4 6855 /tmp/tmp4qu0St/ 1 0.60 1
+4 6858 /tmp/tmp4qu0St/ 1 0.40 1
+4 6854 /tmp/tmp4qu0St/ 1 0.30 1
+4 6861 /tmp/tmp4qu0St/ 1 0.60 1
+4 6859 /tmp/tmp4qu0St/ 1 0.50 1
+4 6862 /tmp/tmp4qu0St/ 1 0.50 1
+4 6860 /tmp/tmp4qu0St/ 1 0.30 1
+4 6863 /tmp/tmp4qu0St/ 1 0.60 1
+4 6864 /tmp/tmp4qu0St/ 1 0.70 1
+4 6865 /tmp/tmp4qu0St/ 1 0.60 1
+4 6866 /tmp/tmp4qu0St/ 1 0.80 1
+
+5 6852 /tmp/tmp4qu0St/ 1 0.70 1
+5 6853 /tmp/tmp4qu0St/ 1 0.40 1
+5 6851 /tmp/tmp4qu0St/ 1 0.50 1
+5 6856 /tmp/tmp4qu0St/ 1 0.40 1
+5 6857 /tmp/tmp4qu0St/ 0 0.00 19
+5 6855 /tmp/tmp4qu0St/ 1 0.60 1
+5 6858 /tmp/tmp4qu0St/ 2 0.80 1
+5 6854 /tmp/tmp4qu0St/ 2 0.60 1
+5 6861 /tmp/tmp4qu0St/ 1 0.60 1
+5 6859 /tmp/tmp4qu0St/ 1 0.50 1
+5 6862 /tmp/tmp4qu0St/ 1 0.50 1
+5 6860 /tmp/tmp4qu0St/ 2 0.60 1
+5 6863 /tmp/tmp4qu0St/ 1 0.60 1
+5 6864 /tmp/tmp4qu0St/ 1 0.70 1
+5 6865 /tmp/tmp4qu0St/ 1 0.60 1
+5 6866 /tmp/tmp4qu0St/ 1 0.80 1
+
+6 6852 /tmp/tmp4qu0St/ 2 1.40 1
+6 6853 /tmp/tmp4qu0St/ 2 0.80 1
+6 6851 /tmp/tmp4qu0St/ 2 1.00 1
+6 6856 /tmp/tmp4qu0St/ 2 0.80 1
+6 6857 /tmp/tmp4qu0St/ 0 0.00 19
+6 6855 /tmp/tmp4qu0St/ 2 1.20 1
+6 6858 /tmp/tmp4qu0St/ 2 0.80 1
+6 6854 /tmp/tmp4qu0St/ 3 0.90 1
+6 6861 /tmp/tmp4qu0St/ 2 1.20 1
+6 6859 /tmp/tmp4qu0St/ 2 1.00 1
+6 6862 /tmp/tmp4qu0St/ 2 1.00 1
+6 6860 /tmp/tmp4qu0St/ 3 0.90 1
+6 6863 /tmp/tmp4qu0St/ 2 1.20 1
+6 6864 /tmp/tmp4qu0St/ 2 1.40 1
+6 6865 /tmp/tmp4qu0St/ 2 1.20 1
+6 6866 /tmp/tmp4qu0St/ 2 1.60 1
+
+7 6852 /tmp/tmp4qu0St/ 2 1.40 1
+7 6853 /tmp/tmp4qu0St/ 3 1.20 1
+7 6851 /tmp/tmp4qu0St/ 3 1.50 1
+7 6856 /tmp/tmp4qu0St/ 2 0.80 1
+7 6857 /tmp/tmp4qu0St/ 0 0.00 19
+7 6855 /tmp/tmp4qu0St/ 2 1.20 1
+7 6858 /tmp/tmp4qu0St/ 3 1.20 1
+7 6854 /tmp/tmp4qu0St/ 3 0.90 1
+7 6861 /tmp/tmp4qu0St/ 2 1.20 1
+7 6859 /tmp/tmp4qu0St/ 2 1.00 1
+7 6862 /tmp/tmp4qu0St/ 3 1.50 1
+7 6860 /tmp/tmp4qu0St/ 3 0.90 1
+7 6863 /tmp/tmp4qu0St/ 2 1.20 1
+7 6864 /tmp/tmp4qu0St/ 2 1.40 1
+7 6865 /tmp/tmp4qu0St/ 2 1.20 1
+7 6866 /tmp/tmp4qu0St/ 2 1.60 1
+
+8 6852 /tmp/tmp4qu0St/ 3 2.10 1
+8 6853 /tmp/tmp4qu0St/ 3 1.20 1
+8 6851 /tmp/tmp4qu0St/ 3 1.50 1
+8 6856 /tmp/tmp4qu0St/ 3 1.20 1
+8 6857 /tmp/tmp4qu0St/ 1 0.60 19
+8 6855 /tmp/tmp4qu0St/ 3 1.80 1
+8 6858 /tmp/tmp4qu0St/ 4 1.60 1
+8 6854 /tmp/tmp4qu0St/ 4 1.20 1
+8 6861 /tmp/tmp4qu0St/ 3 1.80 1
+8 6859 /tmp/tmp4qu0St/ 3 1.50 1
+8 6862 /tmp/tmp4qu0St/ 3 1.50 1
+8 6860 /tmp/tmp4qu0St/ 4 1.20 1
+8 6863 /tmp/tmp4qu0St/ 3 1.80 1
+8 6864 /tmp/tmp4qu0St/ 3 2.10 1
+8 6865 /tmp/tmp4qu0St/ 3 1.80 1
+8 6866 /tmp/tmp4qu0St/ 3 2.40 1
+
+9 6852 /tmp/tmp4qu0St/ 3 2.10 1
+9 6853 /tmp/tmp4qu0St/ 4 1.60 1
+9 6851 /tmp/tmp4qu0St/ 4 2.00 1
+9 6856 /tmp/tmp4qu0St/ 4 1.60 1
+9 6857 /tmp/tmp4qu0St/ 1 0.60 19
+9 6855 /tmp/tmp4qu0St/ 3 1.80 1
+9 6858 /tmp/tmp4qu0St/ 4 1.60 1
+9 6854 /tmp/tmp4qu0St/ 5 1.50 1
+9 6861 /tmp/tmp4qu0St/ 3 1.80 1
+9 6859 /tmp/tmp4qu0St/ 3 1.50 1
+9 6862 /tmp/tmp4qu0St/ 4 2.00 1
+9 6860 /tmp/tmp4qu0St/ 4 1.20 1
+9 6863 /tmp/tmp4qu0St/ 3 1.80 1
+9 6864 /tmp/tmp4qu0St/ 3 2.10 1
+9 6865 /tmp/tmp4qu0St/ 3 1.80 1
+9 6866 /tmp/tmp4qu0St/ 3 2.40 1
+
+10 6852 /tmp/tmp4qu0St/ 3 2.10 1
+10 6853 /tmp/tmp4qu0St/ 5 2.00 1
+10 6851 /tmp/tmp4qu0St/ 4 2.00 1
+10 6856 /tmp/tmp4qu0St/ 4 1.60 1
+10 6857 /tmp/tmp4qu0St/ 1 0.60 19
+10 6855 /tmp/tmp4qu0St/ 4 2.40 1
+10 6858 /tmp/tmp4qu0St/ 5 2.00 1
+10 6854 /tmp/tmp4qu0St/ 5 1.50 1
+10 6861 /tmp/tmp4qu0St/ 3 1.80 1
+10 6859 /tmp/tmp4qu0St/ 4 2.00 1
+10 6862 /tmp/tmp4qu0St/ 4 2.00 1
+10 6860 /tmp/tmp4qu0St/ 5 1.50 1
+10 6863 /tmp/tmp4qu0St/ 4 2.40 1
+10 6864 /tmp/tmp4qu0St/ 3 2.10 1
+10 6865 /tmp/tmp4qu0St/ 4 2.40 1
+10 6866 /tmp/tmp4qu0St/ 3 2.40 1
+
+11 6852 /tmp/tmp4qu0St/ 4 2.80 1
+11 6853 /tmp/tmp4qu0St/ 5 2.00 1
+11 6851 /tmp/tmp4qu0St/ 5 2.50 1
+11 6856 /tmp/tmp4qu0St/ 5 2.00 1
+11 6857 /tmp/tmp4qu0St/ 1 0.60 19
+11 6855 /tmp/tmp4qu0St/ 4 2.40 1
+11 6858 /tmp/tmp4qu0St/ 5 2.00 1
+11 6854 /tmp/tmp4qu0St/ 6 1.80 1
+11 6861 /tmp/tmp4qu0St/ 4 2.40 1
+11 6859 /tmp/tmp4qu0St/ 5 2.50 1
+11 6862 /tmp/tmp4qu0St/ 5 2.50 1
+11 6860 /tmp/tmp4qu0St/ 6 1.80 1
+11 6863 /tmp/tmp4qu0St/ 4 2.40 1
+11 6864 /tmp/tmp4qu0St/ 4 2.80 1
+11 6865 /tmp/tmp4qu0St/ 4 2.40 1
+11 6866 /tmp/tmp4qu0St/ 4 3.20 1
+
+12 6852 /tmp/tmp4qu0St/ 4 2.80 1
+12 6853 /tmp/tmp4qu0St/ 6 2.40 1
+12 6851 /tmp/tmp4qu0St/ 5 2.50 1
+12 6856 /tmp/tmp4qu0St/ 5 2.00 1
+12 6857 /tmp/tmp4qu0St/ 1 0.60 19
+12 6855 /tmp/tmp4qu0St/ 5 3.00 1
+12 6858 /tmp/tmp4qu0St/ 6 2.40 1
+12 6854 /tmp/tmp4qu0St/ 6 1.80 1
+12 6861 /tmp/tmp4qu0St/ 4 2.40 1
+12 6859 /tmp/tmp4qu0St/ 5 2.50 1
+12 6862 /tmp/tmp4qu0St/ 5 2.50 1
+12 6860 /tmp/tmp4qu0St/ 7 2.10 1
+12 6863 /tmp/tmp4qu0St/ 4 2.40 1
+12 6864 /tmp/tmp4qu0St/ 4 2.80 1
+12 6865 /tmp/tmp4qu0St/ 5 3.00 1
+12 6866 /tmp/tmp4qu0St/ 4 3.20 1
+
+13 6852 /tmp/tmp4qu0St/ 5 3.50 1
+13 6853 /tmp/tmp4qu0St/ 7 2.80 1
+13 6851 /tmp/tmp4qu0St/ 6 3.00 1
+13 6856 /tmp/tmp4qu0St/ 6 2.40 1
+13 6857 /tmp/tmp4qu0St/ 1 0.60 19
+13 6855 /tmp/tmp4qu0St/ 5 3.00 1
+13 6858 /tmp/tmp4qu0St/ 6 2.40 1
+13 6854 /tmp/tmp4qu0St/ 7 2.10 1
+13 6861 /tmp/tmp4qu0St/ 5 3.00 1
+13 6859 /tmp/tmp4qu0St/ 6 3.00 1
+13 6862 /tmp/tmp4qu0St/ 6 3.00 1
+13 6860 /tmp/tmp4qu0St/ 7 2.10 1
+13 6863 /tmp/tmp4qu0St/ 5 3.00 1
+13 6864 /tmp/tmp4qu0St/ 5 3.50 1
+13 6865 /tmp/tmp4qu0St/ 5 3.00 1
+13 6866 /tmp/tmp4qu0St/ 5 4.00 1
+
+14 6852 /tmp/tmp4qu0St/ 5 3.50 1
+14 6853 /tmp/tmp4qu0St/ 7 2.80 1
+14 6851 /tmp/tmp4qu0St/ 6 3.00 1
+14 6856 /tmp/tmp4qu0St/ 6 2.40 1
+14 6857 /tmp/tmp4qu0St/ 1 0.60 19
+14 6855 /tmp/tmp4qu0St/ 5 3.00 1
+14 6858 /tmp/tmp4qu0St/ 7 2.80 1
+14 6854 /tmp/tmp4qu0St/ 8 2.40 1
+14 6861 /tmp/tmp4qu0St/ 5 3.00 1
+14 6859 /tmp/tmp4qu0St/ 6 3.00 1
+14 6862 /tmp/tmp4qu0St/ 6 3.00 1
+14 6860 /tmp/tmp4qu0St/ 8 2.40 1
+14 6863 /tmp/tmp4qu0St/ 5 3.00 1
+14 6864 /tmp/tmp4qu0St/ 5 3.50 1
+14 6865 /tmp/tmp4qu0St/ 6 3.60 1
+14 6866 /tmp/tmp4qu0St/ 5 4.00 1
+
+15 6852 /tmp/tmp4qu0St/ 6 4.20 1
+15 6853 /tmp/tmp4qu0St/ 8 3.20 1
+15 6851 /tmp/tmp4qu0St/ 7 3.50 1
+15 6856 /tmp/tmp4qu0St/ 7 2.80 1
+15 6857 /tmp/tmp4qu0St/ 1 0.60 19
+15 6855 /tmp/tmp4qu0St/ 6 3.60 1
+15 6858 /tmp/tmp4qu0St/ 8 3.20 1
+15 6854 /tmp/tmp4qu0St/ 8 2.40 1
+15 6861 /tmp/tmp4qu0St/ 6 3.60 1
+15 6859 /tmp/tmp4qu0St/ 7 3.50 1
+15 6862 /tmp/tmp4qu0St/ 7 3.50 1
+15 6860 /tmp/tmp4qu0St/ 8 2.40 1
+15 6863 /tmp/tmp4qu0St/ 6 3.60 1
+15 6864 /tmp/tmp4qu0St/ 6 4.20 1
+15 6865 /tmp/tmp4qu0St/ 6 3.60 1
+15 6866 /tmp/tmp4qu0St/ 6 4.80 1
+
+16 6852 /tmp/tmp4qu0St/ 6 4.20 1
+16 6853 /tmp/tmp4qu0St/ 8 3.20 1
+16 6851 /tmp/tmp4qu0St/ 7 3.50 1
+16 6856 /tmp/tmp4qu0St/ 8 3.20 1
+16 6857 /tmp/tmp4qu0St/ 1 0.60 19
+16 6855 /tmp/tmp4qu0St/ 6 3.60 1
+16 6858 /tmp/tmp4qu0St/ 8 3.20 1
+16 6854 /tmp/tmp4qu0St/ 9 2.70 1
+16 6861 /tmp/tmp4qu0St/ 6 3.60 1
+16 6859 /tmp/tmp4qu0St/ 7 3.50 1
+16 6862 /tmp/tmp4qu0St/ 7 3.50 1
+16 6860 /tmp/tmp4qu0St/ 9 2.70 1
+16 6863 /tmp/tmp4qu0St/ 6 3.60 1
+16 6864 /tmp/tmp4qu0St/ 6 4.20 1
+16 6865 /tmp/tmp4qu0St/ 7 4.20 1
+16 6866 /tmp/tmp4qu0St/ 6 4.80 1
+
+17 6852 /tmp/tmp4qu0St/ 7 4.90 1
+17 6853 /tmp/tmp4qu0St/ 9 3.60 1
+17 6851 /tmp/tmp4qu0St/ 8 4.00 1
+17 6856 /tmp/tmp4qu0St/ 8 3.20 1
+17 6857 /tmp/tmp4qu0St/ 1 0.60 19
+17 6855 /tmp/tmp4qu0St/ 7 4.20 1
+17 6858 /tmp/tmp4qu0St/ 9 3.60 1
+17 6854 /tmp/tmp4qu0St/ 10 3.00 1
+17 6861 /tmp/tmp4qu0St/ 7 4.20 1
+17 6859 /tmp/tmp4qu0St/ 8 4.00 1
+17 6862 /tmp/tmp4qu0St/ 8 4.00 1
+17 6860 /tmp/tmp4qu0St/ 10 3.00 1
+17 6863 /tmp/tmp4qu0St/ 7 4.20 1
+17 6864 /tmp/tmp4qu0St/ 6 4.20 1
+17 6865 /tmp/tmp4qu0St/ 7 4.20 1
+17 6866 /tmp/tmp4qu0St/ 6 4.80 1
+
+18 6852 /tmp/tmp4qu0St/ 7 4.90 1
+18 6853 /tmp/tmp4qu0St/ 9 3.60 1
+18 6851 /tmp/tmp4qu0St/ 8 4.00 1
+18 6856 /tmp/tmp4qu0St/ 9 3.60 1
+18 6857 /tmp/tmp4qu0St/ 1 0.60 19
+18 6855 /tmp/tmp4qu0St/ 7 4.20 1
+18 6858 /tmp/tmp4qu0St/ 10 4.00 1
+18 6854 /tmp/tmp4qu0St/ 10 3.00 1
+18 6861 /tmp/tmp4qu0St/ 7 4.20 1
+18 6859 /tmp/tmp4qu0St/ 8 4.00 1
+18 6862 /tmp/tmp4qu0St/ 8 4.00 1
+18 6860 /tmp/tmp4qu0St/ 10 3.00 1
+18 6863 /tmp/tmp4qu0St/ 7 4.20 1
+18 6864 /tmp/tmp4qu0St/ 7 4.90 1
+18 6865 /tmp/tmp4qu0St/ 8 4.80 1
+18 6866 /tmp/tmp4qu0St/ 7 5.60 1
+
+19 6852 /tmp/tmp4qu0St/ 7 4.90 1
+19 6853 /tmp/tmp4qu0St/ 10 4.00 1
+19 6851 /tmp/tmp4qu0St/ 9 4.50 1
+19 6856 /tmp/tmp4qu0St/ 10 4.00 1
+19 6857 /tmp/tmp4qu0St/ 1 0.60 19
+19 6855 /tmp/tmp4qu0St/ 8 4.80 1
+19 6858 /tmp/tmp4qu0St/ 10 4.00 1
+19 6854 /tmp/tmp4qu0St/ 11 3.30 1
+19 6861 /tmp/tmp4qu0St/ 8 4.80 1
+19 6859 /tmp/tmp4qu0St/ 9 4.50 1
+19 6862 /tmp/tmp4qu0St/ 9 4.50 1
+19 6860 /tmp/tmp4qu0St/ 11 3.30 1
+19 6863 /tmp/tmp4qu0St/ 8 4.80 1
+19 6864 /tmp/tmp4qu0St/ 7 4.90 1
+19 6865 /tmp/tmp4qu0St/ 8 4.80 1
+19 6866 /tmp/tmp4qu0St/ 7 5.60 1
+
+20 6852 /tmp/tmp4qu0St/ 8 5.60 1
+20 6853 /tmp/tmp4qu0St/ 10 4.00 1
+20 6851 /tmp/tmp4qu0St/ 9 4.50 1
+20 6856 /tmp/tmp4qu0St/ 10 4.00 1
+20 6857 /tmp/tmp4qu0St/ 1 0.60 19
+20 6855 /tmp/tmp4qu0St/ 8 4.80 1
+20 6858 /tmp/tmp4qu0St/ 11 4.40 1
+20 6854 /tmp/tmp4qu0St/ 12 3.60 1
+20 6861 /tmp/tmp4qu0St/ 8 4.80 1
+20 6859 /tmp/tmp4qu0St/ 9 4.50 1
+20 6862 /tmp/tmp4qu0St/ 9 4.50 1
+20 6860 /tmp/tmp4qu0St/ 12 3.60 1
+20 6863 /tmp/tmp4qu0St/ 8 4.80 1
+20 6864 /tmp/tmp4qu0St/ 8 5.60 1
+20 6865 /tmp/tmp4qu0St/ 9 5.40 1
+20 6866 /tmp/tmp4qu0St/ 8 6.40 1
+
+21 6852 /tmp/tmp4qu0St/ 8 5.60 1
+21 6853 /tmp/tmp4qu0St/ 11 4.40 1
+21 6851 /tmp/tmp4qu0St/ 10 5.00 1
+21 6856 /tmp/tmp4qu0St/ 11 4.40 1
+21 6857 /tmp/tmp4qu0St/ 1 0.60 19
+21 6855 /tmp/tmp4qu0St/ 9 5.40 1
+21 6858 /tmp/tmp4qu0St/ 12 4.80 1
+21 6854 /tmp/tmp4qu0St/ 12 3.60 1
+21 6861 /tmp/tmp4qu0St/ 8 4.80 1
+21 6859 /tmp/tmp4qu0St/ 10 5.00 1
+21 6862 /tmp/tmp4qu0St/ 10 5.00 1
+21 6860 /tmp/tmp4qu0St/ 12 3.60 1
+21 6863 /tmp/tmp4qu0St/ 9 5.40 1
+21 6864 /tmp/tmp4qu0St/ 8 5.60 1
+21 6865 /tmp/tmp4qu0St/ 9 5.40 1
+21 6866 /tmp/tmp4qu0St/ 8 6.40 1
+
+22 6852 /tmp/tmp4qu0St/ 9 6.30 1
+22 6853 /tmp/tmp4qu0St/ 12 4.80 1
+22 6851 /tmp/tmp4qu0St/ 11 5.50 1
+22 6856 /tmp/tmp4qu0St/ 11 4.40 1
+22 6857 /tmp/tmp4qu0St/ 1 0.60 19
+22 6855 /tmp/tmp4qu0St/ 9 5.40 1
+22 6858 /tmp/tmp4qu0St/ 12 4.80 1
+22 6854 /tmp/tmp4qu0St/ 13 3.90 1
+22 6861 /tmp/tmp4qu0St/ 9 5.40 1
+22 6859 /tmp/tmp4qu0St/ 10 5.00 1
+22 6862 /tmp/tmp4qu0St/ 10 5.00 1
+22 6860 /tmp/tmp4qu0St/ 13 3.90 1
+22 6863 /tmp/tmp4qu0St/ 9 5.40 1
+22 6864 /tmp/tmp4qu0St/ 9 6.30 1
+22 6865 /tmp/tmp4qu0St/ 10 6.00 1
+22 6866 /tmp/tmp4qu0St/ 8 6.40 1
+
+23 6852 /tmp/tmp4qu0St/ 9 6.30 1
+23 6853 /tmp/tmp4qu0St/ 12 4.80 1
+23 6851 /tmp/tmp4qu0St/ 11 5.50 1
+23 6856 /tmp/tmp4qu0St/ 12 4.80 1
+23 6857 /tmp/tmp4qu0St/ 1 0.60 19
+23 6855 /tmp/tmp4qu0St/ 10 6.00 1
+23 6858 /tmp/tmp4qu0St/ 13 5.20 1
+23 6854 /tmp/tmp4qu0St/ 14 4.20 1
+23 6861 /tmp/tmp4qu0St/ 9 5.40 1
+23 6859 /tmp/tmp4qu0St/ 11 5.50 1
+23 6862 /tmp/tmp4qu0St/ 11 5.50 1
+23 6860 /tmp/tmp4qu0St/ 14 4.20 1
+23 6863 /tmp/tmp4qu0St/ 10 6.00 1
+23 6864 /tmp/tmp4qu0St/ 9 6.30 1
+23 6865 /tmp/tmp4qu0St/ 10 6.00 1
+23 6866 /tmp/tmp4qu0St/ 9 7.20 1
+
+24 6852 /tmp/tmp4qu0St/ 10 7.00 1
+24 6853 /tmp/tmp4qu0St/ 13 5.20 1
+24 6851 /tmp/tmp4qu0St/ 12 6.00 1
+24 6856 /tmp/tmp4qu0St/ 13 5.20 1
+24 6857 /tmp/tmp4qu0St/ 1 0.60 19
+24 6855 /tmp/tmp4qu0St/ 10 6.00 1
+24 6858 /tmp/tmp4qu0St/ 13 5.20 1
+24 6854 /tmp/tmp4qu0St/ 14 4.20 1
+24 6861 /tmp/tmp4qu0St/ 10 6.00 1
+24 6859 /tmp/tmp4qu0St/ 11 5.50 1
+24 6862 /tmp/tmp4qu0St/ 11 5.50 1
+24 6860 /tmp/tmp4qu0St/ 14 4.20 1
+24 6863 /tmp/tmp4qu0St/ 10 6.00 1
+24 6864 /tmp/tmp4qu0St/ 10 7.00 1
+24 6865 /tmp/tmp4qu0St/ 11 6.60 1
+24 6866 /tmp/tmp4qu0St/ 9 7.20 1
+
+25 6852 /tmp/tmp4qu0St/ 10 7.00 1
+25 6853 /tmp/tmp4qu0St/ 13 5.20 1
+25 6851 /tmp/tmp4qu0St/ 12 6.00 1
+25 6856 /tmp/tmp4qu0St/ 13 5.20 1
+25 6857 /tmp/tmp4qu0St/ 1 0.60 19
+25 6855 /tmp/tmp4qu0St/ 11 6.60 1
+25 6858 /tmp/tmp4qu0St/ 14 5.60 1
+25 6854 /tmp/tmp4qu0St/ 15 4.50 1
+25 6861 /tmp/tmp4qu0St/ 10 6.00 1
+25 6859 /tmp/tmp4qu0St/ 12 6.00 1
+25 6862 /tmp/tmp4qu0St/ 12 6.00 1
+25 6860 /tmp/tmp4qu0St/ 15 4.50 1
+25 6863 /tmp/tmp4qu0St/ 11 6.60 1
+25 6864 /tmp/tmp4qu0St/ 10 7.00 1
+25 6865 /tmp/tmp4qu0St/ 11 6.60 1
+25 6866 /tmp/tmp4qu0St/ 10 8.00 1
+
+26 6852 /tmp/tmp4qu0St/ 11 7.70 1
+26 6853 /tmp/tmp4qu0St/ 14 5.60 1
+26 6851 /tmp/tmp4qu0St/ 13 6.50 1
+26 6856 /tmp/tmp4qu0St/ 14 5.60 1
+26 6857 /tmp/tmp4qu0St/ 1 0.60 19
+26 6855 /tmp/tmp4qu0St/ 11 6.60 1
+26 6858 /tmp/tmp4qu0St/ 15 6.00 1
+26 6854 /tmp/tmp4qu0St/ 15 4.50 1
+26 6861 /tmp/tmp4qu0St/ 11 6.60 1
+26 6859 /tmp/tmp4qu0St/ 12 6.00 1
+26 6862 /tmp/tmp4qu0St/ 12 6.00 1
+26 6860 /tmp/tmp4qu0St/ 16 4.80 1
+26 6863 /tmp/tmp4qu0St/ 11 6.60 1
+26 6864 /tmp/tmp4qu0St/ 11 7.70 1
+26 6865 /tmp/tmp4qu0St/ 12 7.20 1
+26 6866 /tmp/tmp4qu0St/ 10 8.00 1
+
+27 6852 /tmp/tmp4qu0St/ 11 7.70 1
+27 6853 /tmp/tmp4qu0St/ 14 5.60 1
+27 6851 /tmp/tmp4qu0St/ 13 6.50 1
+27 6856 /tmp/tmp4qu0St/ 14 5.60 1
+27 6857 /tmp/tmp4qu0St/ 1 0.60 19
+27 6855 /tmp/tmp4qu0St/ 12 7.20 1
+27 6858 /tmp/tmp4qu0St/ 15 6.00 1
+27 6854 /tmp/tmp4qu0St/ 16 4.80 1
+27 6861 /tmp/tmp4qu0St/ 11 6.60 1
+27 6859 /tmp/tmp4qu0St/ 13 6.50 1
+27 6862 /tmp/tmp4qu0St/ 13 6.50 1
+27 6860 /tmp/tmp4qu0St/ 16 4.80 1
+27 6863 /tmp/tmp4qu0St/ 12 7.20 1
+27 6864 /tmp/tmp4qu0St/ 11 7.70 1
+27 6865 /tmp/tmp4qu0St/ 12 7.20 1
+27 6866 /tmp/tmp4qu0St/ 10 8.00 1
+
+28 6852 /tmp/tmp4qu0St/ 11 7.70 1
+28 6853 /tmp/tmp4qu0St/ 15 6.00 1
+28 6851 /tmp/tmp4qu0St/ 14 7.00 1
+28 6856 /tmp/tmp4qu0St/ 15 6.00 1
+28 6857 /tmp/tmp4qu0St/ 1 0.60 19
+28 6855 /tmp/tmp4qu0St/ 12 7.20 1
+28 6858 /tmp/tmp4qu0St/ 16 6.40 1
+28 6854 /tmp/tmp4qu0St/ 17 5.10 1
+28 6861 /tmp/tmp4qu0St/ 12 7.20 1
+28 6859 /tmp/tmp4qu0St/ 13 6.50 1
+28 6862 /tmp/tmp4qu0St/ 14 7.00 1
+28 6860 /tmp/tmp4qu0St/ 17 5.10 1
+28 6863 /tmp/tmp4qu0St/ 12 7.20 1
+28 6864 /tmp/tmp4qu0St/ 11 7.70 1
+28 6865 /tmp/tmp4qu0St/ 13 7.80 1
+28 6866 /tmp/tmp4qu0St/ 11 8.80 1
+
+29 6852 /tmp/tmp4qu0St/ 12 8.40 1
+29 6853 /tmp/tmp4qu0St/ 16 6.40 1
+29 6851 /tmp/tmp4qu0St/ 14 7.00 1
+29 6856 /tmp/tmp4qu0St/ 16 6.40 1
+29 6857 /tmp/tmp4qu0St/ 1 0.60 19
+29 6855 /tmp/tmp4qu0St/ 13 7.80 1
+29 6858 /tmp/tmp4qu0St/ 16 6.40 1
+29 6854 /tmp/tmp4qu0St/ 17 5.10 1
+29 6861 /tmp/tmp4qu0St/ 12 7.20 1
+29 6859 /tmp/tmp4qu0St/ 14 7.00 1
+29 6862 /tmp/tmp4qu0St/ 14 7.00 1
+29 6860 /tmp/tmp4qu0St/ 18 5.40 1
+29 6863 /tmp/tmp4qu0St/ 13 7.80 1
+29 6864 /tmp/tmp4qu0St/ 12 8.40 1
+29 6865 /tmp/tmp4qu0St/ 13 7.80 1
+29 6866 /tmp/tmp4qu0St/ 11 8.80 1
+
+30 6852 /tmp/tmp4qu0St/ 12 8.40 1
+30 6853 /tmp/tmp4qu0St/ 16 6.40 1
+30 6851 /tmp/tmp4qu0St/ 15 7.50 1
+30 6856 /tmp/tmp4qu0St/ 16 6.40 1
+30 6857 /tmp/tmp4qu0St/ 1 0.60 19
+30 6855 /tmp/tmp4qu0St/ 13 7.80 1
+30 6858 /tmp/tmp4qu0St/ 17 6.80 1
+30 6854 /tmp/tmp4qu0St/ 18 5.40 1
+30 6861 /tmp/tmp4qu0St/ 13 7.80 1
+30 6859 /tmp/tmp4qu0St/ 14 7.00 1
+30 6862 /tmp/tmp4qu0St/ 15 7.50 1
+30 6860 /tmp/tmp4qu0St/ 18 5.40 1
+30 6863 /tmp/tmp4qu0St/ 13 7.80 1
+30 6864 /tmp/tmp4qu0St/ 12 8.40 1
+30 6865 /tmp/tmp4qu0St/ 13 7.80 1
+30 6866 /tmp/tmp4qu0St/ 12 9.60 1
+
+31 6852 /tmp/tmp4qu0St/ 13 9.10 1
+31 6853 /tmp/tmp4qu0St/ 17 6.80 1
+31 6851 /tmp/tmp4qu0St/ 15 7.50 1
+31 6856 /tmp/tmp4qu0St/ 17 6.80 1
+31 6857 /tmp/tmp4qu0St/ 1 0.60 19
+31 6855 /tmp/tmp4qu0St/ 14 8.40 1
+31 6858 /tmp/tmp4qu0St/ 17 6.80 1
+31 6854 /tmp/tmp4qu0St/ 19 5.70 1
+31 6861 /tmp/tmp4qu0St/ 13 7.80 1
+31 6859 /tmp/tmp4qu0St/ 15 7.50 1
+31 6862 /tmp/tmp4qu0St/ 15 7.50 1
+31 6860 /tmp/tmp4qu0St/ 19 5.70 1
+31 6863 /tmp/tmp4qu0St/ 13 7.80 1
+31 6864 /tmp/tmp4qu0St/ 13 9.10 1
+31 6865 /tmp/tmp4qu0St/ 14 8.40 1
+31 6866 /tmp/tmp4qu0St/ 12 9.60 1
+
+32 6852 /tmp/tmp4qu0St/ 13 9.10 1
+32 6853 /tmp/tmp4qu0St/ 17 6.80 1
+32 6851 /tmp/tmp4qu0St/ 15 7.50 1
+32 6856 /tmp/tmp4qu0St/ 17 6.80 1
+32 6857 /tmp/tmp4qu0St/ 1 0.60 19
+32 6855 /tmp/tmp4qu0St/ 14 8.40 1
+32 6858 /tmp/tmp4qu0St/ 17 6.80 1
+32 6854 /tmp/tmp4qu0St/ 19 5.70 1
+32 6861 /tmp/tmp4qu0St/ 13 7.80 1
+32 6859 /tmp/tmp4qu0St/ 15 7.50 1
+32 6862 /tmp/tmp4qu0St/ 15 7.50 1
+32 6860 /tmp/tmp4qu0St/ 19 5.70 1
+32 6863 /tmp/tmp4qu0St/ 13 7.80 1
+32 6864 /tmp/tmp4qu0St/ 13 9.10 1
+32 6865 /tmp/tmp4qu0St/ 14 8.40 1
+32 6866 /tmp/tmp4qu0St/ 12 9.60 1
+
+
+
+test manyclients PASSED (6 of 6)
+ (Check that up to 16 clients can run concurrently)
+
+starting manyclients2
+
+**********************************************************************
+
+Test manyclients2
+Check that when a client leaves, another can enter
+
+**********************************************************************
+stat_init Failure
+running server with: /tmp/tmp4qu0St/p/stats_server -k 953
+running client with: /tmp/tmp4qu0St/p/stats_client -k 953 -c 500000000 -s 500000000 -p 1
+running client with: /tmp/tmp4qu0St/p/stats_client -s 200000000 -p 1 -k 953 -c 800000000
+running client with: /tmp/tmp4qu0St/p/stats_client -s 700000000 -k 953 -c 300000000 -p 1
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -c 800000000 -k 953 -s 200000000
+running client with: /tmp/tmp4qu0St/p/stats_client -k 953 -c 400000000 -p 1 -s 600000000
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -s 700000000 -c 300000000 -k 953
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -k 953 -c 300000000 -s 700000000
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -c 600000000 -s 400000000 -k 953
+running client with: /tmp/tmp4qu0St/p/stats_client -s 500000000 -k 953 -p 1 -c 500000000
+running client with: /tmp/tmp4qu0St/p/stats_client -s 500000000 -p 1 -c 500000000 -k 953
+running client with: /tmp/tmp4qu0St/p/stats_client -s 600000000 -c 400000000 -p 1 -k 953
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -s 400000000 -k 953 -c 600000000
+running client with: /tmp/tmp4qu0St/p/stats_client -c 300000000 -k 953 -p 1 -s 700000000
+running client with: /tmp/tmp4qu0St/p/stats_client -k 953 -s 600000000 -p 1 -c 400000000
+running client with: /tmp/tmp4qu0St/p/stats_client -p 1 -c 600000000 -k 953 -s 400000000
+running client with: /tmp/tmp4qu0St/p/stats_client -c 800000000 -p 1 -k 953 -s 200000000
+running client with: /tmp/tmp4qu0St/p/stats_client -c 600000000 -p 1 -s 400000000 -k 953
+server output:
+
+2 6874 /tmp/tmp4qu0St/ 0 0.00 1
+2 6875 /tmp/tmp4qu0St/ 0 0.00 1
+2 6877 /tmp/tmp4qu0St/ 0 0.00 1
+2 6878 /tmp/tmp4qu0St/ 0 0.00 1
+2 6879 /tmp/tmp4qu0St/ 0 0.00 1
+2 6876 /tmp/tmp4qu0St/ 0 0.00 1
+2 6880 /tmp/tmp4qu0St/ 0 0.00 1
+2 6881 /tmp/tmp4qu0St/ 0 0.00 1
+2 6882 /tmp/tmp4qu0St/ 0 0.00 1
+2 6883 /tmp/tmp4qu0St/ 0 0.00 1
+2 6884 /tmp/tmp4qu0St/ 0 0.00 1
+2 6885 /tmp/tmp4qu0St/ 0 0.00 1
+2 6886 /tmp/tmp4qu0St/ 0 0.00 1
+2 6887 /tmp/tmp4qu0St/ 0 0.00 1
+2 6888 /tmp/tmp4qu0St/ 0 0.00 1
+2 6889 /tmp/tmp4qu0St/ 0 0.00 1
+
+3 6874 /tmp/tmp4qu0St/ 0 0.00 1
+3 6875 /tmp/tmp4qu0St/ 0 0.00 1
+3 6877 /tmp/tmp4qu0St/ 0 0.00 1
+3 6878 /tmp/tmp4qu0St/ 0 0.00 1
+3 6879 /tmp/tmp4qu0St/ 1 0.30 1
+3 6876 /tmp/tmp4qu0St/ 1 0.30 1
+3 6880 /tmp/tmp4qu0St/ 1 0.30 1
+3 6881 /tmp/tmp4qu0St/ 0 0.00 1
+3 6882 /tmp/tmp4qu0St/ 0 0.00 1
+3 6883 /tmp/tmp4qu0St/ 0 0.00 1
+3 6884 /tmp/tmp4qu0St/ 0 0.00 1
+3 6885 /tmp/tmp4qu0St/ 0 0.00 1
+3 6886 /tmp/tmp4qu0St/ 1 0.30 1
+3 6887 /tmp/tmp4qu0St/ 0 0.00 1
+3 6888 /tmp/tmp4qu0St/ 0 0.00 1
+3 6889 /tmp/tmp4qu0St/ 1 0.80 1
+
+4 6874 /tmp/tmp4qu0St/ 1 0.50 1
+4 6875 /tmp/tmp4qu0St/ 1 0.80 1
+4 6877 /tmp/tmp4qu0St/ 1 0.80 1
+4 6878 /tmp/tmp4qu0St/ 1 0.40 1
+4 6879 /tmp/tmp4qu0St/ 1 0.30 1
+4 6876 /tmp/tmp4qu0St/ 1 0.30 1
+4 6880 /tmp/tmp4qu0St/ 1 0.30 1
+4 6881 /tmp/tmp4qu0St/ 1 0.60 1
+4 6882 /tmp/tmp4qu0St/ 1 0.50 1
+4 6883 /tmp/tmp4qu0St/ 1 0.50 1
+4 6884 /tmp/tmp4qu0St/ 1 0.40 1
+4 6885 /tmp/tmp4qu0St/ 1 0.60 1
+4 6886 /tmp/tmp4qu0St/ 1 0.30 1
+4 6887 /tmp/tmp4qu0St/ 1 0.40 1
+4 6888 /tmp/tmp4qu0St/ 1 0.60 1
+4 6889 /tmp/tmp4qu0St/ 1 0.80 1
+
+5 6874 /tmp/tmp4qu0St/ 1 0.50 1
+5 6875 /tmp/tmp4qu0St/ 1 0.80 1
+5 6877 /tmp/tmp4qu0St/ 1 0.80 1
+5 6878 /tmp/tmp4qu0St/ 1 0.40 1
+5 6879 /tmp/tmp4qu0St/ 2 0.60 1
+5 6876 /tmp/tmp4qu0St/ 2 0.60 1
+5 6880 /tmp/tmp4qu0St/ 2 0.60 1
+5 6881 /tmp/tmp4qu0St/ 1 0.60 1
+5 6882 /tmp/tmp4qu0St/ 1 0.50 1
+5 6883 /tmp/tmp4qu0St/ 1 0.50 1
+5 6884 /tmp/tmp4qu0St/ 2 0.80 1
+5 6885 /tmp/tmp4qu0St/ 1 0.60 1
+5 6886 /tmp/tmp4qu0St/ 2 0.60 1
+5 6887 /tmp/tmp4qu0St/ 1 0.40 1
+5 6888 /tmp/tmp4qu0St/ 1 0.60 1
+5 6889 /tmp/tmp4qu0St/ 2 1.60 1
+
+6 6874 /tmp/tmp4qu0St/ 2 1.00 1
+6 6875 /tmp/tmp4qu0St/ 2 1.60 1
+6 6877 /tmp/tmp4qu0St/ 2 1.60 1
+6 6878 /tmp/tmp4qu0St/ 2 0.80 1
+6 6879 /tmp/tmp4qu0St/ 2 0.60 1
+6 6876 /tmp/tmp4qu0St/ 2 0.60 1
+6 6880 /tmp/tmp4qu0St/ 2 0.60 1
+6 6881 /tmp/tmp4qu0St/ 2 1.20 1
+6 6882 /tmp/tmp4qu0St/ 2 1.00 1
+6 6883 /tmp/tmp4qu0St/ 2 1.00 1
+6 6884 /tmp/tmp4qu0St/ 2 0.80 1
+6 6885 /tmp/tmp4qu0St/ 2 1.20 1
+6 6886 /tmp/tmp4qu0St/ 3 0.90 1
+6 6887 /tmp/tmp4qu0St/ 2 0.80 1
+6 6888 /tmp/tmp4qu0St/ 2 1.20 1
+6 6889 /tmp/tmp4qu0St/ 2 1.60 1
+
+7 6874 /tmp/tmp4qu0St/ 2 1.00 1
+7 6875 /tmp/tmp4qu0St/ 2 1.60 1
+7 6877 /tmp/tmp4qu0St/ 2 1.60 1
+7 6878 /tmp/tmp4qu0St/ 3 1.20 1
+7 6879 /tmp/tmp4qu0St/ 3 0.90 1
+7 6876 /tmp/tmp4qu0St/ 3 0.90 1
+7 6880 /tmp/tmp4qu0St/ 3 0.90 1
+7 6881 /tmp/tmp4qu0St/ 2 1.20 1
+7 6882 /tmp/tmp4qu0St/ 2 1.00 1
+7 6883 /tmp/tmp4qu0St/ 2 1.00 1
+7 6884 /tmp/tmp4qu0St/ 3 1.20 1
+7 6885 /tmp/tmp4qu0St/ 2 1.20 1
+7 6886 /tmp/tmp4qu0St/ 3 0.90 1
+7 6887 /tmp/tmp4qu0St/ 3 1.20 1
+7 6888 /tmp/tmp4qu0St/ 2 1.20 1
+7 6889 /tmp/tmp4qu0St/ 2 1.60 1
+
+8 6874 /tmp/tmp4qu0St/ 3 1.50 1
+8 6875 /tmp/tmp4qu0St/ 2 1.60 1
+8 6877 /tmp/tmp4qu0St/ 2 1.60 1
+8 6878 /tmp/tmp4qu0St/ 3 1.20 1
+8 6879 /tmp/tmp4qu0St/ 4 1.20 1
+8 6876 /tmp/tmp4qu0St/ 4 1.20 1
+8 6880 /tmp/tmp4qu0St/ 4 1.20 1
+8 6881 /tmp/tmp4qu0St/ 3 1.80 1
+8 6882 /tmp/tmp4qu0St/ 3 1.50 1
+8 6883 /tmp/tmp4qu0St/ 3 1.50 1
+8 6884 /tmp/tmp4qu0St/ 3 1.20 1
+8 6885 /tmp/tmp4qu0St/ 3 1.80 1
+8 6886 /tmp/tmp4qu0St/ 4 1.20 1
+8 6887 /tmp/tmp4qu0St/ 3 1.20 1
+8 6888 /tmp/tmp4qu0St/ 3 1.80 1
+8 6889 /tmp/tmp4qu0St/ 3 2.40 1
+
+9 6874 /tmp/tmp4qu0St/ 3 1.50 1
+9 6875 /tmp/tmp4qu0St/ 3 2.40 1
+9 6877 /tmp/tmp4qu0St/ 3 2.40 1
+9 6878 /tmp/tmp4qu0St/ 4 1.60 1
+9 6879 /tmp/tmp4qu0St/ 4 1.20 1
+9 6876 /tmp/tmp4qu0St/ 4 1.20 1
+9 6880 /tmp/tmp4qu0St/ 4 1.20 1
+9 6881 /tmp/tmp4qu0St/ 3 1.80 1
+9 6882 /tmp/tmp4qu0St/ 3 1.50 1
+9 6883 /tmp/tmp4qu0St/ 3 1.50 1
+9 6884 /tmp/tmp4qu0St/ 4 1.60 1
+9 6885 /tmp/tmp4qu0St/ 3 1.80 1
+9 6886 /tmp/tmp4qu0St/ 5 1.50 1
+9 6887 /tmp/tmp4qu0St/ 4 1.60 1
+9 6888 /tmp/tmp4qu0St/ 3 1.80 1
+9 6889 /tmp/tmp4qu0St/ 3 2.40 1
+
+10 6874 /tmp/tmp4qu0St/ 4 2.00 1
+10 6875 /tmp/tmp4qu0St/ 3 2.40 1
+10 6877 /tmp/tmp4qu0St/ 3 2.40 1
+10 6878 /tmp/tmp4qu0St/ 4 1.60 1
+10 6879 /tmp/tmp4qu0St/ 5 1.50 1
+10 6876 /tmp/tmp4qu0St/ 5 1.50 1
+10 6880 /tmp/tmp4qu0St/ 5 1.50 1
+10 6881 /tmp/tmp4qu0St/ 4 2.40 1
+10 6882 /tmp/tmp4qu0St/ 4 2.00 1
+10 6883 /tmp/tmp4qu0St/ 4 2.00 1
+10 6884 /tmp/tmp4qu0St/ 4 1.60 1
+10 6885 /tmp/tmp4qu0St/ 3 1.80 1
+10 6886 /tmp/tmp4qu0St/ 5 1.50 1
+10 6887 /tmp/tmp4qu0St/ 4 1.60 1
+10 6888 /tmp/tmp4qu0St/ 3 1.80 1
+10 6889 /tmp/tmp4qu0St/ 3 2.40 1
+
+11 6874 /tmp/tmp4qu0St/ 4 2.00 1
+11 6875 /tmp/tmp4qu0St/ 4 3.20 1
+11 6877 /tmp/tmp4qu0St/ 4 3.20 1
+11 6878 /tmp/tmp4qu0St/ 5 2.00 1
+11 6879 /tmp/tmp4qu0St/ 6 1.80 1
+11 6876 /tmp/tmp4qu0St/ 5 1.50 1
+11 6880 /tmp/tmp4qu0St/ 5 1.50 1
+11 6881 /tmp/tmp4qu0St/ 4 2.40 1
+11 6882 /tmp/tmp4qu0St/ 4 2.00 1
+11 6883 /tmp/tmp4qu0St/ 5 2.50 1
+11 6884 /tmp/tmp4qu0St/ 5 2.00 1
+11 6885 /tmp/tmp4qu0St/ 4 2.40 1
+11 6886 /tmp/tmp4qu0St/ 6 1.80 1
+11 6887 /tmp/tmp4qu0St/ 5 2.00 1
+11 6888 /tmp/tmp4qu0St/ 4 2.40 1
+11 6889 /tmp/tmp4qu0St/ 4 3.20 1
+
+12 6874 /tmp/tmp4qu0St/ 5 2.50 1
+12 6875 /tmp/tmp4qu0St/ 4 3.20 1
+12 6877 /tmp/tmp4qu0St/ 4 3.20 1
+12 6878 /tmp/tmp4qu0St/ 6 2.40 1
+12 6879 /tmp/tmp4qu0St/ 6 1.80 1
+12 6876 /tmp/tmp4qu0St/ 6 1.80 1
+12 6880 /tmp/tmp4qu0St/ 6 1.80 1
+12 6881 /tmp/tmp4qu0St/ 4 2.40 1
+12 6882 /tmp/tmp4qu0St/ 5 2.50 1
+12 6883 /tmp/tmp4qu0St/ 5 2.50 1
+12 6884 /tmp/tmp4qu0St/ 6 2.40 1
+12 6885 /tmp/tmp4qu0St/ 4 2.40 1
+12 6886 /tmp/tmp4qu0St/ 6 1.80 1
+12 6887 /tmp/tmp4qu0St/ 6 2.40 1
+12 6888 /tmp/tmp4qu0St/ 4 2.40 1
+12 6889 /tmp/tmp4qu0St/ 4 3.20 1
+
+13 6874 /tmp/tmp4qu0St/ 6 3.00 1
+13 6875 /tmp/tmp4qu0St/ 5 4.00 1
+13 6877 /tmp/tmp4qu0St/ 4 3.20 1
+13 6878 /tmp/tmp4qu0St/ 6 2.40 1
+13 6879 /tmp/tmp4qu0St/ 7 2.10 1
+13 6876 /tmp/tmp4qu0St/ 7 2.10 1
+13 6880 /tmp/tmp4qu0St/ 7 2.10 1
+13 6881 /tmp/tmp4qu0St/ 5 3.00 1
+13 6882 /tmp/tmp4qu0St/ 5 2.50 1
+13 6883 /tmp/tmp4qu0St/ 6 3.00 1
+13 6884 /tmp/tmp4qu0St/ 6 2.40 1
+13 6885 /tmp/tmp4qu0St/ 5 3.00 1
+13 6886 /tmp/tmp4qu0St/ 6 1.80 1
+13 6887 /tmp/tmp4qu0St/ 6 2.40 1
+13 6888 /tmp/tmp4qu0St/ 5 3.00 1
+13 6889 /tmp/tmp4qu0St/ 5 4.00 1
+
+14 6874 /tmp/tmp4qu0St/ 6 3.00 1
+14 6875 /tmp/tmp4qu0St/ 5 4.00 1
+14 6877 /tmp/tmp4qu0St/ 5 4.00 1
+14 6878 /tmp/tmp4qu0St/ 7 2.80 1
+14 6879 /tmp/tmp4qu0St/ 7 2.10 1
+14 6876 /tmp/tmp4qu0St/ 7 2.10 1
+14 6880 /tmp/tmp4qu0St/ 7 2.10 1
+14 6881 /tmp/tmp4qu0St/ 5 3.00 1
+14 6882 /tmp/tmp4qu0St/ 6 3.00 1
+14 6883 /tmp/tmp4qu0St/ 6 3.00 1
+14 6884 /tmp/tmp4qu0St/ 7 2.80 1
+14 6885 /tmp/tmp4qu0St/ 5 3.00 1
+14 6886 /tmp/tmp4qu0St/ 6 1.80 1
+14 6887 /tmp/tmp4qu0St/ 7 2.80 1
+14 6888 /tmp/tmp4qu0St/ 5 3.00 1
+14 6889 /tmp/tmp4qu0St/ 5 4.00 1
+
+15 6874 /tmp/tmp4qu0St/ 7 3.50 1
+15 6875 /tmp/tmp4qu0St/ 5 4.00 1
+15 6877 /tmp/tmp4qu0St/ 5 4.00 1
+15 6878 /tmp/tmp4qu0St/ 7 2.80 1
+15 6879 /tmp/tmp4qu0St/ 8 2.40 1
+15 6876 /tmp/tmp4qu0St/ 8 2.40 1
+15 6880 /tmp/tmp4qu0St/ 8 2.40 1
+15 6881 /tmp/tmp4qu0St/ 6 3.60 1
+15 6882 /tmp/tmp4qu0St/ 7 3.50 1
+15 6883 /tmp/tmp4qu0St/ 7 3.50 1
+15 6884 /tmp/tmp4qu0St/ 7 2.80 1
+15 6885 /tmp/tmp4qu0St/ 6 3.60 1
+15 6886 /tmp/tmp4qu0St/ 6 1.80 1
+15 6887 /tmp/tmp4qu0St/ 7 2.80 1
+15 6888 /tmp/tmp4qu0St/ 6 3.60 1
+15 6889 /tmp/tmp4qu0St/ 6 4.80 1
+
+16 6874 /tmp/tmp4qu0St/ 7 3.50 1
+16 6875 /tmp/tmp4qu0St/ 6 4.80 1
+16 6877 /tmp/tmp4qu0St/ 6 4.80 1
+16 6878 /tmp/tmp4qu0St/ 8 3.20 1
+16 6879 /tmp/tmp4qu0St/ 9 2.70 1
+16 6876 /tmp/tmp4qu0St/ 9 2.70 1
+16 6880 /tmp/tmp4qu0St/ 9 2.70 1
+16 6881 /tmp/tmp4qu0St/ 6 3.60 1
+16 6882 /tmp/tmp4qu0St/ 7 3.50 1
+16 6883 /tmp/tmp4qu0St/ 7 3.50 1
+16 6884 /tmp/tmp4qu0St/ 8 3.20 1
+16 6885 /tmp/tmp4qu0St/ 6 3.60 1
+16 6886 /tmp/tmp4qu0St/ 6 1.80 1
+16 6887 /tmp/tmp4qu0St/ 8 3.20 1
+16 6888 /tmp/tmp4qu0St/ 6 3.60 1
+16 6889 /tmp/tmp4qu0St/ 6 4.80 1
+
+17 6874 /tmp/tmp4qu0St/ 8 4.00 1
+17 6875 /tmp/tmp4qu0St/ 6 4.80 1
+17 6877 /tmp/tmp4qu0St/ 6 4.80 1
+17 6878 /tmp/tmp4qu0St/ 9 3.60 1
+17 6879 /tmp/tmp4qu0St/ 9 2.70 1
+17 6876 /tmp/tmp4qu0St/ 9 2.70 1
+17 6880 /tmp/tmp4qu0St/ 9 2.70 1
+17 6881 /tmp/tmp4qu0St/ 7 4.20 1
+17 6882 /tmp/tmp4qu0St/ 8 4.00 1
+17 6883 /tmp/tmp4qu0St/ 8 4.00 1
+17 6884 /tmp/tmp4qu0St/ 8 3.20 1
+17 6885 /tmp/tmp4qu0St/ 7 4.20 1
+17 6886 /tmp/tmp4qu0St/ 6 1.80 1
+17 6887 /tmp/tmp4qu0St/ 9 3.60 1
+17 6888 /tmp/tmp4qu0St/ 7 4.20 1
+17 6889 /tmp/tmp4qu0St/ 6 4.80 1
+
+18 6874 /tmp/tmp4qu0St/ 8 4.00 1
+18 6875 /tmp/tmp4qu0St/ 7 5.60 1
+18 6877 /tmp/tmp4qu0St/ 7 5.60 1
+18 6878 /tmp/tmp4qu0St/ 9 3.60 1
+18 6879 /tmp/tmp4qu0St/ 10 3.00 1
+18 6876 /tmp/tmp4qu0St/ 10 3.00 1
+18 6880 /tmp/tmp4qu0St/ 10 3.00 1
+18 6881 /tmp/tmp4qu0St/ 7 4.20 1
+18 6882 /tmp/tmp4qu0St/ 8 4.00 1
+18 6883 /tmp/tmp4qu0St/ 8 4.00 1
+18 6884 /tmp/tmp4qu0St/ 9 3.60 1
+18 6885 /tmp/tmp4qu0St/ 7 4.20 1
+18 6886 /tmp/tmp4qu0St/ 6 1.80 1
+18 6887 /tmp/tmp4qu0St/ 9 3.60 1
+18 6888 /tmp/tmp4qu0St/ 7 4.20 1
+18 6889 /tmp/tmp4qu0St/ 7 5.60 1
+
+19 6874 /tmp/tmp4qu0St/ 9 4.50 1
+19 6875 /tmp/tmp4qu0St/ 7 5.60 1
+19 6877 /tmp/tmp4qu0St/ 7 5.60 1
+19 6878 /tmp/tmp4qu0St/ 10 4.00 1
+19 6879 /tmp/tmp4qu0St/ 11 3.30 1
+19 6876 /tmp/tmp4qu0St/ 11 3.30 1
+19 6880 /tmp/tmp4qu0St/ 11 3.30 1
+19 6881 /tmp/tmp4qu0St/ 8 4.80 1
+19 6882 /tmp/tmp4qu0St/ 9 4.50 1
+19 6883 /tmp/tmp4qu0St/ 9 4.50 1
+19 6884 /tmp/tmp4qu0St/ 10 4.00 1
+19 6885 /tmp/tmp4qu0St/ 8 4.80 1
+19 6886 /tmp/tmp4qu0St/ 6 1.80 1
+19 6887 /tmp/tmp4qu0St/ 10 4.00 1
+19 6888 /tmp/tmp4qu0St/ 8 4.80 1
+19 6889 /tmp/tmp4qu0St/ 7 5.60 1
+
+20 6874 /tmp/tmp4qu0St/ 9 4.50 1
+20 6875 /tmp/tmp4qu0St/ 8 6.40 1
+20 6877 /tmp/tmp4qu0St/ 7 5.60 1
+20 6878 /tmp/tmp4qu0St/ 10 4.00 1
+20 6879 /tmp/tmp4qu0St/ 11 3.30 1
+20 6876 /tmp/tmp4qu0St/ 11 3.30 1
+20 6880 /tmp/tmp4qu0St/ 11 3.30 1
+20 6881 /tmp/tmp4qu0St/ 8 4.80 1
+20 6882 /tmp/tmp4qu0St/ 10 5.00 1
+20 6883 /tmp/tmp4qu0St/ 9 4.50 1
+20 6884 /tmp/tmp4qu0St/ 10 4.00 1
+20 6885 /tmp/tmp4qu0St/ 8 4.80 1
+20 6886 /tmp/tmp4qu0St/ 6 1.80 1
+20 6887 /tmp/tmp4qu0St/ 10 4.00 1
+20 6888 /tmp/tmp4qu0St/ 8 4.80 1
+20 6889 /tmp/tmp4qu0St/ 8 6.40 1
+
+21 6874 /tmp/tmp4qu0St/ 10 5.00 1
+21 6875 /tmp/tmp4qu0St/ 8 6.40 1
+21 6877 /tmp/tmp4qu0St/ 8 6.40 1
+21 6878 /tmp/tmp4qu0St/ 11 4.40 1
+21 6879 /tmp/tmp4qu0St/ 12 3.60 1
+21 6876 /tmp/tmp4qu0St/ 12 3.60 1
+21 6880 /tmp/tmp4qu0St/ 12 3.60 1
+21 6881 /tmp/tmp4qu0St/ 9 5.40 1
+21 6882 /tmp/tmp4qu0St/ 10 5.00 1
+21 6883 /tmp/tmp4qu0St/ 10 5.00 1
+21 6884 /tmp/tmp4qu0St/ 11 4.40 1
+21 6885 /tmp/tmp4qu0St/ 9 5.40 1
+21 6886 /tmp/tmp4qu0St/ 6 1.80 1
+21 6887 /tmp/tmp4qu0St/ 11 4.40 1
+21 6888 /tmp/tmp4qu0St/ 9 5.40 1
+21 6889 /tmp/tmp4qu0St/ 8 6.40 1
+
+22 6874 /tmp/tmp4qu0St/ 10 5.00 1
+22 6875 /tmp/tmp4qu0St/ 8 6.40 1
+22 6877 /tmp/tmp4qu0St/ 8 6.40 1
+22 6878 /tmp/tmp4qu0St/ 11 4.40 1
+22 6879 /tmp/tmp4qu0St/ 12 3.60 1
+22 6876 /tmp/tmp4qu0St/ 12 3.60 1
+22 6880 /tmp/tmp4qu0St/ 12 3.60 1
+22 6881 /tmp/tmp4qu0St/ 9 5.40 1
+22 6882 /tmp/tmp4qu0St/ 11 5.50 1
+22 6883 /tmp/tmp4qu0St/ 10 5.00 1
+22 6884 /tmp/tmp4qu0St/ 11 4.40 1
+22 6885 /tmp/tmp4qu0St/ 9 5.40 1
+22 6886 /tmp/tmp4qu0St/ 6 1.80 1
+22 6887 /tmp/tmp4qu0St/ 11 4.40 1
+22 6888 /tmp/tmp4qu0St/ 9 5.40 1
+22 6889 /tmp/tmp4qu0St/ 9 7.20 1
+
+23 6874 /tmp/tmp4qu0St/ 11 5.50 1
+23 6875 /tmp/tmp4qu0St/ 9 7.20 1
+23 6877 /tmp/tmp4qu0St/ 9 7.20 1
+23 6878 /tmp/tmp4qu0St/ 12 4.80 1
+23 6879 /tmp/tmp4qu0St/ 13 3.90 1
+23 6876 /tmp/tmp4qu0St/ 13 3.90 1
+23 6880 /tmp/tmp4qu0St/ 13 3.90 1
+23 6881 /tmp/tmp4qu0St/ 10 6.00 1
+23 6882 /tmp/tmp4qu0St/ 12 6.00 1
+23 6883 /tmp/tmp4qu0St/ 11 5.50 1
+23 6884 /tmp/tmp4qu0St/ 12 4.80 1
+23 6885 /tmp/tmp4qu0St/ 10 6.00 1
+23 6886 /tmp/tmp4qu0St/ 6 1.80 1
+23 6887 /tmp/tmp4qu0St/ 12 4.80 1
+23 6888 /tmp/tmp4qu0St/ 10 6.00 1
+23 6889 /tmp/tmp4qu0St/ 9 7.20 1
+
+24 6874 /tmp/tmp4qu0St/ 11 5.50 1
+24 6875 /tmp/tmp4qu0St/ 9 7.20 1
+24 6877 /tmp/tmp4qu0St/ 9 7.20 1
+24 6878 /tmp/tmp4qu0St/ 13 5.20 1
+24 6879 /tmp/tmp4qu0St/ 14 4.20 1
+24 6876 /tmp/tmp4qu0St/ 14 4.20 1
+24 6880 /tmp/tmp4qu0St/ 13 3.90 1
+24 6881 /tmp/tmp4qu0St/ 10 6.00 1
+24 6882 /tmp/tmp4qu0St/ 12 6.00 1
+24 6883 /tmp/tmp4qu0St/ 12 6.00 1
+24 6884 /tmp/tmp4qu0St/ 12 4.80 1
+24 6885 /tmp/tmp4qu0St/ 10 6.00 1
+24 6886 /tmp/tmp4qu0St/ 6 1.80 1
+24 6887 /tmp/tmp4qu0St/ 12 4.80 1
+24 6888 /tmp/tmp4qu0St/ 10 6.00 1
+24 6889 /tmp/tmp4qu0St/ 10 8.00 1
+
+25 6874 /tmp/tmp4qu0St/ 12 6.00 1
+25 6875 /tmp/tmp4qu0St/ 10 8.00 1
+25 6877 /tmp/tmp4qu0St/ 10 8.00 1
+25 6878 /tmp/tmp4qu0St/ 13 5.20 1
+25 6879 /tmp/tmp4qu0St/ 14 4.20 1
+25 6876 /tmp/tmp4qu0St/ 14 4.20 1
+25 6880 /tmp/tmp4qu0St/ 14 4.20 1
+25 6881 /tmp/tmp4qu0St/ 11 6.60 1
+25 6882 /tmp/tmp4qu0St/ 13 6.50 1
+25 6883 /tmp/tmp4qu0St/ 12 6.00 1
+25 6884 /tmp/tmp4qu0St/ 13 5.20 1
+25 6885 /tmp/tmp4qu0St/ 11 6.60 1
+25 6886 /tmp/tmp4qu0St/ 6 1.80 1
+25 6887 /tmp/tmp4qu0St/ 13 5.20 1
+25 6888 /tmp/tmp4qu0St/ 11 6.60 1
+25 6889 /tmp/tmp4qu0St/ 10 8.00 1
+
+26 6874 /tmp/tmp4qu0St/ 12 6.00 1
+26 6875 /tmp/tmp4qu0St/ 10 8.00 1
+26 6877 /tmp/tmp4qu0St/ 10 8.00 1
+26 6878 /tmp/tmp4qu0St/ 14 5.60 1
+26 6879 /tmp/tmp4qu0St/ 15 4.50 1
+26 6876 /tmp/tmp4qu0St/ 15 4.50 1
+26 6880 /tmp/tmp4qu0St/ 15 4.50 1
+26 6881 /tmp/tmp4qu0St/ 11 6.60 1
+26 6882 /tmp/tmp4qu0St/ 13 6.50 1
+26 6883 /tmp/tmp4qu0St/ 13 6.50 1
+26 6884 /tmp/tmp4qu0St/ 13 5.20 1
+26 6885 /tmp/tmp4qu0St/ 11 6.60 1
+26 6886 /tmp/tmp4qu0St/ 6 1.80 1
+26 6887 /tmp/tmp4qu0St/ 13 5.20 1
+26 6888 /tmp/tmp4qu0St/ 11 6.60 1
+26 6889 /tmp/tmp4qu0St/ 10 8.00 1
+
+27 6874 /tmp/tmp4qu0St/ 13 6.50 1
+27 6875 /tmp/tmp4qu0St/ 11 8.80 1
+27 6877 /tmp/tmp4qu0St/ 10 8.00 1
+27 6878 /tmp/tmp4qu0St/ 15 6.00 1
+27 6879 /tmp/tmp4qu0St/ 16 4.80 1
+27 6876 /tmp/tmp4qu0St/ 16 4.80 1
+27 6880 /tmp/tmp4qu0St/ 16 4.80 1
+27 6881 /tmp/tmp4qu0St/ 12 7.20 1
+27 6882 /tmp/tmp4qu0St/ 14 7.00 1
+27 6883 /tmp/tmp4qu0St/ 13 6.50 1
+27 6884 /tmp/tmp4qu0St/ 14 5.60 1
+27 6885 /tmp/tmp4qu0St/ 12 7.20 1
+27 6886 /tmp/tmp4qu0St/ 6 1.80 1
+27 6887 /tmp/tmp4qu0St/ 14 5.60 1
+27 6888 /tmp/tmp4qu0St/ 12 7.20 1
+27 6889 /tmp/tmp4qu0St/ 11 8.80 1
+
+28 6874 /tmp/tmp4qu0St/ 13 6.50 1
+28 6875 /tmp/tmp4qu0St/ 11 8.80 1
+28 6877 /tmp/tmp4qu0St/ 11 8.80 1
+28 6878 /tmp/tmp4qu0St/ 15 6.00 1
+28 6879 /tmp/tmp4qu0St/ 16 4.80 1
+28 6876 /tmp/tmp4qu0St/ 16 4.80 1
+28 6880 /tmp/tmp4qu0St/ 16 4.80 1
+28 6881 /tmp/tmp4qu0St/ 12 7.20 1
+28 6882 /tmp/tmp4qu0St/ 14 7.00 1
+28 6883 /tmp/tmp4qu0St/ 14 7.00 1
+28 6884 /tmp/tmp4qu0St/ 15 6.00 1
+28 6885 /tmp/tmp4qu0St/ 12 7.20 1
+28 6886 /tmp/tmp4qu0St/ 6 1.80 1
+28 6887 /tmp/tmp4qu0St/ 15 6.00 1
+28 6888 /tmp/tmp4qu0St/ 12 7.20 1
+28 6889 /tmp/tmp4qu0St/ 11 8.80 1
+
+29 6874 /tmp/tmp4qu0St/ 14 7.00 1
+29 6875 /tmp/tmp4qu0St/ 12 9.60 1
+29 6877 /tmp/tmp4qu0St/ 11 8.80 1
+29 6878 /tmp/tmp4qu0St/ 16 6.40 1
+29 6879 /tmp/tmp4qu0St/ 17 5.10 1
+29 6876 /tmp/tmp4qu0St/ 17 5.10 1
+29 6880 /tmp/tmp4qu0St/ 17 5.10 1
+29 6881 /tmp/tmp4qu0St/ 12 7.20 1
+29 6882 /tmp/tmp4qu0St/ 15 7.50 1
+29 6883 /tmp/tmp4qu0St/ 14 7.00 1
+29 6884 /tmp/tmp4qu0St/ 15 6.00 1
+29 6885 /tmp/tmp4qu0St/ 13 7.80 1
+29 6886 /tmp/tmp4qu0St/ 6 1.80 1
+29 6887 /tmp/tmp4qu0St/ 15 6.00 1
+29 6888 /tmp/tmp4qu0St/ 12 7.20 1
+29 6889 /tmp/tmp4qu0St/ 12 9.60 1
+
+30 6874 /tmp/tmp4qu0St/ 15 7.50 1
+30 6875 /tmp/tmp4qu0St/ 12 9.60 1
+30 6877 /tmp/tmp4qu0St/ 12 9.60 1
+30 6878 /tmp/tmp4qu0St/ 16 6.40 1
+30 6879 /tmp/tmp4qu0St/ 18 5.40 1
+30 6876 /tmp/tmp4qu0St/ 18 5.40 1
+30 6880 /tmp/tmp4qu0St/ 17 5.10 1
+30 6881 /tmp/tmp4qu0St/ 13 7.80 1
+30 6882 /tmp/tmp4qu0St/ 15 7.50 1
+30 6883 /tmp/tmp4qu0St/ 15 7.50 1
+30 6884 /tmp/tmp4qu0St/ 16 6.40 1
+30 6885 /tmp/tmp4qu0St/ 13 7.80 1
+30 6886 /tmp/tmp4qu0St/ 6 1.80 1
+30 6887 /tmp/tmp4qu0St/ 16 6.40 1
+30 6888 /tmp/tmp4qu0St/ 13 7.80 1
+30 6889 /tmp/tmp4qu0St/ 12 9.60 1
+
+31 6874 /tmp/tmp4qu0St/ 15 7.50 1
+31 6875 /tmp/tmp4qu0St/ 12 9.60 1
+31 6877 /tmp/tmp4qu0St/ 12 9.60 1
+31 6878 /tmp/tmp4qu0St/ 17 6.80 1
+31 6879 /tmp/tmp4qu0St/ 18 5.40 1
+31 6876 /tmp/tmp4qu0St/ 19 5.70 1
+31 6880 /tmp/tmp4qu0St/ 18 5.40 1
+31 6881 /tmp/tmp4qu0St/ 13 7.80 1
+31 6882 /tmp/tmp4qu0St/ 16 8.00 1
+31 6883 /tmp/tmp4qu0St/ 15 7.50 1
+31 6884 /tmp/tmp4qu0St/ 16 6.40 1
+31 6885 /tmp/tmp4qu0St/ 14 8.40 1
+31 6886 /tmp/tmp4qu0St/ 6 1.80 1
+31 6887 /tmp/tmp4qu0St/ 17 6.80 1
+31 6888 /tmp/tmp4qu0St/ 13 7.80 1
+31 6889 /tmp/tmp4qu0St/ 13 10.40 1
+
+32 6874 /tmp/tmp4qu0St/ 16 8.00 1
+32 6875 /tmp/tmp4qu0St/ 13 10.40 1
+32 6877 /tmp/tmp4qu0St/ 12 9.60 1
+32 6878 /tmp/tmp4qu0St/ 17 6.80 1
+32 6879 /tmp/tmp4qu0St/ 19 5.70 1
+32 6876 /tmp/tmp4qu0St/ 19 5.70 1
+32 6880 /tmp/tmp4qu0St/ 19 5.70 1
+32 6881 /tmp/tmp4qu0St/ 14 8.40 1
+32 6882 /tmp/tmp4qu0St/ 16 8.00 1
+32 6883 /tmp/tmp4qu0St/ 16 8.00 1
+32 6884 /tmp/tmp4qu0St/ 17 6.80 1
+32 6885 /tmp/tmp4qu0St/ 14 8.40 1
+32 6886 /tmp/tmp4qu0St/ 6 1.80 1
+32 6887 /tmp/tmp4qu0St/ 17 6.80 1
+32 6888 /tmp/tmp4qu0St/ 14 8.40 1
+32 6889 /tmp/tmp4qu0St/ 13 10.40 1
+
+33 6874 /tmp/tmp4qu0St/ 16 8.00 1
+33 6875 /tmp/tmp4qu0St/ 13 10.40 1
+33 6877 /tmp/tmp4qu0St/ 13 10.40 1
+33 6878 /tmp/tmp4qu0St/ 18 7.20 1
+33 6879 /tmp/tmp4qu0St/ 19 5.70 1
+33 6876 /tmp/tmp4qu0St/ 19 5.70 1
+33 6880 /tmp/tmp4qu0St/ 19 5.70 1
+33 6881 /tmp/tmp4qu0St/ 14 8.40 1
+33 6882 /tmp/tmp4qu0St/ 17 8.50 1
+33 6883 /tmp/tmp4qu0St/ 16 8.00 1
+33 6884 /tmp/tmp4qu0St/ 17 6.80 1
+33 6885 /tmp/tmp4qu0St/ 14 8.40 1
+33 6886 /tmp/tmp4qu0St/ 6 1.80 1
+33 6887 /tmp/tmp4qu0St/ 17 6.80 1
+33 6888 /tmp/tmp4qu0St/ 14 8.40 1
+33 6889 /tmp/tmp4qu0St/ 13 10.40 1
+
+
+
+test manyclients2 FAILED (0 of 6)
+ (Check that when a client leaves, another can enter)
+ failed to display stats correctly for pid: 6890
+
+Skipped 1 tests.
 To keep testing after failing a test, use flag '-c' or '--continue'

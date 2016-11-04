@@ -5,22 +5,26 @@
 #include<time.h>
 #include<sys/resource.h>
 #include<stdlib.h>
+#include<string.h>  // strncpy()
 #include"libstats.h"
+
+#define secNano 1000000000
 
 static int keepRunning = 1;
 
+
 void INThandler(int sig) {
-	keepRunning = 0;
+    keepRunning = 0;
 }
+
 
 int main(int argc, char *argv[]) {
     // Change this based on default value if a flag isnt set
-    int reasonableDefaultValue = 1000;
-    int priority;
-    int sleeptime_ns = reasonableDefaultValue;
-    int cputime_ns = reasonableDefaultValue;
+    int priority = 1;
+    int sleeptime_ns = secNano/2;
+    int cputime_ns = secNano/2;
     int c;
-	int key;
+    int key;
 
     stats_t *stat;
 
@@ -44,73 +48,97 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    // Check to see if args are bad
+// Check to see if args are bad
     if (sleeptime_ns < 0 || cputime_ns < 0) {
         exit(1);
     }
 
-    // Get point to key
+    int pid = getpid();
+
+// Get point to key
     stat = stats_init(key);
     if (stat == NULL) {
       printf("stat_init Failure\n");
       exit(1);
     }
 
-    // Initalize all of the stat_t fields
-    stat->pid = getpid();
-    stat->counter = 0;
-    stat->priority = priority;
-    stat->cpu_secs = cputime_ns;
-    // TOD set argv[0] in stats_t, is it supposed to be in char arg[16]???
-    // stat->arg = argv[0]
-
-    // Register Interrupt Handler
+// Register Interrupt Handler
     signal(SIGINT, INThandler);
 
-    // time Structs
-    struct timespec start, end, cpuStart, cpuEnd;
-    int returnPriority, endTime;
-    // TOD is this the right one? could also be PRIO_PGRP or PRIO_USER
-    int which = PRIO_PROCESS;
+// Setup Priority and Clock
+    struct timespec cpuStart, cpuCurr, procStart;
+    int currPriority;
+    int prior = PRIO_PROCESS;
+    int clock = CLOCK_PROCESS_CPUTIME_ID;
 
-    clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &cpuStart);
+    if (setpriority(prior, getpid(), priority) < 0) {
+      perror("setpriority");
+      exit(1);
+    }
 
-    // set priority
-    returnPriority = setpriority(which, getpid(), priority);
-    if (returnPriority < 0) {
-        perror("Error Setting priority");
+    if ((currPriority = getpriority(prior, pid)) < 0) {
+        perror("getpriority");
+        exit(1);
+    }
+    clock_gettime(clock, &procStart);
+
+    // printf("Start: %ld\n", procStart.tv_nsec);
+
+// Initalize all of the stat_t fields
+    stat->pid = pid;
+    stat->counter = 0;
+    stat->priority = currPriority;
+    stat->cpu_secs = procStart.tv_nsec/secNano;  // Cutoff on server end
+    strncpy(stat->arg, argv[0], 15);
+    stat->arg[15] = '\0';
+
+// Struct for sleeping
+    struct timespec sleepSpec;
+    sleepSpec.tv_sec = sleeptime_ns / secNano;
+    sleepSpec.tv_nsec = sleeptime_ns % secNano;
+
+    // printf("Sleep: %ld\n", sleepSpec.tv_nsec);
+    // printf("CPU: %d\n", cputime_ns);
+
+    while (keepRunning) {
+    // Sleep for specific amount of time
+        if (nanosleep(&sleepSpec, 0) < 0) {
+          perror("nanosleep");
+          exit(1);
+        }
+
+    // Do Calc for nanosecond time
+        clock_gettime(clock, &cpuStart);
+        cpuCurr = cpuStart;
+
+        while (((cpuCurr.tv_sec - cpuStart.tv_sec)*secNano +
+                    cpuCurr.tv_nsec - cpuStart.tv_nsec) < cputime_ns) {
+            clock_gettime(clock, &cpuCurr);
+            // printf("Diff: %ld\n", cpuCurr. - cpuStart.tv_nsec);
+        }
+
+    // Get Current Priority
+        if ((currPriority = getpriority(prior, pid)) < 0) {
+            perror("getpriority");
+            exit(1);
+        }
+
+    // Get current cpu time
+        clock_gettime(clock, &cpuCurr);
+
+    // Update shared memory
+        stat->cpu_secs += (double) ((cpuCurr.tv_sec - cpuStart.tv_sec)*secNano +
+                                    cpuCurr.tv_nsec - cpuStart.tv_nsec)/secNano;
+        stat->priority = currPriority;
+        stat->counter++;
+
+        // printf("Counter: %d\n", stat->counter);
+    }
+
+    if (stats_unlink(key) < 0) {
+        perror("unlink");
         exit(1);
     }
 
-    while (keepRunning) {
-        // Sleep for specific amount of time
-        sleep(sleeptime_ns);
-
-        // Do Calc for nanosecond time
-        clock_gettime(CLOCK_MONOTONIC, &start);
-        endTime = 0;
-        while (endTime - start.tv_nsec < cputime_ns) {
-            clock_gettime(CLOCK_MONOTONIC, &end);
-            endTime = end.tv_nsec;
-        }
-        returnPriority = getpriority(which, getpid());
-        if (returnPriority < 0) {
-            perror("Error getting priority");
-            exit(1);
-        }
-        clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &cpuEnd);
-        // Should go to two decimal places, takes nanoseconds divides by 1e7,
-        // rounds that, then divides by the 100
-        stat->cpu_secs = round((cpuEnd.tv_nsec-cpuStart.tv_nsec)/10000000)/100;
-        stat->priority = returnPriority;
-
-        stat->counter = stat->counter + 1;
-    }
-	
-	if(stats_unlink(key) < 0) {
-		perror("unlink");
-		exit(1);
-	}
-	
-	exit(0);
+    exit(0);
 }

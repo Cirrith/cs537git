@@ -16,17 +16,18 @@ stats_t* stats_init(key_t key) {
   stats_t *stat;
   shm = getMem(key);
 
+  semInit();  // Is this critical?
+
   if (shm == NULL) {
     return NULL;
   }
-  
-  if((sem = sem_open("bradleyMillerP3", O_RDWR)) == SEM_FAILED) {
-	return NULL;
+
+  if ((sem = sem_open(semKey, O_RDWR)) == SEM_FAILED) {
+    return NULL;
   }
-  
-  printf("%p\n", sem);
-  sem_wait(sem);
-  printf("Got Here\n");
+
+  if (sem_wait(sem) < 0)
+    return NULL;
   for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
     if (stat->inUse == 0) {
       stat->inUse = 1;
@@ -40,12 +41,10 @@ stats_t* stats_init(key_t key) {
 }
 
 int stats_unlink(key_t key) {
-  // If can remove return 0
-  // Else return -1
   scaff *shm;
   stats_t *stat;
   int pid;
-  
+
   shm = getMem(key);
 
   if (shm == NULL) {
@@ -53,15 +52,16 @@ int stats_unlink(key_t key) {
   }
 
   pid = getpid();
-  
-  sem_wait(sem);  // Don't think this is critical section
-  
-  printf("Got Here\n");
+
+  if (sem_wait(sem) < 0)  // Don't think this is critical section
+    return 0;
+
   for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
     if (stat->pid == pid) {
       stat->inUse = 0;
       shmdt(shm);  // Remove shm from Address Space
       sem_post(sem);
+      semDel();
       return 0;
     }
   }
@@ -86,18 +86,15 @@ scaff* getMem(key_t key) {
   return shm;
 }
 
-int semInit(void){
-  // Init Semaphore at top of shared memory
-  if ((sem = sem_open("bradleyMillerP3", O_CREAT, 0666, 1)) == SEM_FAILED) {
-    return -1;
-  }
-  return 0;
+int semInit(void) {
+    if ((sem = sem_open(semKey, O_CREAT, 0666, 1)) == SEM_FAILED) {
+          return -1;
+    }
+    return 0;
 }
 
-int semDel(void) 
-{  
-    // Remove Semaphore
-    if (sem_unlink("bradleyMillerP3")) {
+int semDel(void) {
+    if (sem_unlink(semKey)) {
         return -1;
     }
     return 0;
