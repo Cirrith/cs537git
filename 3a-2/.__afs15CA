@@ -17,7 +17,6 @@ int key;
 
 void INThandler(int sig) {
     stat->inUse = 0;
-    stat->valid = 0;
     if (stats_unlink(key) < 0) {
       perror("unlink");
       exit(1);
@@ -68,8 +67,8 @@ int main(int argc, char *argv[]) {
     }
 
 // Register Interrupt Handler
+    // memset(&sa, 0, sizeof(sa));
     sa.sa_handler = INThandler;
-    sa.sa_flags = 0;
     sigemptyset(&sa.sa_mask);
     if (sigaction(SIGINT, &sa, NULL) != 0) {
       perror("sigaction");
@@ -100,7 +99,6 @@ int main(int argc, char *argv[]) {
     stat->cpu_secs = procStart.tv_nsec/secNano;  // Cutoff on server end
     strncpy(stat->arg, argv[0], 15);
     stat->arg[15] = '\0';
-    stat->valid = 1;
 
 // Struct for sleeping
     struct timespec sleepSpec;  // sleepRem;
