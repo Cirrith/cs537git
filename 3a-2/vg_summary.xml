@@ -9,11 +9,11 @@
   <line>Memcheck, a memory error detector</line>
   <line>Copyright (C) 2002-2013, and GNU GPL'd, by Julian Seward et al.</line>
   <line>Using Valgrind-3.10.1 and LibVEX; rerun with -h for copyright info</line>
-  <line>Command: /tmp/tmp3wRMqk/p/stats_client -p 1 -c 300000000 -k 4472 -s 700000000</line>
+  <line>Command: /tmp/tmp9UHABL/p/stats_client -k 9136 -p 1 -s 200000000 -c 800000000</line>
 </preamble>
 
-<pid>7492</pid>
-<ppid>7489</ppid>
+<pid>29512</pid>
+<ppid>29478</ppid>
 <tool>memcheck</tool>
 
 <args>
@@ -21,34 +21,57 @@
     <exe>/usr/bin/valgrind.bin</exe>
     <arg>--show-reachable=yes</arg>
     <arg>--xml=yes</arg>
-    <arg>--xml-file=/tmp/tmp3wRMqk/p/0.xml</arg>
+    <arg>--xml-file=/tmp/tmp9UHABL/p/0.xml</arg>
   </vargv>
   <argv>
-    <exe>/tmp/tmp3wRMqk/p/stats_client</exe>
+    <exe>/tmp/tmp9UHABL/p/stats_client</exe>
+    <arg>-k</arg>
+    <arg>9136</arg>
     <arg>-p</arg>
     <arg>1</arg>
-    <arg>-c</arg>
-    <arg>300000000</arg>
-    <arg>-k</arg>
-    <arg>4472</arg>
     <arg>-s</arg>
-    <arg>700000000</arg>
+    <arg>200000000</arg>
+    <arg>-c</arg>
+    <arg>800000000</arg>
   </argv>
 </args>
 
 <status>
   <state>RUNNING</state>
-  <time>00:00:00:00.098 </time>
-</status>
-
-
-<status>
-  <state>FINISHED</state>
-  <time>00:00:00:51.862 </time>
+  <time>00:00:00:00.382 </time>
 </status>
 
 <error>
   <unique>0x0</unique>
+  <tid>1</tid>
+  <kind>SyscallParam</kind>
+  <what>Syscall param rt_sigaction(act-&gt;sa_flags) points to uninitialised byte(s)</what>
+  <stack>
+    <frame>
+      <ip>0x504A43D</ip>
+      <obj>/lib/x86_64-linux-gnu/libpthread-2.19.so</obj>
+      <fn>__libc_sigaction</fn>
+      <dir>/build/eglibc-oGUzwX/eglibc-2.19/nptl/../sysdeps/unix/sysv/linux/x86_64</dir>
+      <file>sigaction.c</file>
+      <line>64</line>
+    </frame>
+    <frame>
+      <ip>0x400D32</ip>
+      <obj>/tmp/tmp9UHABL/p/stats_client</obj>
+      <fn>main</fn>
+    </frame>
+  </stack>
+  <auxwhat>Address 0xfff000408 is on thread 1's stack</auxwhat>
+</error>
+
+
+<status>
+  <state>FINISHED</state>
+  <time>00:00:00:51.247 </time>
+</status>
+
+<error>
+  <unique>0x1</unique>
   <tid>1</tid>
   <kind>Leak_StillReachable</kind>
   <xwhat>
@@ -87,25 +110,25 @@
       <line>278</line>
     </frame>
     <frame>
-      <ip>0x4E37A97</ip>
-      <obj>/tmp/tmp3wRMqk/p/libstats.so</obj>
+      <ip>0x4E37BF2</ip>
+      <obj>/tmp/tmp9UHABL/p/libstats.so</obj>
       <fn>stats_init</fn>
     </frame>
     <frame>
-      <ip>0x400BF7</ip>
-      <obj>/tmp/tmp3wRMqk/p/stats_client</obj>
+      <ip>0x400CD4</ip>
+      <obj>/tmp/tmp9UHABL/p/stats_client</obj>
       <fn>main</fn>
     </frame>
   </stack>
 </error>
 
 <error>
-  <unique>0x1</unique>
+  <unique>0x2</unique>
   <tid>1</tid>
   <kind>Leak_StillReachable</kind>
   <xwhat>
-    <text>43 bytes in 1 blocks are still reachable in loss record 2 of 2</text>
-    <leakedbytes>43</leakedbytes>
+    <text>46 bytes in 1 blocks are still reachable in loss record 2 of 2</text>
+    <leakedbytes>46</leakedbytes>
     <leakedblocks>1</leakedblocks>
   </xwhat>
   <stack>
@@ -131,19 +154,23 @@
       <line>278</line>
     </frame>
     <frame>
-      <ip>0x4E37A97</ip>
-      <obj>/tmp/tmp3wRMqk/p/libstats.so</obj>
+      <ip>0x4E37BF2</ip>
+      <obj>/tmp/tmp9UHABL/p/libstats.so</obj>
       <fn>stats_init</fn>
     </frame>
     <frame>
-      <ip>0x400BF7</ip>
-      <obj>/tmp/tmp3wRMqk/p/stats_client</obj>
+      <ip>0x400CD4</ip>
+      <obj>/tmp/tmp9UHABL/p/stats_client</obj>
       <fn>main</fn>
     </frame>
   </stack>
 </error>
 
 <errorcounts>
+  <pair>
+    <count>1</count>
+    <unique>0x0</unique>
+  </pair>
 </errorcounts>
 
 <suppcounts>

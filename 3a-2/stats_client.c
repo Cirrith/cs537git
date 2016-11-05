@@ -11,11 +11,17 @@
 
 #define secNano 1000000000
 
-static int keepRunning = 1;
 sem_t *sem;
+stats_t *stat;
+int key;
 
 void INThandler(int sig) {
-    keepRunning = 0;
+    stat->inUse = 0;
+    if (stats_unlink(key) < 0) {
+      perror("unlink");
+      exit(1);
+    }
+    exit(0);
 }
 
 int main(int argc, char *argv[]) {
@@ -24,9 +30,7 @@ int main(int argc, char *argv[]) {
     int sleeptime_ns = secNano/2;
     int cputime_ns = secNano/2;
     int c;
-    int key;
-
-    stats_t *stat;
+    struct sigaction sa;
 
     while ((c = getopt(argc, argv, "k:p:s:c:")) != -1) {
         switch (c) {
@@ -63,7 +67,12 @@ int main(int argc, char *argv[]) {
     }
 
 // Register Interrupt Handler
-    signal(SIGINT, INThandler);
+    sa.sa_handler = INThandler;
+    sigemptyset(&sa.sa_mask);
+    if (sigaction(SIGINT, &sa, NULL) != 0) {
+      perror("sigaction");
+      exit(1);
+    }
 
 // Setup Priority and Clock
     struct timespec cpuStart, cpuCurr, procStart;
@@ -91,40 +100,28 @@ int main(int argc, char *argv[]) {
     stat->arg[15] = '\0';
 
 // Struct for sleeping
-    struct timespec sleepSpec, sleepRem;
+    struct timespec sleepSpec;  // sleepRem;
     sleepSpec.tv_sec = sleeptime_ns / secNano;
     sleepSpec.tv_nsec = sleeptime_ns % secNano;
-    int notDoneSleeping = 0;
-    while (keepRunning) {
+    // int notDoneSleeping = 0;
+    while (1) {
     // Sleep for specific amount of time
-      // if (nanosleep(&sleepSpec, 0) < 0) {
-      //  break;
-      //}
-      notDoneSleeping = 0;
-        do {
-            if (!notDoneSleeping) {
-                if (nanosleep(&sleepSpec, &sleepRem) < 0) {
-                    notDoneSleeping = 1;
-                }
-            } else {
-                nanosleep(&sleepRem, &sleepRem);
-            }
-        }while (sleepRem.tv_nsec != 0);
-    // Do Calc for nanosecond time
-        clock_gettime(clock, &cpuStart);
-        cpuCurr = cpuStart;
+      nanosleep(&sleepSpec, 0);
 
-        while (((cpuCurr.tv_sec - cpuStart.tv_sec)*secNano +
-                    cpuCurr.tv_nsec - cpuStart.tv_nsec) < cputime_ns) {
-            clock_gettime(clock, &cpuCurr);
+      clock_gettime(clock, &cpuStart);
+      cpuCurr = cpuStart;
+
+      while (((cpuCurr.tv_sec - cpuStart.tv_sec)*secNano +
+             cpuCurr.tv_nsec - cpuStart.tv_nsec) < cputime_ns) {
+        clock_gettime(clock, &cpuCurr);
             // printf("Diff: %ld\n", cpuCurr. - cpuStart.tv_nsec);
-        }
+      }
 
     // Get Current Priority
-        if ((currPriority = getpriority(prior, pid)) < 0) {
-            perror("getpriority");
-            exit(1);
-        }
+      if ((currPriority = getpriority(prior, pid)) < 0) {
+        perror("getpriority");
+          exit(1);
+      }
 
     // Get current cpu time
         clock_gettime(clock, &cpuCurr);
@@ -135,11 +132,4 @@ int main(int argc, char *argv[]) {
         stat->priority = currPriority;
         stat->counter++;
     }
-
-    if (stats_unlink(key) < 0) {
-        perror("unlink");
-        exit(1);
-    }
-
-    exit(0);
 }

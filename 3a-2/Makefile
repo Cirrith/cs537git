@@ -2,10 +2,12 @@
 
 CC=gcc
 EXFLAGS= -Wall -Werror -lstats -L. -pthread -lm
+LIBFLAGS= -shared
 
 all: LIBRARY SERVER CLIENT
 
 debug: EXFLAGS += -g
+debug: LIBFLAGS += -g
 debug: all
 
 SERVER: stats_server.c
@@ -16,7 +18,7 @@ CLIENT: stats_client.c
 
 LIBRARY: libstats.c
 	$(CC) -c $< -Wall -Werror -fpic -o libstats.o
-	$(CC) -shared -o libstats.so libstats.o
+	$(CC) $(LIBFLAGS) -o libstats.so libstats.o
 
 clean: 
 	rm *o stats_server stats_client
