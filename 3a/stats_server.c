@@ -11,19 +11,27 @@
 #include"stats.h"
 #include"libstats.h"
 
-static int keepRunning = 1;
-
 sem_t *sem;
+scaff *shm;
+int shmid;
+int key;
 
-void INThandler(int sig) {
-  keepRunning = 0;
+void INThandler(int sig) {  // Mark Shared Memory Segment for Deletion
+  shmdt(shm);
+  shmctl(shmid, IPC_RMID, 0);
+
+  if (semDel(key) < 0) {
+    perror("sem_unlink");
+    exit(1);
+  }
+  exit(0);
 }
 
 int main(int argc, char *argv[]) {
   int c;
   char *arg;
-  int key = 0;
   int servIt = 1;
+  struct sigaction sa;
   // Parse Command Inputs
 
   if (argc != 3) {
@@ -46,15 +54,20 @@ int main(int argc, char *argv[]) {
   }
 
 // Setup Interrupt Handler
-  signal(SIGINT, INThandler);
+    sa.sa_handler = INThandler;
+    sa.sa_flags = 0;
+    sigemptyset(&sa.sa_mask);
+    if (sigaction(SIGINT, &sa, NULL) != 0) {
+      perror("sigaction");
+      exit(1);
+    }
 
 // Setup Shared Memory
   int pgSize = getpagesize();
-  int shmid;
-  scaff *shm;
 
   // Create shared memory segment
-  if ((shmid = shmget(key, pgSize, IPC_EXCL | IPC_CREAT | 0666)) < 0) {
+  if ((shmid = shmget(key, pgSize, IPC_EXCL | IPC_CREAT |
+                               S_IWUSR | S_IRUSR)) < 0) {
     perror("shmget");
     exit(0);
   }
@@ -77,11 +90,10 @@ int main(int argc, char *argv[]) {
 
 // Every 1 second go through memory and print out
   stats_t *stat;
-  while (keepRunning) {
+  while (1) {
     sleep(1);
-    // printf("Checking ...\n");
     for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
-      if (stat->inUse) {
+      if (stat->valid) {
         printf("%d %d %s %d %.2f %d\n", servIt, stat->pid, stat->arg,
           stat->counter, stat->cpu_secs, stat->priority);
       }
@@ -90,13 +102,5 @@ int main(int argc, char *argv[]) {
     printf("\n");
   }
 
-// Mark Shared Memory Segment for Deletion
-  shmctl(shmid, IPC_RMID, 0);
-
-  if (semDel(key) < 0) {
-    perror("sem_unlink");
-    exit(1);
-  }
-
-  return 0;
+  exit(0);
 }

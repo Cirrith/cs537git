@@ -1,8 +1,0 @@
-linux-shmem:
-    gcc -c -fpic stats.c -Wall -Werror
-    gcc -shared -o libstats.so stats.o
-    gcc -o stats_client client.c -Wall -Werror -lstats -L. -pthread
-    gcc -o stats_server server.c -Wall -Werror -lstats -L. -pthread
-
-clean:
-    rm -f *.so *.o stats_client stats_server

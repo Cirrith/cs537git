@@ -47,7 +47,7 @@ Client should exit gracefully if no server is running
 
 **********************************************************************
 stat_init Failure
-running client with: /tmp/tmp5WvBh0/p/stats_client -c 100 -s 100 -k 5469 -p 1
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -c 100 -s 100 -k 2556
 
 
 test clientnoservertest PASSED (6 of 6)
@@ -61,18 +61,14 @@ Test defaultargstest
 Test that client chooses default values for unspecified args
 
 **********************************************************************
-key: 872
-Unlink
-running server with: /tmp/tmp5WvBh0/p/stats_server -k 872
-running client with: /tmp/tmp5WvBh0/p/stats_client -k 872
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 9616
+running client with: /tmp/tmpbQ9j5V/p/stats_client -k 9616
 server output:
-1 20259 /tmp/tmp5WvBh0/ 0 0.00 1
+1 8297 /tmp/tmpbQ9j5V/ 0 0.00 1
 
-2 20259 /tmp/tmp5WvBh0/ 1 0.50 1
+2 8297 /tmp/tmpbQ9j5V/ 0 0.00 1
 
-3 20259 /tmp/tmp5WvBh0/ 2 1.00 1
-
-4 20259 /tmp/tmp5WvBh0/ 2 1.00 1
+3 8297 /tmp/tmpbQ9j5V/ 1 0.50 1
 
 
 
@@ -87,19 +83,15 @@ Test clientservertest
 Test basic functionality for one client & server
 
 **********************************************************************
-key: 222
-Unlink
-running server with: /tmp/tmp5WvBh0/p/stats_server -k 222
-running client with: /tmp/tmp5WvBh0/p/stats_client -s 700000000 -c 300000000 -p 1 -k 222
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 8392
+running client with: /tmp/tmpbQ9j5V/p/stats_client -c 800000000 -s 200000000 -k 8392 -p 1
 server output:
 
-2 20267 /tmp/tmp5WvBh0/ 0 0.00 1
+2 8305 /tmp/tmpbQ9j5V/ 0 0.00 1
 
-3 20267 /tmp/tmp5WvBh0/ 1 0.30 1
+3 8305 /tmp/tmpbQ9j5V/ 1 0.80 1
 
-4 20267 /tmp/tmp5WvBh0/ 2 0.60 1
-
-5 20267 /tmp/tmp5WvBh0/ 2 0.60 1
+4 8305 /tmp/tmpbQ9j5V/ 2 1.60 1
 
 
 
@@ -114,37 +106,2015 @@ Test twoservers1
 Check that two servers can run with different keys
 
 **********************************************************************
-key: 8331
-Unlink
-running server with: /tmp/tmp5WvBh0/p/stats_server -k 2876
-running server with: /tmp/tmp5WvBh0/p/stats_server -k 8331
-running client with: /tmp/tmp5WvBh0/p/stats_client -p 1 -k 2876 -c 300000000 -s 700000000
-running client with: /tmp/tmp5WvBh0/p/stats_client -k 8331 -c 400000000 -s 100000000 -p 1
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 362
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 2685
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -k 362 -c 800000000 -s 200000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -c 300000000 -p 1 -k 2685 -s 200000000
 server output:
 
-2 20276 /tmp/tmp5WvBh0/ 0 0.00 1
+2 8314 /tmp/tmpbQ9j5V/ 0 0.00 1
 
-3 20276 /tmp/tmp5WvBh0/ 1 0.30 1
+3 8314 /tmp/tmpbQ9j5V/ 1 0.80 1
 
-4 20276 /tmp/tmp5WvBh0/ 2 0.60 1
-
-5 20276 /tmp/tmp5WvBh0/ 2 0.60 1
+4 8314 /tmp/tmpbQ9j5V/ 1 0.80 1
 
 server output:
 
-2 20277 /tmp/tmp5WvBh0/ 1 0.40 1
+2 8315 /tmp/tmpbQ9j5V/ 1 0.30 1
 
-3 20277 /tmp/tmp5WvBh0/ 3 1.20 1
+3 8315 /tmp/tmpbQ9j5V/ 2 0.60 1
 
-4 20277 /tmp/tmp5WvBh0/ 4 1.60 1
-
-5 20277 /tmp/tmp5WvBh0/ 4 1.60 1
+4 8315 /tmp/tmpbQ9j5V/ 4 1.20 1
 
 
 
-test twoservers1 FAILED (0 of 6)
+test twoservers1 PASSED (6 of 6)
  (Check that two servers can run with different keys)
- Failed to gracefully exit process after SIGINT
 
-Skipped 5 tests.
-To keep testing after failing a test, use flag '-c' or '--continue'
+starting twoservers2
+
+**********************************************************************
+
+Test twoservers2
+Check that two servers with same key can't run concurrently
+
+**********************************************************************
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 7795
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 7795
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -c 600000000 -k 7795 -s 400000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -k 7795 -c 200000000 -s 300000000 -p 1
+server output:
+
+
+3 8325 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8326 /tmp/tmpbQ9j5V/ 1 0.20 1
+
+4 8325 /tmp/tmpbQ9j5V/ 1 0.60 1
+4 8326 /tmp/tmpbQ9j5V/ 3 0.60 1
+
+5 8325 /tmp/tmpbQ9j5V/ 2 1.20 1
+5 8326 /tmp/tmpbQ9j5V/ 4 0.80 1
+
+
+
+test twoservers2 PASSED (6 of 6)
+ (Check that two servers with same key can't run concurrently)
+
+starting twoservers3
+
+**********************************************************************
+
+Test twoservers3
+Check that two servers with same key can run in sequence
+
+**********************************************************************
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 9888
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -c 800000000 -s 200000000 -k 9888
+server output:
+
+2 8334 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+3 8334 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+4 8334 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 9888
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -c 600000000 -k 9888 -s 400000000
+server output:
+
+2 8357 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+3 8357 /tmp/tmpbQ9j5V/ 1 0.60 1
+
+4 8357 /tmp/tmpbQ9j5V/ 2 1.20 1
+
+
+
+test twoservers3 PASSED (6 of 6)
+ (Check that two servers with same key can run in sequence)
+
+starting manyclients
+
+**********************************************************************
+
+Test manyclients
+Check that up to 16 clients can run concurrently
+
+**********************************************************************
+stat_init Failure
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 3607
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -c 500000000 -k 3607 -s 500000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -s 400000000 -c 600000000 -k 3607
+running client with: /tmp/tmpbQ9j5V/p/stats_client -c 300000000 -s 700000000 -p 1 -k 3607
+running client with: /tmp/tmpbQ9j5V/p/stats_client -c 600000000 -s 400000000 -k 3607 -p 1
+running client with: /tmp/tmpbQ9j5V/p/stats_client -s 400000000 -p 19 -c 600000000 -k 3607
+running client with: /tmp/tmpbQ9j5V/p/stats_client -c 400000000 -p 1 -k 3607 -s 600000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -s 300000000 -c 700000000 -k 3607
+running client with: /tmp/tmpbQ9j5V/p/stats_client -k 3607 -c 400000000 -p 1 -s 600000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -k 3607 -s 200000000 -p 1 -c 800000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -c 700000000 -k 3607 -s 300000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -c 800000000 -k 3607 -s 200000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -s 300000000 -c 700000000 -k 3607
+running client with: /tmp/tmpbQ9j5V/p/stats_client -c 800000000 -s 200000000 -k 3607 -p 1
+running client with: /tmp/tmpbQ9j5V/p/stats_client -k 3607 -p 1 -c 600000000 -s 400000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -s 200000000 -p 1 -c 800000000 -k 3607
+running client with: /tmp/tmpbQ9j5V/p/stats_client -k 3607 -s 700000000 -c 300000000 -p 1
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -k 3607
+server output:
+
+2 8365 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8366 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8367 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+2 8369 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8370 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8371 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8364 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8372 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8373 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8374 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8377 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8375 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8376 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8378 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8379 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+3 8365 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8366 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8367 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+3 8369 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8370 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8371 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8364 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8372 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8373 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8374 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8377 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8375 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8376 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8378 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8379 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+4 8365 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8366 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8367 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+4 8369 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8370 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8371 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8364 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8372 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8373 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8374 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8377 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8375 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8376 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8378 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8379 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+5 8365 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8366 /tmp/tmpbQ9j5V/ 1 0.30 1
+5 8367 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+5 8369 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8370 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8371 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8364 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8372 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8373 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8374 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8377 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8375 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8376 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8378 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8379 /tmp/tmpbQ9j5V/ 1 0.30 1
+
+6 8365 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8366 /tmp/tmpbQ9j5V/ 1 0.30 1
+6 8367 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+6 8369 /tmp/tmpbQ9j5V/ 1 0.40 1
+6 8370 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8371 /tmp/tmpbQ9j5V/ 1 0.40 1
+6 8364 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8372 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8373 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8374 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8377 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8375 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8376 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8378 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8379 /tmp/tmpbQ9j5V/ 1 0.30 1
+
+7 8365 /tmp/tmpbQ9j5V/ 1 0.60 1
+7 8366 /tmp/tmpbQ9j5V/ 1 0.30 1
+7 8367 /tmp/tmpbQ9j5V/ 1 0.60 1
+7 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+7 8369 /tmp/tmpbQ9j5V/ 1 0.40 1
+7 8370 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8371 /tmp/tmpbQ9j5V/ 1 0.40 1
+7 8364 /tmp/tmpbQ9j5V/ 1 0.50 1
+7 8372 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8373 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8374 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8377 /tmp/tmpbQ9j5V/ 1 0.60 1
+7 8375 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8376 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8378 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8379 /tmp/tmpbQ9j5V/ 1 0.30 1
+
+8 8365 /tmp/tmpbQ9j5V/ 1 0.60 1
+8 8366 /tmp/tmpbQ9j5V/ 2 0.60 1
+8 8367 /tmp/tmpbQ9j5V/ 1 0.60 1
+8 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+8 8369 /tmp/tmpbQ9j5V/ 1 0.40 1
+8 8370 /tmp/tmpbQ9j5V/ 1 0.70 1
+8 8371 /tmp/tmpbQ9j5V/ 1 0.40 1
+8 8364 /tmp/tmpbQ9j5V/ 1 0.50 1
+8 8372 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8373 /tmp/tmpbQ9j5V/ 1 0.70 1
+8 8374 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8377 /tmp/tmpbQ9j5V/ 1 0.60 1
+8 8375 /tmp/tmpbQ9j5V/ 1 0.70 1
+8 8376 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8378 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8379 /tmp/tmpbQ9j5V/ 2 0.60 1
+
+9 8365 /tmp/tmpbQ9j5V/ 1 0.60 1
+9 8366 /tmp/tmpbQ9j5V/ 2 0.60 1
+9 8367 /tmp/tmpbQ9j5V/ 1 0.60 1
+9 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+9 8369 /tmp/tmpbQ9j5V/ 1 0.40 1
+9 8370 /tmp/tmpbQ9j5V/ 1 0.70 1
+9 8371 /tmp/tmpbQ9j5V/ 1 0.40 1
+9 8364 /tmp/tmpbQ9j5V/ 1 0.50 1
+9 8372 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8373 /tmp/tmpbQ9j5V/ 1 0.70 1
+9 8374 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8377 /tmp/tmpbQ9j5V/ 1 0.60 1
+9 8375 /tmp/tmpbQ9j5V/ 1 0.70 1
+9 8376 /tmp/tmpbQ9j5V/ 1 0.80 1
+9 8378 /tmp/tmpbQ9j5V/ 1 0.80 1
+9 8379 /tmp/tmpbQ9j5V/ 2 0.60 1
+
+10 8365 /tmp/tmpbQ9j5V/ 1 0.60 1
+10 8366 /tmp/tmpbQ9j5V/ 2 0.60 1
+10 8367 /tmp/tmpbQ9j5V/ 1 0.60 1
+10 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+10 8369 /tmp/tmpbQ9j5V/ 1 0.40 1
+10 8370 /tmp/tmpbQ9j5V/ 1 0.70 1
+10 8371 /tmp/tmpbQ9j5V/ 2 0.80 1
+10 8364 /tmp/tmpbQ9j5V/ 1 0.50 1
+10 8372 /tmp/tmpbQ9j5V/ 1 0.80 1
+10 8373 /tmp/tmpbQ9j5V/ 1 0.70 1
+10 8374 /tmp/tmpbQ9j5V/ 1 0.80 1
+10 8377 /tmp/tmpbQ9j5V/ 1 0.60 1
+10 8375 /tmp/tmpbQ9j5V/ 1 0.70 1
+10 8376 /tmp/tmpbQ9j5V/ 1 0.80 1
+10 8378 /tmp/tmpbQ9j5V/ 1 0.80 1
+10 8379 /tmp/tmpbQ9j5V/ 2 0.60 1
+
+11 8365 /tmp/tmpbQ9j5V/ 1 0.60 1
+11 8366 /tmp/tmpbQ9j5V/ 2 0.60 1
+11 8367 /tmp/tmpbQ9j5V/ 1 0.60 1
+11 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+11 8369 /tmp/tmpbQ9j5V/ 2 0.80 1
+11 8370 /tmp/tmpbQ9j5V/ 1 0.70 1
+11 8371 /tmp/tmpbQ9j5V/ 2 0.80 1
+11 8364 /tmp/tmpbQ9j5V/ 1 0.50 1
+11 8372 /tmp/tmpbQ9j5V/ 1 0.80 1
+11 8373 /tmp/tmpbQ9j5V/ 1 0.70 1
+11 8374 /tmp/tmpbQ9j5V/ 1 0.80 1
+11 8377 /tmp/tmpbQ9j5V/ 1 0.60 1
+11 8375 /tmp/tmpbQ9j5V/ 1 0.70 1
+11 8376 /tmp/tmpbQ9j5V/ 1 0.80 1
+11 8378 /tmp/tmpbQ9j5V/ 1 0.80 1
+11 8379 /tmp/tmpbQ9j5V/ 2 0.60 1
+
+12 8365 /tmp/tmpbQ9j5V/ 1 0.60 1
+12 8366 /tmp/tmpbQ9j5V/ 3 0.90 1
+12 8367 /tmp/tmpbQ9j5V/ 1 0.60 1
+12 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+12 8369 /tmp/tmpbQ9j5V/ 2 0.80 1
+12 8370 /tmp/tmpbQ9j5V/ 1 0.70 1
+12 8371 /tmp/tmpbQ9j5V/ 2 0.80 1
+12 8364 /tmp/tmpbQ9j5V/ 2 1.00 1
+12 8372 /tmp/tmpbQ9j5V/ 1 0.80 1
+12 8373 /tmp/tmpbQ9j5V/ 1 0.70 1
+12 8374 /tmp/tmpbQ9j5V/ 1 0.80 1
+12 8377 /tmp/tmpbQ9j5V/ 1 0.60 1
+12 8375 /tmp/tmpbQ9j5V/ 1 0.70 1
+12 8376 /tmp/tmpbQ9j5V/ 1 0.80 1
+12 8378 /tmp/tmpbQ9j5V/ 1 0.80 1
+12 8379 /tmp/tmpbQ9j5V/ 3 0.90 1
+
+13 8365 /tmp/tmpbQ9j5V/ 2 1.20 1
+13 8366 /tmp/tmpbQ9j5V/ 3 0.90 1
+13 8367 /tmp/tmpbQ9j5V/ 2 1.20 1
+13 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+13 8369 /tmp/tmpbQ9j5V/ 2 0.80 1
+13 8370 /tmp/tmpbQ9j5V/ 1 0.70 1
+13 8371 /tmp/tmpbQ9j5V/ 2 0.80 1
+13 8364 /tmp/tmpbQ9j5V/ 2 1.00 1
+13 8372 /tmp/tmpbQ9j5V/ 1 0.80 1
+13 8373 /tmp/tmpbQ9j5V/ 1 0.70 1
+13 8374 /tmp/tmpbQ9j5V/ 1 0.80 1
+13 8377 /tmp/tmpbQ9j5V/ 2 1.20 1
+13 8375 /tmp/tmpbQ9j5V/ 1 0.70 1
+13 8376 /tmp/tmpbQ9j5V/ 1 0.80 1
+13 8378 /tmp/tmpbQ9j5V/ 1 0.80 1
+13 8379 /tmp/tmpbQ9j5V/ 3 0.90 1
+
+14 8365 /tmp/tmpbQ9j5V/ 2 1.20 1
+14 8366 /tmp/tmpbQ9j5V/ 3 0.90 1
+14 8367 /tmp/tmpbQ9j5V/ 2 1.20 1
+14 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+14 8369 /tmp/tmpbQ9j5V/ 2 0.80 1
+14 8370 /tmp/tmpbQ9j5V/ 1 0.70 1
+14 8371 /tmp/tmpbQ9j5V/ 2 0.80 1
+14 8364 /tmp/tmpbQ9j5V/ 2 1.00 1
+14 8372 /tmp/tmpbQ9j5V/ 1 0.80 1
+14 8373 /tmp/tmpbQ9j5V/ 1 0.70 1
+14 8374 /tmp/tmpbQ9j5V/ 1 0.80 1
+14 8377 /tmp/tmpbQ9j5V/ 2 1.20 1
+14 8375 /tmp/tmpbQ9j5V/ 1 0.70 1
+14 8376 /tmp/tmpbQ9j5V/ 1 0.80 1
+14 8378 /tmp/tmpbQ9j5V/ 1 0.80 1
+14 8379 /tmp/tmpbQ9j5V/ 3 0.90 1
+
+15 8365 /tmp/tmpbQ9j5V/ 2 1.20 1
+15 8366 /tmp/tmpbQ9j5V/ 4 1.20 1
+15 8367 /tmp/tmpbQ9j5V/ 2 1.20 1
+15 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+15 8369 /tmp/tmpbQ9j5V/ 3 1.20 1
+15 8370 /tmp/tmpbQ9j5V/ 2 1.40 1
+15 8371 /tmp/tmpbQ9j5V/ 3 1.20 1
+15 8364 /tmp/tmpbQ9j5V/ 2 1.00 1
+15 8372 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8373 /tmp/tmpbQ9j5V/ 2 1.40 1
+15 8374 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8377 /tmp/tmpbQ9j5V/ 2 1.20 1
+15 8375 /tmp/tmpbQ9j5V/ 2 1.40 1
+15 8376 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8378 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8379 /tmp/tmpbQ9j5V/ 4 1.20 1
+
+16 8365 /tmp/tmpbQ9j5V/ 2 1.20 1
+16 8366 /tmp/tmpbQ9j5V/ 4 1.20 1
+16 8367 /tmp/tmpbQ9j5V/ 2 1.20 1
+16 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+16 8369 /tmp/tmpbQ9j5V/ 3 1.20 1
+16 8370 /tmp/tmpbQ9j5V/ 2 1.40 1
+16 8371 /tmp/tmpbQ9j5V/ 3 1.20 1
+16 8364 /tmp/tmpbQ9j5V/ 2 1.00 1
+16 8372 /tmp/tmpbQ9j5V/ 1 0.80 1
+16 8373 /tmp/tmpbQ9j5V/ 2 1.40 1
+16 8374 /tmp/tmpbQ9j5V/ 1 0.80 1
+16 8377 /tmp/tmpbQ9j5V/ 2 1.20 1
+16 8375 /tmp/tmpbQ9j5V/ 2 1.40 1
+16 8376 /tmp/tmpbQ9j5V/ 2 1.60 1
+16 8378 /tmp/tmpbQ9j5V/ 2 1.60 1
+16 8379 /tmp/tmpbQ9j5V/ 4 1.20 1
+
+17 8365 /tmp/tmpbQ9j5V/ 2 1.20 1
+17 8366 /tmp/tmpbQ9j5V/ 4 1.20 1
+17 8367 /tmp/tmpbQ9j5V/ 2 1.20 1
+17 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+17 8369 /tmp/tmpbQ9j5V/ 3 1.20 1
+17 8370 /tmp/tmpbQ9j5V/ 2 1.40 1
+17 8371 /tmp/tmpbQ9j5V/ 3 1.20 1
+17 8364 /tmp/tmpbQ9j5V/ 3 1.50 1
+17 8372 /tmp/tmpbQ9j5V/ 2 1.60 1
+17 8373 /tmp/tmpbQ9j5V/ 2 1.40 1
+17 8374 /tmp/tmpbQ9j5V/ 2 1.60 1
+17 8377 /tmp/tmpbQ9j5V/ 2 1.20 1
+17 8375 /tmp/tmpbQ9j5V/ 2 1.40 1
+17 8376 /tmp/tmpbQ9j5V/ 2 1.60 1
+17 8378 /tmp/tmpbQ9j5V/ 2 1.60 1
+17 8379 /tmp/tmpbQ9j5V/ 4 1.20 1
+
+18 8365 /tmp/tmpbQ9j5V/ 2 1.20 1
+18 8366 /tmp/tmpbQ9j5V/ 4 1.20 1
+18 8367 /tmp/tmpbQ9j5V/ 2 1.20 1
+18 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+18 8369 /tmp/tmpbQ9j5V/ 3 1.20 1
+18 8370 /tmp/tmpbQ9j5V/ 2 1.40 1
+18 8371 /tmp/tmpbQ9j5V/ 3 1.20 1
+18 8364 /tmp/tmpbQ9j5V/ 3 1.50 1
+18 8372 /tmp/tmpbQ9j5V/ 2 1.60 1
+18 8373 /tmp/tmpbQ9j5V/ 2 1.40 1
+18 8374 /tmp/tmpbQ9j5V/ 2 1.60 1
+18 8377 /tmp/tmpbQ9j5V/ 2 1.20 1
+18 8375 /tmp/tmpbQ9j5V/ 2 1.40 1
+18 8376 /tmp/tmpbQ9j5V/ 2 1.60 1
+18 8378 /tmp/tmpbQ9j5V/ 2 1.60 1
+18 8379 /tmp/tmpbQ9j5V/ 4 1.20 1
+
+19 8365 /tmp/tmpbQ9j5V/ 3 1.80 1
+19 8366 /tmp/tmpbQ9j5V/ 5 1.50 1
+19 8367 /tmp/tmpbQ9j5V/ 3 1.80 1
+19 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+19 8369 /tmp/tmpbQ9j5V/ 4 1.60 1
+19 8370 /tmp/tmpbQ9j5V/ 2 1.40 1
+19 8371 /tmp/tmpbQ9j5V/ 4 1.60 1
+19 8364 /tmp/tmpbQ9j5V/ 3 1.50 1
+19 8372 /tmp/tmpbQ9j5V/ 2 1.60 1
+19 8373 /tmp/tmpbQ9j5V/ 2 1.40 1
+19 8374 /tmp/tmpbQ9j5V/ 2 1.60 1
+19 8377 /tmp/tmpbQ9j5V/ 2 1.20 1
+19 8375 /tmp/tmpbQ9j5V/ 2 1.40 1
+19 8376 /tmp/tmpbQ9j5V/ 2 1.60 1
+19 8378 /tmp/tmpbQ9j5V/ 2 1.60 1
+19 8379 /tmp/tmpbQ9j5V/ 5 1.50 1
+
+20 8365 /tmp/tmpbQ9j5V/ 3 1.80 1
+20 8366 /tmp/tmpbQ9j5V/ 5 1.50 1
+20 8367 /tmp/tmpbQ9j5V/ 3 1.80 1
+20 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+20 8369 /tmp/tmpbQ9j5V/ 4 1.60 1
+20 8370 /tmp/tmpbQ9j5V/ 2 1.40 1
+20 8371 /tmp/tmpbQ9j5V/ 4 1.60 1
+20 8364 /tmp/tmpbQ9j5V/ 3 1.50 1
+20 8372 /tmp/tmpbQ9j5V/ 2 1.60 1
+20 8373 /tmp/tmpbQ9j5V/ 2 1.40 1
+20 8374 /tmp/tmpbQ9j5V/ 2 1.60 1
+20 8377 /tmp/tmpbQ9j5V/ 3 1.80 1
+20 8375 /tmp/tmpbQ9j5V/ 2 1.40 1
+20 8376 /tmp/tmpbQ9j5V/ 2 1.60 1
+20 8378 /tmp/tmpbQ9j5V/ 2 1.60 1
+20 8379 /tmp/tmpbQ9j5V/ 5 1.50 1
+
+21 8365 /tmp/tmpbQ9j5V/ 3 1.80 1
+21 8366 /tmp/tmpbQ9j5V/ 5 1.50 1
+21 8367 /tmp/tmpbQ9j5V/ 3 1.80 1
+21 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+21 8369 /tmp/tmpbQ9j5V/ 4 1.60 1
+21 8370 /tmp/tmpbQ9j5V/ 2 1.40 1
+21 8371 /tmp/tmpbQ9j5V/ 4 1.60 1
+21 8364 /tmp/tmpbQ9j5V/ 3 1.50 1
+21 8372 /tmp/tmpbQ9j5V/ 2 1.60 1
+21 8373 /tmp/tmpbQ9j5V/ 2 1.40 1
+21 8374 /tmp/tmpbQ9j5V/ 2 1.60 1
+21 8377 /tmp/tmpbQ9j5V/ 3 1.80 1
+21 8375 /tmp/tmpbQ9j5V/ 2 1.40 1
+21 8376 /tmp/tmpbQ9j5V/ 2 1.60 1
+21 8378 /tmp/tmpbQ9j5V/ 2 1.60 1
+21 8379 /tmp/tmpbQ9j5V/ 5 1.50 1
+
+22 8365 /tmp/tmpbQ9j5V/ 3 1.80 1
+22 8366 /tmp/tmpbQ9j5V/ 6 1.80 1
+22 8367 /tmp/tmpbQ9j5V/ 3 1.80 1
+22 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+22 8369 /tmp/tmpbQ9j5V/ 4 1.60 1
+22 8370 /tmp/tmpbQ9j5V/ 3 2.10 1
+22 8371 /tmp/tmpbQ9j5V/ 4 1.60 1
+22 8364 /tmp/tmpbQ9j5V/ 4 2.00 1
+22 8372 /tmp/tmpbQ9j5V/ 2 1.60 1
+22 8373 /tmp/tmpbQ9j5V/ 3 2.10 1
+22 8374 /tmp/tmpbQ9j5V/ 2 1.60 1
+22 8377 /tmp/tmpbQ9j5V/ 3 1.80 1
+22 8375 /tmp/tmpbQ9j5V/ 3 2.10 1
+22 8376 /tmp/tmpbQ9j5V/ 2 1.60 1
+22 8378 /tmp/tmpbQ9j5V/ 2 1.60 1
+22 8379 /tmp/tmpbQ9j5V/ 6 1.80 1
+
+23 8365 /tmp/tmpbQ9j5V/ 3 1.80 1
+23 8366 /tmp/tmpbQ9j5V/ 6 1.80 1
+23 8367 /tmp/tmpbQ9j5V/ 3 1.80 1
+23 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+23 8369 /tmp/tmpbQ9j5V/ 4 1.60 1
+23 8370 /tmp/tmpbQ9j5V/ 3 2.10 1
+23 8371 /tmp/tmpbQ9j5V/ 4 1.60 1
+23 8364 /tmp/tmpbQ9j5V/ 4 2.00 1
+23 8372 /tmp/tmpbQ9j5V/ 2 1.60 1
+23 8373 /tmp/tmpbQ9j5V/ 3 2.10 1
+23 8374 /tmp/tmpbQ9j5V/ 2 1.60 1
+23 8377 /tmp/tmpbQ9j5V/ 3 1.80 1
+23 8375 /tmp/tmpbQ9j5V/ 3 2.10 1
+23 8376 /tmp/tmpbQ9j5V/ 2 1.60 1
+23 8378 /tmp/tmpbQ9j5V/ 3 2.40 1
+23 8379 /tmp/tmpbQ9j5V/ 6 1.80 1
+
+24 8365 /tmp/tmpbQ9j5V/ 3 1.80 1
+24 8366 /tmp/tmpbQ9j5V/ 6 1.80 1
+24 8367 /tmp/tmpbQ9j5V/ 3 1.80 1
+24 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+24 8369 /tmp/tmpbQ9j5V/ 5 2.00 1
+24 8370 /tmp/tmpbQ9j5V/ 3 2.10 1
+24 8371 /tmp/tmpbQ9j5V/ 5 2.00 1
+24 8364 /tmp/tmpbQ9j5V/ 4 2.00 1
+24 8372 /tmp/tmpbQ9j5V/ 2 1.60 1
+24 8373 /tmp/tmpbQ9j5V/ 3 2.10 1
+24 8374 /tmp/tmpbQ9j5V/ 2 1.60 1
+24 8377 /tmp/tmpbQ9j5V/ 3 1.80 1
+24 8375 /tmp/tmpbQ9j5V/ 3 2.10 1
+24 8376 /tmp/tmpbQ9j5V/ 3 2.40 1
+24 8378 /tmp/tmpbQ9j5V/ 3 2.40 1
+24 8379 /tmp/tmpbQ9j5V/ 6 1.80 1
+
+25 8365 /tmp/tmpbQ9j5V/ 4 2.40 1
+25 8366 /tmp/tmpbQ9j5V/ 6 1.80 1
+25 8367 /tmp/tmpbQ9j5V/ 4 2.40 1
+25 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+25 8369 /tmp/tmpbQ9j5V/ 5 2.00 1
+25 8370 /tmp/tmpbQ9j5V/ 3 2.10 1
+25 8371 /tmp/tmpbQ9j5V/ 5 2.00 1
+25 8364 /tmp/tmpbQ9j5V/ 4 2.00 1
+25 8372 /tmp/tmpbQ9j5V/ 3 2.40 1
+25 8373 /tmp/tmpbQ9j5V/ 3 2.10 1
+25 8374 /tmp/tmpbQ9j5V/ 3 2.40 1
+25 8377 /tmp/tmpbQ9j5V/ 4 2.40 1
+25 8375 /tmp/tmpbQ9j5V/ 3 2.10 1
+25 8376 /tmp/tmpbQ9j5V/ 3 2.40 1
+25 8378 /tmp/tmpbQ9j5V/ 3 2.40 1
+25 8379 /tmp/tmpbQ9j5V/ 6 1.80 1
+
+26 8365 /tmp/tmpbQ9j5V/ 4 2.40 1
+26 8366 /tmp/tmpbQ9j5V/ 7 2.10 1
+26 8367 /tmp/tmpbQ9j5V/ 4 2.40 1
+26 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+26 8369 /tmp/tmpbQ9j5V/ 5 2.00 1
+26 8370 /tmp/tmpbQ9j5V/ 3 2.10 1
+26 8371 /tmp/tmpbQ9j5V/ 5 2.00 1
+26 8364 /tmp/tmpbQ9j5V/ 4 2.00 1
+26 8372 /tmp/tmpbQ9j5V/ 3 2.40 1
+26 8373 /tmp/tmpbQ9j5V/ 3 2.10 1
+26 8374 /tmp/tmpbQ9j5V/ 3 2.40 1
+26 8377 /tmp/tmpbQ9j5V/ 4 2.40 1
+26 8375 /tmp/tmpbQ9j5V/ 3 2.10 1
+26 8376 /tmp/tmpbQ9j5V/ 3 2.40 1
+26 8378 /tmp/tmpbQ9j5V/ 3 2.40 1
+26 8379 /tmp/tmpbQ9j5V/ 7 2.10 1
+
+27 8365 /tmp/tmpbQ9j5V/ 4 2.40 1
+27 8366 /tmp/tmpbQ9j5V/ 7 2.10 1
+27 8367 /tmp/tmpbQ9j5V/ 4 2.40 1
+27 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+27 8369 /tmp/tmpbQ9j5V/ 5 2.00 1
+27 8370 /tmp/tmpbQ9j5V/ 3 2.10 1
+27 8371 /tmp/tmpbQ9j5V/ 5 2.00 1
+27 8364 /tmp/tmpbQ9j5V/ 5 2.50 1
+27 8372 /tmp/tmpbQ9j5V/ 3 2.40 1
+27 8373 /tmp/tmpbQ9j5V/ 3 2.10 1
+27 8374 /tmp/tmpbQ9j5V/ 3 2.40 1
+27 8377 /tmp/tmpbQ9j5V/ 4 2.40 1
+27 8375 /tmp/tmpbQ9j5V/ 3 2.10 1
+27 8376 /tmp/tmpbQ9j5V/ 3 2.40 1
+27 8378 /tmp/tmpbQ9j5V/ 3 2.40 1
+27 8379 /tmp/tmpbQ9j5V/ 7 2.10 1
+
+28 8365 /tmp/tmpbQ9j5V/ 4 2.40 1
+28 8366 /tmp/tmpbQ9j5V/ 7 2.10 1
+28 8367 /tmp/tmpbQ9j5V/ 4 2.40 1
+28 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+28 8369 /tmp/tmpbQ9j5V/ 6 2.40 1
+28 8370 /tmp/tmpbQ9j5V/ 3 2.10 1
+28 8371 /tmp/tmpbQ9j5V/ 6 2.40 1
+28 8364 /tmp/tmpbQ9j5V/ 5 2.50 1
+28 8372 /tmp/tmpbQ9j5V/ 3 2.40 1
+28 8373 /tmp/tmpbQ9j5V/ 3 2.10 1
+28 8374 /tmp/tmpbQ9j5V/ 3 2.40 1
+28 8377 /tmp/tmpbQ9j5V/ 4 2.40 1
+28 8375 /tmp/tmpbQ9j5V/ 3 2.10 1
+28 8376 /tmp/tmpbQ9j5V/ 3 2.40 1
+28 8378 /tmp/tmpbQ9j5V/ 3 2.40 1
+28 8379 /tmp/tmpbQ9j5V/ 7 2.10 1
+
+29 8365 /tmp/tmpbQ9j5V/ 4 2.40 1
+29 8366 /tmp/tmpbQ9j5V/ 7 2.10 1
+29 8367 /tmp/tmpbQ9j5V/ 4 2.40 1
+29 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+29 8369 /tmp/tmpbQ9j5V/ 6 2.40 1
+29 8370 /tmp/tmpbQ9j5V/ 4 2.80 1
+29 8371 /tmp/tmpbQ9j5V/ 6 2.40 1
+29 8364 /tmp/tmpbQ9j5V/ 5 2.50 1
+29 8372 /tmp/tmpbQ9j5V/ 3 2.40 1
+29 8373 /tmp/tmpbQ9j5V/ 4 2.80 1
+29 8374 /tmp/tmpbQ9j5V/ 3 2.40 1
+29 8377 /tmp/tmpbQ9j5V/ 4 2.40 1
+29 8375 /tmp/tmpbQ9j5V/ 4 2.80 1
+29 8376 /tmp/tmpbQ9j5V/ 3 2.40 1
+29 8378 /tmp/tmpbQ9j5V/ 3 2.40 1
+29 8379 /tmp/tmpbQ9j5V/ 7 2.10 1
+
+30 8365 /tmp/tmpbQ9j5V/ 4 2.40 1
+30 8366 /tmp/tmpbQ9j5V/ 8 2.40 1
+30 8367 /tmp/tmpbQ9j5V/ 4 2.40 1
+30 8368 /tmp/tmpbQ9j5V/ 0 0.00 19
+30 8369 /tmp/tmpbQ9j5V/ 6 2.40 1
+30 8370 /tmp/tmpbQ9j5V/ 4 2.80 1
+30 8371 /tmp/tmpbQ9j5V/ 6 2.40 1
+30 8364 /tmp/tmpbQ9j5V/ 5 2.50 1
+30 8372 /tmp/tmpbQ9j5V/ 3 2.40 1
+30 8373 /tmp/tmpbQ9j5V/ 4 2.80 1
+30 8374 /tmp/tmpbQ9j5V/ 3 2.40 1
+30 8377 /tmp/tmpbQ9j5V/ 4 2.40 1
+30 8375 /tmp/tmpbQ9j5V/ 4 2.80 1
+30 8376 /tmp/tmpbQ9j5V/ 3 2.40 1
+30 8378 /tmp/tmpbQ9j5V/ 3 2.40 1
+30 8379 /tmp/tmpbQ9j5V/ 8 2.40 1
+
+
+
+test manyclients PASSED (6 of 6)
+ (Check that up to 16 clients can run concurrently)
+
+starting manyclients2
+
+**********************************************************************
+
+Test manyclients2
+Check that when a client leaves, another can enter
+
+**********************************************************************
+running server with: /tmp/tmpbQ9j5V/p/stats_server -k 287
+running client with: /tmp/tmpbQ9j5V/p/stats_client -c 800000000 -s 200000000 -p 1 -k 287
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -k 287 -s 600000000 -c 400000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -s 400000000 -c 600000000 -k 287 -p 1
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -c 400000000 -k 287 -s 600000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -s 500000000 -c 500000000 -k 287
+running client with: /tmp/tmpbQ9j5V/p/stats_client -k 287 -c 800000000 -p 1 -s 200000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -s 500000000 -p 1 -k 287 -c 500000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -s 200000000 -k 287 -c 800000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -k 287 -s 700000000 -c 300000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -c 600000000 -s 400000000 -p 1 -k 287
+running client with: /tmp/tmpbQ9j5V/p/stats_client -s 200000000 -p 1 -k 287 -c 800000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -k 287 -s 300000000 -c 700000000 -p 1
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -s 600000000 -c 400000000 -k 287
+running client with: /tmp/tmpbQ9j5V/p/stats_client -s 300000000 -k 287 -c 700000000 -p 1
+running client with: /tmp/tmpbQ9j5V/p/stats_client -k 287 -c 300000000 -p 1 -s 700000000
+running client with: /tmp/tmpbQ9j5V/p/stats_client -p 1 -s 700000000 -c 300000000 -k 287
+running client with: /tmp/tmpbQ9j5V/p/stats_client -s 300000000 -k 287 -c 700000000 -p 1
+server output:
+
+2 8523 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8525 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8524 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8520 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8515 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8516 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8517 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8518 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8519 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8522 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8521 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8514 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8513 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8512 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8511 /tmp/tmpbQ9j5V/ 0 0.00 1
+2 8510 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+3 8523 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8525 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8524 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8520 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8515 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8516 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8517 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8518 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8519 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8522 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8521 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8514 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8513 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8512 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8511 /tmp/tmpbQ9j5V/ 0 0.00 1
+3 8510 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+4 8523 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8525 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8524 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8520 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8515 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8516 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8517 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8518 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8519 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8522 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8521 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8514 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8513 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8512 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8511 /tmp/tmpbQ9j5V/ 0 0.00 1
+4 8510 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+5 8523 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8525 /tmp/tmpbQ9j5V/ 1 0.30 1
+5 8524 /tmp/tmpbQ9j5V/ 1 0.30 1
+5 8520 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8515 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8516 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8517 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8518 /tmp/tmpbQ9j5V/ 1 0.30 1
+5 8519 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8522 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8521 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8514 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8513 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8512 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8511 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8510 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+6 8523 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8525 /tmp/tmpbQ9j5V/ 1 0.30 1
+6 8524 /tmp/tmpbQ9j5V/ 1 0.30 1
+6 8520 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8515 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8516 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8517 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8518 /tmp/tmpbQ9j5V/ 1 0.30 1
+6 8519 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8522 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8521 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8514 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8513 /tmp/tmpbQ9j5V/ 1 0.40 1
+6 8512 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8511 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8510 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+7 8523 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8525 /tmp/tmpbQ9j5V/ 1 0.30 1
+7 8524 /tmp/tmpbQ9j5V/ 1 0.30 1
+7 8520 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8515 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8516 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8517 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8518 /tmp/tmpbQ9j5V/ 1 0.30 1
+7 8519 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8522 /tmp/tmpbQ9j5V/ 1 0.40 1
+7 8521 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8514 /tmp/tmpbQ9j5V/ 1 0.50 1
+7 8513 /tmp/tmpbQ9j5V/ 1 0.40 1
+7 8512 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8511 /tmp/tmpbQ9j5V/ 1 0.40 1
+7 8510 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+8 8523 /tmp/tmpbQ9j5V/ 1 0.70 1
+8 8525 /tmp/tmpbQ9j5V/ 1 0.30 1
+8 8524 /tmp/tmpbQ9j5V/ 1 0.30 1
+8 8520 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8515 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8516 /tmp/tmpbQ9j5V/ 1 0.50 1
+8 8517 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8518 /tmp/tmpbQ9j5V/ 1 0.30 1
+8 8519 /tmp/tmpbQ9j5V/ 1 0.60 1
+8 8522 /tmp/tmpbQ9j5V/ 1 0.40 1
+8 8521 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8514 /tmp/tmpbQ9j5V/ 1 0.50 1
+8 8513 /tmp/tmpbQ9j5V/ 1 0.40 1
+8 8512 /tmp/tmpbQ9j5V/ 1 0.60 1
+8 8511 /tmp/tmpbQ9j5V/ 1 0.40 1
+8 8510 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+9 8523 /tmp/tmpbQ9j5V/ 1 0.70 1
+9 8525 /tmp/tmpbQ9j5V/ 2 0.60 1
+9 8524 /tmp/tmpbQ9j5V/ 2 0.60 1
+9 8520 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8515 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8516 /tmp/tmpbQ9j5V/ 1 0.50 1
+9 8517 /tmp/tmpbQ9j5V/ 1 0.80 1
+9 8518 /tmp/tmpbQ9j5V/ 2 0.60 1
+9 8519 /tmp/tmpbQ9j5V/ 1 0.60 1
+9 8522 /tmp/tmpbQ9j5V/ 1 0.40 1
+9 8521 /tmp/tmpbQ9j5V/ 1 0.70 1
+9 8514 /tmp/tmpbQ9j5V/ 1 0.50 1
+9 8513 /tmp/tmpbQ9j5V/ 1 0.40 1
+9 8512 /tmp/tmpbQ9j5V/ 1 0.60 1
+9 8511 /tmp/tmpbQ9j5V/ 1 0.40 1
+9 8510 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+10 8523 /tmp/tmpbQ9j5V/ 1 0.70 1
+10 8525 /tmp/tmpbQ9j5V/ 2 0.60 1
+10 8524 /tmp/tmpbQ9j5V/ 2 0.60 1
+10 8520 /tmp/tmpbQ9j5V/ 1 0.80 1
+10 8515 /tmp/tmpbQ9j5V/ 1 0.80 1
+10 8516 /tmp/tmpbQ9j5V/ 1 0.50 1
+10 8517 /tmp/tmpbQ9j5V/ 1 0.80 1
+10 8518 /tmp/tmpbQ9j5V/ 2 0.60 1
+10 8519 /tmp/tmpbQ9j5V/ 1 0.60 1
+10 8522 /tmp/tmpbQ9j5V/ 1 0.40 1
+10 8521 /tmp/tmpbQ9j5V/ 1 0.70 1
+10 8514 /tmp/tmpbQ9j5V/ 1 0.50 1
+10 8513 /tmp/tmpbQ9j5V/ 1 0.40 1
+10 8512 /tmp/tmpbQ9j5V/ 1 0.60 1
+10 8511 /tmp/tmpbQ9j5V/ 1 0.40 1
+10 8510 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+11 8525 /tmp/tmpbQ9j5V/ 2 0.60 1
+11 8524 /tmp/tmpbQ9j5V/ 2 0.60 1
+11 8520 /tmp/tmpbQ9j5V/ 1 0.80 1
+11 8515 /tmp/tmpbQ9j5V/ 1 0.80 1
+11 8516 /tmp/tmpbQ9j5V/ 1 0.50 1
+11 8517 /tmp/tmpbQ9j5V/ 1 0.80 1
+11 8518 /tmp/tmpbQ9j5V/ 2 0.60 1
+11 8519 /tmp/tmpbQ9j5V/ 1 0.60 1
+11 8522 /tmp/tmpbQ9j5V/ 2 0.80 1
+11 8521 /tmp/tmpbQ9j5V/ 1 0.70 1
+11 8514 /tmp/tmpbQ9j5V/ 1 0.50 1
+11 8513 /tmp/tmpbQ9j5V/ 2 0.80 1
+11 8512 /tmp/tmpbQ9j5V/ 1 0.60 1
+11 8511 /tmp/tmpbQ9j5V/ 2 0.80 1
+11 8510 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+12 8525 /tmp/tmpbQ9j5V/ 2 0.60 1
+12 8524 /tmp/tmpbQ9j5V/ 2 0.60 1
+12 8520 /tmp/tmpbQ9j5V/ 1 0.80 1
+12 8515 /tmp/tmpbQ9j5V/ 1 0.80 1
+12 8516 /tmp/tmpbQ9j5V/ 1 0.50 1
+12 8517 /tmp/tmpbQ9j5V/ 1 0.80 1
+12 8518 /tmp/tmpbQ9j5V/ 2 0.60 1
+12 8519 /tmp/tmpbQ9j5V/ 1 0.60 1
+12 8522 /tmp/tmpbQ9j5V/ 2 0.80 1
+12 8521 /tmp/tmpbQ9j5V/ 1 0.70 1
+12 8514 /tmp/tmpbQ9j5V/ 2 1.00 1
+12 8513 /tmp/tmpbQ9j5V/ 2 0.80 1
+12 8512 /tmp/tmpbQ9j5V/ 1 0.60 1
+12 8511 /tmp/tmpbQ9j5V/ 2 0.80 1
+12 8510 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+13 8541 /tmp/tmpbQ9j5V/ 0 0.00 1
+13 8525 /tmp/tmpbQ9j5V/ 3 0.90 1
+13 8524 /tmp/tmpbQ9j5V/ 3 0.90 1
+13 8520 /tmp/tmpbQ9j5V/ 1 0.80 1
+13 8515 /tmp/tmpbQ9j5V/ 1 0.80 1
+13 8516 /tmp/tmpbQ9j5V/ 2 1.00 1
+13 8517 /tmp/tmpbQ9j5V/ 1 0.80 1
+13 8518 /tmp/tmpbQ9j5V/ 3 0.90 1
+13 8519 /tmp/tmpbQ9j5V/ 1 0.60 1
+13 8522 /tmp/tmpbQ9j5V/ 2 0.80 1
+13 8521 /tmp/tmpbQ9j5V/ 1 0.70 1
+13 8514 /tmp/tmpbQ9j5V/ 2 1.00 1
+13 8513 /tmp/tmpbQ9j5V/ 2 0.80 1
+13 8512 /tmp/tmpbQ9j5V/ 1 0.60 1
+13 8511 /tmp/tmpbQ9j5V/ 2 0.80 1
+13 8510 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+14 8541 /tmp/tmpbQ9j5V/ 0 0.00 1
+14 8525 /tmp/tmpbQ9j5V/ 3 0.90 1
+14 8524 /tmp/tmpbQ9j5V/ 3 0.90 1
+14 8520 /tmp/tmpbQ9j5V/ 1 0.80 1
+14 8515 /tmp/tmpbQ9j5V/ 1 0.80 1
+14 8516 /tmp/tmpbQ9j5V/ 2 1.00 1
+14 8517 /tmp/tmpbQ9j5V/ 1 0.80 1
+14 8518 /tmp/tmpbQ9j5V/ 3 0.90 1
+14 8519 /tmp/tmpbQ9j5V/ 1 0.60 1
+14 8522 /tmp/tmpbQ9j5V/ 2 0.80 1
+14 8521 /tmp/tmpbQ9j5V/ 1 0.70 1
+14 8514 /tmp/tmpbQ9j5V/ 2 1.00 1
+14 8513 /tmp/tmpbQ9j5V/ 2 0.80 1
+14 8512 /tmp/tmpbQ9j5V/ 2 1.20 1
+14 8511 /tmp/tmpbQ9j5V/ 2 0.80 1
+14 8510 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+15 8541 /tmp/tmpbQ9j5V/ 0 0.00 1
+15 8525 /tmp/tmpbQ9j5V/ 3 0.90 1
+15 8524 /tmp/tmpbQ9j5V/ 3 0.90 1
+15 8520 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8515 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8516 /tmp/tmpbQ9j5V/ 2 1.00 1
+15 8517 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8518 /tmp/tmpbQ9j5V/ 3 0.90 1
+15 8519 /tmp/tmpbQ9j5V/ 2 1.20 1
+15 8522 /tmp/tmpbQ9j5V/ 2 0.80 1
+15 8521 /tmp/tmpbQ9j5V/ 1 0.70 1
+15 8514 /tmp/tmpbQ9j5V/ 2 1.00 1
+15 8513 /tmp/tmpbQ9j5V/ 2 0.80 1
+15 8512 /tmp/tmpbQ9j5V/ 2 1.20 1
+15 8511 /tmp/tmpbQ9j5V/ 3 1.20 1
+15 8510 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+16 8541 /tmp/tmpbQ9j5V/ 0 0.00 1
+16 8525 /tmp/tmpbQ9j5V/ 3 0.90 1
+16 8524 /tmp/tmpbQ9j5V/ 4 1.20 1
+16 8520 /tmp/tmpbQ9j5V/ 1 0.80 1
+16 8515 /tmp/tmpbQ9j5V/ 1 0.80 1
+16 8516 /tmp/tmpbQ9j5V/ 2 1.00 1
+16 8517 /tmp/tmpbQ9j5V/ 1 0.80 1
+16 8518 /tmp/tmpbQ9j5V/ 4 1.20 1
+16 8519 /tmp/tmpbQ9j5V/ 2 1.20 1
+16 8522 /tmp/tmpbQ9j5V/ 3 1.20 1
+16 8521 /tmp/tmpbQ9j5V/ 1 0.70 1
+16 8514 /tmp/tmpbQ9j5V/ 2 1.00 1
+16 8513 /tmp/tmpbQ9j5V/ 3 1.20 1
+16 8512 /tmp/tmpbQ9j5V/ 2 1.20 1
+16 8511 /tmp/tmpbQ9j5V/ 3 1.20 1
+16 8510 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+17 8541 /tmp/tmpbQ9j5V/ 0 0.00 1
+17 8525 /tmp/tmpbQ9j5V/ 4 1.20 1
+17 8524 /tmp/tmpbQ9j5V/ 4 1.20 1
+17 8520 /tmp/tmpbQ9j5V/ 1 0.80 1
+17 8515 /tmp/tmpbQ9j5V/ 1 0.80 1
+17 8516 /tmp/tmpbQ9j5V/ 2 1.00 1
+17 8517 /tmp/tmpbQ9j5V/ 2 1.60 1
+17 8518 /tmp/tmpbQ9j5V/ 4 1.20 1
+17 8519 /tmp/tmpbQ9j5V/ 2 1.20 1
+17 8522 /tmp/tmpbQ9j5V/ 3 1.20 1
+17 8521 /tmp/tmpbQ9j5V/ 2 1.40 1
+17 8514 /tmp/tmpbQ9j5V/ 2 1.00 1
+17 8513 /tmp/tmpbQ9j5V/ 3 1.20 1
+17 8512 /tmp/tmpbQ9j5V/ 2 1.20 1
+17 8511 /tmp/tmpbQ9j5V/ 3 1.20 1
+17 8510 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+18 8541 /tmp/tmpbQ9j5V/ 0 0.00 1
+18 8525 /tmp/tmpbQ9j5V/ 4 1.20 1
+18 8524 /tmp/tmpbQ9j5V/ 4 1.20 1
+18 8520 /tmp/tmpbQ9j5V/ 1 0.80 1
+18 8515 /tmp/tmpbQ9j5V/ 1 0.80 1
+18 8516 /tmp/tmpbQ9j5V/ 2 1.00 1
+18 8517 /tmp/tmpbQ9j5V/ 2 1.60 1
+18 8518 /tmp/tmpbQ9j5V/ 4 1.20 1
+18 8519 /tmp/tmpbQ9j5V/ 2 1.20 1
+18 8522 /tmp/tmpbQ9j5V/ 3 1.20 1
+18 8521 /tmp/tmpbQ9j5V/ 2 1.40 1
+18 8514 /tmp/tmpbQ9j5V/ 3 1.50 1
+18 8513 /tmp/tmpbQ9j5V/ 3 1.20 1
+18 8512 /tmp/tmpbQ9j5V/ 2 1.20 1
+18 8511 /tmp/tmpbQ9j5V/ 3 1.20 1
+18 8510 /tmp/tmpbQ9j5V/ 1 0.80 1
+
+19 8541 /tmp/tmpbQ9j5V/ 1 0.70 1
+19 8525 /tmp/tmpbQ9j5V/ 4 1.20 1
+19 8524 /tmp/tmpbQ9j5V/ 4 1.20 1
+19 8520 /tmp/tmpbQ9j5V/ 2 1.60 1
+19 8515 /tmp/tmpbQ9j5V/ 2 1.60 1
+19 8516 /tmp/tmpbQ9j5V/ 3 1.50 1
+19 8517 /tmp/tmpbQ9j5V/ 2 1.60 1
+19 8518 /tmp/tmpbQ9j5V/ 4 1.20 1
+19 8519 /tmp/tmpbQ9j5V/ 2 1.20 1
+19 8522 /tmp/tmpbQ9j5V/ 3 1.20 1
+19 8521 /tmp/tmpbQ9j5V/ 2 1.40 1
+19 8514 /tmp/tmpbQ9j5V/ 3 1.50 1
+19 8513 /tmp/tmpbQ9j5V/ 3 1.20 1
+19 8512 /tmp/tmpbQ9j5V/ 2 1.20 1
+19 8511 /tmp/tmpbQ9j5V/ 3 1.20 1
+19 8510 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+20 8541 /tmp/tmpbQ9j5V/ 1 0.70 1
+20 8525 /tmp/tmpbQ9j5V/ 4 1.20 1
+20 8524 /tmp/tmpbQ9j5V/ 5 1.50 1
+20 8520 /tmp/tmpbQ9j5V/ 2 1.60 1
+20 8515 /tmp/tmpbQ9j5V/ 2 1.60 1
+20 8516 /tmp/tmpbQ9j5V/ 3 1.50 1
+20 8517 /tmp/tmpbQ9j5V/ 2 1.60 1
+20 8518 /tmp/tmpbQ9j5V/ 5 1.50 1
+20 8519 /tmp/tmpbQ9j5V/ 2 1.20 1
+20 8522 /tmp/tmpbQ9j5V/ 3 1.20 1
+20 8521 /tmp/tmpbQ9j5V/ 2 1.40 1
+20 8514 /tmp/tmpbQ9j5V/ 3 1.50 1
+20 8513 /tmp/tmpbQ9j5V/ 4 1.60 1
+20 8512 /tmp/tmpbQ9j5V/ 3 1.80 1
+20 8511 /tmp/tmpbQ9j5V/ 4 1.60 1
+20 8510 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+21 8541 /tmp/tmpbQ9j5V/ 1 0.70 1
+21 8525 /tmp/tmpbQ9j5V/ 5 1.50 1
+21 8524 /tmp/tmpbQ9j5V/ 5 1.50 1
+21 8520 /tmp/tmpbQ9j5V/ 2 1.60 1
+21 8515 /tmp/tmpbQ9j5V/ 2 1.60 1
+21 8516 /tmp/tmpbQ9j5V/ 3 1.50 1
+21 8517 /tmp/tmpbQ9j5V/ 2 1.60 1
+21 8518 /tmp/tmpbQ9j5V/ 5 1.50 1
+21 8519 /tmp/tmpbQ9j5V/ 3 1.80 1
+21 8522 /tmp/tmpbQ9j5V/ 4 1.60 1
+21 8521 /tmp/tmpbQ9j5V/ 2 1.40 1
+21 8514 /tmp/tmpbQ9j5V/ 3 1.50 1
+21 8513 /tmp/tmpbQ9j5V/ 4 1.60 1
+21 8512 /tmp/tmpbQ9j5V/ 3 1.80 1
+21 8511 /tmp/tmpbQ9j5V/ 4 1.60 1
+21 8510 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+22 8541 /tmp/tmpbQ9j5V/ 1 0.70 1
+22 8525 /tmp/tmpbQ9j5V/ 5 1.50 1
+22 8524 /tmp/tmpbQ9j5V/ 5 1.50 1
+22 8520 /tmp/tmpbQ9j5V/ 2 1.60 1
+22 8515 /tmp/tmpbQ9j5V/ 2 1.60 1
+22 8516 /tmp/tmpbQ9j5V/ 3 1.50 1
+22 8517 /tmp/tmpbQ9j5V/ 2 1.60 1
+22 8518 /tmp/tmpbQ9j5V/ 5 1.50 1
+22 8519 /tmp/tmpbQ9j5V/ 3 1.80 1
+22 8522 /tmp/tmpbQ9j5V/ 4 1.60 1
+22 8521 /tmp/tmpbQ9j5V/ 2 1.40 1
+22 8514 /tmp/tmpbQ9j5V/ 3 1.50 1
+22 8513 /tmp/tmpbQ9j5V/ 4 1.60 1
+22 8512 /tmp/tmpbQ9j5V/ 3 1.80 1
+22 8511 /tmp/tmpbQ9j5V/ 4 1.60 1
+22 8510 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+23 8541 /tmp/tmpbQ9j5V/ 1 0.70 1
+23 8525 /tmp/tmpbQ9j5V/ 5 1.50 1
+23 8524 /tmp/tmpbQ9j5V/ 5 1.50 1
+23 8520 /tmp/tmpbQ9j5V/ 2 1.60 1
+23 8515 /tmp/tmpbQ9j5V/ 2 1.60 1
+23 8516 /tmp/tmpbQ9j5V/ 3 1.50 1
+23 8517 /tmp/tmpbQ9j5V/ 2 1.60 1
+23 8518 /tmp/tmpbQ9j5V/ 5 1.50 1
+23 8519 /tmp/tmpbQ9j5V/ 3 1.80 1
+23 8522 /tmp/tmpbQ9j5V/ 4 1.60 1
+23 8521 /tmp/tmpbQ9j5V/ 2 1.40 1
+23 8514 /tmp/tmpbQ9j5V/ 4 2.00 1
+23 8513 /tmp/tmpbQ9j5V/ 4 1.60 1
+23 8512 /tmp/tmpbQ9j5V/ 3 1.80 1
+23 8511 /tmp/tmpbQ9j5V/ 4 1.60 1
+23 8510 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+24 8541 /tmp/tmpbQ9j5V/ 1 0.70 1
+24 8525 /tmp/tmpbQ9j5V/ 6 1.80 1
+24 8524 /tmp/tmpbQ9j5V/ 6 1.80 1
+24 8520 /tmp/tmpbQ9j5V/ 2 1.60 1
+24 8515 /tmp/tmpbQ9j5V/ 2 1.60 1
+24 8516 /tmp/tmpbQ9j5V/ 4 2.00 1
+24 8517 /tmp/tmpbQ9j5V/ 2 1.60 1
+24 8518 /tmp/tmpbQ9j5V/ 6 1.80 1
+24 8519 /tmp/tmpbQ9j5V/ 3 1.80 1
+24 8522 /tmp/tmpbQ9j5V/ 4 1.60 1
+24 8521 /tmp/tmpbQ9j5V/ 2 1.40 1
+24 8514 /tmp/tmpbQ9j5V/ 4 2.00 1
+24 8513 /tmp/tmpbQ9j5V/ 4 1.60 1
+24 8512 /tmp/tmpbQ9j5V/ 3 1.80 1
+24 8511 /tmp/tmpbQ9j5V/ 5 2.00 1
+24 8510 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+25 8541 /tmp/tmpbQ9j5V/ 1 0.70 1
+25 8525 /tmp/tmpbQ9j5V/ 6 1.80 1
+25 8524 /tmp/tmpbQ9j5V/ 6 1.80 1
+25 8520 /tmp/tmpbQ9j5V/ 2 1.60 1
+25 8515 /tmp/tmpbQ9j5V/ 2 1.60 1
+25 8516 /tmp/tmpbQ9j5V/ 4 2.00 1
+25 8517 /tmp/tmpbQ9j5V/ 2 1.60 1
+25 8518 /tmp/tmpbQ9j5V/ 6 1.80 1
+25 8519 /tmp/tmpbQ9j5V/ 3 1.80 1
+25 8522 /tmp/tmpbQ9j5V/ 5 2.00 1
+25 8521 /tmp/tmpbQ9j5V/ 3 2.10 1
+25 8514 /tmp/tmpbQ9j5V/ 4 2.00 1
+25 8513 /tmp/tmpbQ9j5V/ 5 2.00 1
+25 8512 /tmp/tmpbQ9j5V/ 3 1.80 1
+25 8511 /tmp/tmpbQ9j5V/ 5 2.00 1
+25 8510 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+26 8541 /tmp/tmpbQ9j5V/ 2 1.40 1
+26 8525 /tmp/tmpbQ9j5V/ 6 1.80 1
+26 8524 /tmp/tmpbQ9j5V/ 6 1.80 1
+26 8520 /tmp/tmpbQ9j5V/ 2 1.60 1
+26 8515 /tmp/tmpbQ9j5V/ 2 1.60 1
+26 8516 /tmp/tmpbQ9j5V/ 4 2.00 1
+26 8517 /tmp/tmpbQ9j5V/ 3 2.40 1
+26 8518 /tmp/tmpbQ9j5V/ 6 1.80 1
+26 8519 /tmp/tmpbQ9j5V/ 3 1.80 1
+26 8522 /tmp/tmpbQ9j5V/ 5 2.00 1
+26 8521 /tmp/tmpbQ9j5V/ 3 2.10 1
+26 8514 /tmp/tmpbQ9j5V/ 4 2.00 1
+26 8513 /tmp/tmpbQ9j5V/ 5 2.00 1
+26 8512 /tmp/tmpbQ9j5V/ 3 1.80 1
+26 8511 /tmp/tmpbQ9j5V/ 5 2.00 1
+26 8510 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+27 8541 /tmp/tmpbQ9j5V/ 2 1.40 1
+27 8525 /tmp/tmpbQ9j5V/ 6 1.80 1
+27 8524 /tmp/tmpbQ9j5V/ 6 1.80 1
+27 8520 /tmp/tmpbQ9j5V/ 2 1.60 1
+27 8515 /tmp/tmpbQ9j5V/ 2 1.60 1
+27 8516 /tmp/tmpbQ9j5V/ 4 2.00 1
+27 8517 /tmp/tmpbQ9j5V/ 3 2.40 1
+27 8518 /tmp/tmpbQ9j5V/ 6 1.80 1
+27 8519 /tmp/tmpbQ9j5V/ 4 2.40 1
+27 8522 /tmp/tmpbQ9j5V/ 5 2.00 1
+27 8521 /tmp/tmpbQ9j5V/ 3 2.10 1
+27 8514 /tmp/tmpbQ9j5V/ 4 2.00 1
+27 8513 /tmp/tmpbQ9j5V/ 5 2.00 1
+27 8512 /tmp/tmpbQ9j5V/ 4 2.40 1
+27 8511 /tmp/tmpbQ9j5V/ 5 2.00 1
+27 8510 /tmp/tmpbQ9j5V/ 2 1.60 1
+
+28 8541 /tmp/tmpbQ9j5V/ 2 1.40 1
+28 8525 /tmp/tmpbQ9j5V/ 7 2.10 1
+28 8524 /tmp/tmpbQ9j5V/ 7 2.10 1
+28 8520 /tmp/tmpbQ9j5V/ 3 2.40 1
+28 8515 /tmp/tmpbQ9j5V/ 3 2.40 1
+28 8516 /tmp/tmpbQ9j5V/ 4 2.00 1
+28 8517 /tmp/tmpbQ9j5V/ 3 2.40 1
+28 8518 /tmp/tmpbQ9j5V/ 7 2.10 1
+28 8519 /tmp/tmpbQ9j5V/ 4 2.40 1
+28 8522 /tmp/tmpbQ9j5V/ 5 2.00 1
+28 8521 /tmp/tmpbQ9j5V/ 3 2.10 1
+28 8514 /tmp/tmpbQ9j5V/ 4 2.00 1
+28 8513 /tmp/tmpbQ9j5V/ 5 2.00 1
+28 8512 /tmp/tmpbQ9j5V/ 4 2.40 1
+28 8511 /tmp/tmpbQ9j5V/ 5 2.00 1
+28 8510 /tmp/tmpbQ9j5V/ 3 2.40 1
+
+29 8541 /tmp/tmpbQ9j5V/ 2 1.40 1
+29 8525 /tmp/tmpbQ9j5V/ 7 2.10 1
+29 8524 /tmp/tmpbQ9j5V/ 7 2.10 1
+29 8520 /tmp/tmpbQ9j5V/ 3 2.40 1
+29 8515 /tmp/tmpbQ9j5V/ 3 2.40 1
+29 8516 /tmp/tmpbQ9j5V/ 5 2.50 1
+29 8517 /tmp/tmpbQ9j5V/ 3 2.40 1
+29 8518 /tmp/tmpbQ9j5V/ 7 2.10 1
+29 8519 /tmp/tmpbQ9j5V/ 4 2.40 1
+29 8522 /tmp/tmpbQ9j5V/ 6 2.40 1
+29 8521 /tmp/tmpbQ9j5V/ 3 2.10 1
+29 8514 /tmp/tmpbQ9j5V/ 5 2.50 1
+29 8513 /tmp/tmpbQ9j5V/ 5 2.00 1
+29 8512 /tmp/tmpbQ9j5V/ 4 2.40 1
+29 8511 /tmp/tmpbQ9j5V/ 6 2.40 1
+29 8510 /tmp/tmpbQ9j5V/ 3 2.40 1
+
+30 8541 /tmp/tmpbQ9j5V/ 2 1.40 1
+30 8525 /tmp/tmpbQ9j5V/ 7 2.10 1
+30 8524 /tmp/tmpbQ9j5V/ 7 2.10 1
+30 8520 /tmp/tmpbQ9j5V/ 3 2.40 1
+30 8515 /tmp/tmpbQ9j5V/ 3 2.40 1
+30 8516 /tmp/tmpbQ9j5V/ 5 2.50 1
+30 8517 /tmp/tmpbQ9j5V/ 3 2.40 1
+30 8518 /tmp/tmpbQ9j5V/ 7 2.10 1
+30 8519 /tmp/tmpbQ9j5V/ 4 2.40 1
+30 8522 /tmp/tmpbQ9j5V/ 6 2.40 1
+30 8521 /tmp/tmpbQ9j5V/ 3 2.10 1
+30 8514 /tmp/tmpbQ9j5V/ 5 2.50 1
+30 8513 /tmp/tmpbQ9j5V/ 6 2.40 1
+30 8512 /tmp/tmpbQ9j5V/ 4 2.40 1
+30 8511 /tmp/tmpbQ9j5V/ 6 2.40 1
+30 8510 /tmp/tmpbQ9j5V/ 3 2.40 1
+
+31 8541 /tmp/tmpbQ9j5V/ 2 1.40 1
+31 8525 /tmp/tmpbQ9j5V/ 7 2.10 1
+31 8524 /tmp/tmpbQ9j5V/ 7 2.10 1
+31 8520 /tmp/tmpbQ9j5V/ 3 2.40 1
+31 8515 /tmp/tmpbQ9j5V/ 3 2.40 1
+31 8516 /tmp/tmpbQ9j5V/ 5 2.50 1
+31 8517 /tmp/tmpbQ9j5V/ 3 2.40 1
+31 8518 /tmp/tmpbQ9j5V/ 7 2.10 1
+31 8519 /tmp/tmpbQ9j5V/ 4 2.40 1
+31 8522 /tmp/tmpbQ9j5V/ 6 2.40 1
+31 8521 /tmp/tmpbQ9j5V/ 3 2.10 1
+31 8514 /tmp/tmpbQ9j5V/ 5 2.50 1
+31 8513 /tmp/tmpbQ9j5V/ 6 2.40 1
+31 8512 /tmp/tmpbQ9j5V/ 4 2.40 1
+31 8511 /tmp/tmpbQ9j5V/ 6 2.40 1
+31 8510 /tmp/tmpbQ9j5V/ 3 2.40 1
+
+
+
+test manyclients2 PASSED (6 of 6)
+ (Check that when a client leaves, another can enter)
+
+starting valgrind
+
+**********************************************************************
+
+Test valgrind
+essentially, manyclients2 run for longer and with valgrind
+
+**********************************************************************
+running server with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/17.xml /tmp/tmpbQ9j5V/p/stats_server -k 8288
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/0.xml /tmp/tmpbQ9j5V/p/stats_client -k 8288 -c 700000000 -p 1 -s 300000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/1.xml /tmp/tmpbQ9j5V/p/stats_client -p 1 -c 700000000 -s 300000000 -k 8288
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/2.xml /tmp/tmpbQ9j5V/p/stats_client -s 400000000 -k 8288 -p 1 -c 600000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/3.xml /tmp/tmpbQ9j5V/p/stats_client -s 200000000 -c 800000000 -p 1 -k 8288
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/4.xml /tmp/tmpbQ9j5V/p/stats_client -s 300000000 -c 700000000 -p 1 -k 8288
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/5.xml /tmp/tmpbQ9j5V/p/stats_client -s 200000000 -k 8288 -c 800000000 -p 1
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/6.xml /tmp/tmpbQ9j5V/p/stats_client -s 600000000 -c 400000000 -k 8288 -p 1
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/7.xml /tmp/tmpbQ9j5V/p/stats_client -c 800000000 -s 200000000 -p 1 -k 8288
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/8.xml /tmp/tmpbQ9j5V/p/stats_client -k 8288 -s 300000000 -c 700000000 -p 1
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/9.xml /tmp/tmpbQ9j5V/p/stats_client -c 300000000 -k 8288 -s 700000000 -p 1
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/10.xml /tmp/tmpbQ9j5V/p/stats_client -k 8288 -p 1 -c 600000000 -s 400000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/11.xml /tmp/tmpbQ9j5V/p/stats_client -c 400000000 -s 600000000 -p 1 -k 8288
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/12.xml /tmp/tmpbQ9j5V/p/stats_client -p 1 -k 8288 -c 500000000 -s 500000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/13.xml /tmp/tmpbQ9j5V/p/stats_client -k 8288 -s 500000000 -c 500000000 -p 1
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/14.xml /tmp/tmpbQ9j5V/p/stats_client -p 1 -k 8288 -c 500000000 -s 500000000
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/15.xml /tmp/tmpbQ9j5V/p/stats_client -c 300000000 -s 700000000 -p 1 -k 8288
+running client with: /usr/bin/valgrind --show-reachable=yes --xml=yes --xml-file=/tmp/tmpbQ9j5V/p/16.xml /tmp/tmpbQ9j5V/p/stats_client -p 1 -k 8288 -s 600000000 -c 400000000
+server output:
+
+
+
+
+5 8595 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8594 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8581 /tmp/tmpbQ9j5V/ 0 0.00 1
+5 8596 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+6 8595 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8594 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8581 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8596 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8580 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8583 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8584 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8585 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8598 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8597 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8582 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8586 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8592 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8587 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8593 /tmp/tmpbQ9j5V/ 0 0.00 1
+6 8591 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+7 8595 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8594 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8581 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8596 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8580 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8583 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8584 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8585 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8598 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8597 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8582 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8586 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8592 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8587 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8593 /tmp/tmpbQ9j5V/ 0 0.00 1
+7 8591 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+8 8595 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8594 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8581 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8596 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8580 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8583 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8584 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8585 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8598 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8597 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8582 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8586 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8592 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8587 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8593 /tmp/tmpbQ9j5V/ 0 0.00 1
+8 8591 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+9 8595 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8594 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8581 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8596 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8580 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8583 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8584 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8585 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8598 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8597 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8582 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8586 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8592 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8587 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8593 /tmp/tmpbQ9j5V/ 0 0.00 1
+9 8591 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+10 8595 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8594 /tmp/tmpbQ9j5V/ 1 0.40 1
+10 8581 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8596 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8580 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8583 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8584 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8585 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8598 /tmp/tmpbQ9j5V/ 1 0.30 1
+10 8597 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8582 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8586 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8592 /tmp/tmpbQ9j5V/ 1 0.30 1
+10 8587 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8593 /tmp/tmpbQ9j5V/ 0 0.00 1
+10 8591 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+11 8595 /tmp/tmpbQ9j5V/ 0 0.00 1
+11 8594 /tmp/tmpbQ9j5V/ 1 0.40 1
+11 8581 /tmp/tmpbQ9j5V/ 0 0.00 1
+11 8596 /tmp/tmpbQ9j5V/ 1 0.50 1
+11 8580 /tmp/tmpbQ9j5V/ 0 0.00 1
+11 8583 /tmp/tmpbQ9j5V/ 0 0.00 1
+11 8584 /tmp/tmpbQ9j5V/ 0 0.00 1
+11 8585 /tmp/tmpbQ9j5V/ 0 0.00 1
+11 8598 /tmp/tmpbQ9j5V/ 1 0.30 1
+11 8597 /tmp/tmpbQ9j5V/ 0 0.00 1
+11 8582 /tmp/tmpbQ9j5V/ 0 0.00 1
+11 8586 /tmp/tmpbQ9j5V/ 1 0.40 1
+11 8592 /tmp/tmpbQ9j5V/ 1 0.30 1
+11 8587 /tmp/tmpbQ9j5V/ 0 0.00 1
+11 8593 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+12 8595 /tmp/tmpbQ9j5V/ 1 0.50 1
+12 8594 /tmp/tmpbQ9j5V/ 1 0.40 1
+12 8581 /tmp/tmpbQ9j5V/ 0 0.00 1
+12 8596 /tmp/tmpbQ9j5V/ 1 0.50 1
+12 8580 /tmp/tmpbQ9j5V/ 0 0.00 1
+12 8583 /tmp/tmpbQ9j5V/ 0 0.00 1
+12 8584 /tmp/tmpbQ9j5V/ 0 0.00 1
+12 8585 /tmp/tmpbQ9j5V/ 0 0.00 1
+12 8598 /tmp/tmpbQ9j5V/ 1 0.30 1
+12 8597 /tmp/tmpbQ9j5V/ 1 0.50 1
+12 8582 /tmp/tmpbQ9j5V/ 0 0.00 1
+12 8586 /tmp/tmpbQ9j5V/ 1 0.40 1
+12 8592 /tmp/tmpbQ9j5V/ 1 0.30 1
+12 8587 /tmp/tmpbQ9j5V/ 0 0.00 1
+12 8593 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+13 8595 /tmp/tmpbQ9j5V/ 1 0.50 1
+13 8594 /tmp/tmpbQ9j5V/ 1 0.40 1
+13 8581 /tmp/tmpbQ9j5V/ 1 0.70 1
+13 8596 /tmp/tmpbQ9j5V/ 1 0.50 1
+13 8580 /tmp/tmpbQ9j5V/ 0 0.00 1
+13 8583 /tmp/tmpbQ9j5V/ 0 0.00 1
+13 8584 /tmp/tmpbQ9j5V/ 1 0.70 1
+13 8585 /tmp/tmpbQ9j5V/ 0 0.00 1
+13 8598 /tmp/tmpbQ9j5V/ 1 0.30 1
+13 8597 /tmp/tmpbQ9j5V/ 1 0.50 1
+13 8582 /tmp/tmpbQ9j5V/ 1 0.60 1
+13 8586 /tmp/tmpbQ9j5V/ 1 0.40 1
+13 8592 /tmp/tmpbQ9j5V/ 1 0.30 1
+13 8587 /tmp/tmpbQ9j5V/ 0 0.00 1
+13 8593 /tmp/tmpbQ9j5V/ 1 0.60 1
+
+14 8595 /tmp/tmpbQ9j5V/ 1 0.50 1
+14 8594 /tmp/tmpbQ9j5V/ 1 0.40 1
+14 8581 /tmp/tmpbQ9j5V/ 1 0.70 1
+14 8596 /tmp/tmpbQ9j5V/ 1 0.50 1
+14 8580 /tmp/tmpbQ9j5V/ 1 0.70 1
+14 8583 /tmp/tmpbQ9j5V/ 1 0.80 1
+14 8584 /tmp/tmpbQ9j5V/ 1 0.70 1
+14 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+14 8598 /tmp/tmpbQ9j5V/ 2 0.60 1
+14 8597 /tmp/tmpbQ9j5V/ 1 0.50 1
+14 8582 /tmp/tmpbQ9j5V/ 1 0.60 1
+14 8586 /tmp/tmpbQ9j5V/ 1 0.40 1
+14 8592 /tmp/tmpbQ9j5V/ 2 0.60 1
+14 8587 /tmp/tmpbQ9j5V/ 0 0.00 1
+14 8593 /tmp/tmpbQ9j5V/ 1 0.60 1
+
+15 8595 /tmp/tmpbQ9j5V/ 1 0.50 1
+15 8594 /tmp/tmpbQ9j5V/ 2 0.80 1
+15 8581 /tmp/tmpbQ9j5V/ 1 0.70 1
+15 8596 /tmp/tmpbQ9j5V/ 1 0.50 1
+15 8580 /tmp/tmpbQ9j5V/ 1 0.70 1
+15 8583 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8584 /tmp/tmpbQ9j5V/ 1 0.70 1
+15 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8598 /tmp/tmpbQ9j5V/ 2 0.60 1
+15 8597 /tmp/tmpbQ9j5V/ 1 0.50 1
+15 8582 /tmp/tmpbQ9j5V/ 1 0.60 1
+15 8586 /tmp/tmpbQ9j5V/ 2 0.80 1
+15 8592 /tmp/tmpbQ9j5V/ 2 0.60 1
+15 8587 /tmp/tmpbQ9j5V/ 1 0.80 1
+15 8593 /tmp/tmpbQ9j5V/ 1 0.60 1
+15 8668 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+16 8595 /tmp/tmpbQ9j5V/ 1 0.50 1
+16 8594 /tmp/tmpbQ9j5V/ 2 0.80 1
+16 8581 /tmp/tmpbQ9j5V/ 1 0.70 1
+16 8596 /tmp/tmpbQ9j5V/ 1 0.50 1
+16 8580 /tmp/tmpbQ9j5V/ 1 0.70 1
+16 8583 /tmp/tmpbQ9j5V/ 1 0.80 1
+16 8584 /tmp/tmpbQ9j5V/ 1 0.70 1
+16 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+16 8598 /tmp/tmpbQ9j5V/ 2 0.60 1
+16 8597 /tmp/tmpbQ9j5V/ 1 0.50 1
+16 8582 /tmp/tmpbQ9j5V/ 1 0.60 1
+16 8586 /tmp/tmpbQ9j5V/ 2 0.80 1
+16 8592 /tmp/tmpbQ9j5V/ 2 0.60 1
+16 8587 /tmp/tmpbQ9j5V/ 1 0.80 1
+16 8593 /tmp/tmpbQ9j5V/ 1 0.60 1
+16 8668 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+17 8595 /tmp/tmpbQ9j5V/ 1 0.50 1
+17 8594 /tmp/tmpbQ9j5V/ 2 0.80 1
+17 8581 /tmp/tmpbQ9j5V/ 1 0.70 1
+17 8596 /tmp/tmpbQ9j5V/ 1 0.50 1
+17 8580 /tmp/tmpbQ9j5V/ 1 0.70 1
+17 8583 /tmp/tmpbQ9j5V/ 1 0.80 1
+17 8584 /tmp/tmpbQ9j5V/ 1 0.70 1
+17 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+17 8598 /tmp/tmpbQ9j5V/ 2 0.60 1
+17 8597 /tmp/tmpbQ9j5V/ 1 0.50 1
+17 8582 /tmp/tmpbQ9j5V/ 1 0.60 1
+17 8586 /tmp/tmpbQ9j5V/ 2 0.80 1
+17 8592 /tmp/tmpbQ9j5V/ 2 0.60 1
+17 8587 /tmp/tmpbQ9j5V/ 1 0.80 1
+17 8593 /tmp/tmpbQ9j5V/ 1 0.60 1
+17 8668 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+18 8595 /tmp/tmpbQ9j5V/ 2 1.00 1
+18 8594 /tmp/tmpbQ9j5V/ 2 0.80 1
+18 8581 /tmp/tmpbQ9j5V/ 1 0.70 1
+18 8596 /tmp/tmpbQ9j5V/ 2 1.00 1
+18 8580 /tmp/tmpbQ9j5V/ 1 0.70 1
+18 8583 /tmp/tmpbQ9j5V/ 1 0.80 1
+18 8584 /tmp/tmpbQ9j5V/ 1 0.70 1
+18 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+18 8598 /tmp/tmpbQ9j5V/ 3 0.90 1
+18 8597 /tmp/tmpbQ9j5V/ 2 1.00 1
+18 8582 /tmp/tmpbQ9j5V/ 1 0.60 1
+18 8586 /tmp/tmpbQ9j5V/ 2 0.80 1
+18 8592 /tmp/tmpbQ9j5V/ 3 0.90 1
+18 8587 /tmp/tmpbQ9j5V/ 1 0.80 1
+18 8593 /tmp/tmpbQ9j5V/ 1 0.60 1
+18 8668 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+19 8595 /tmp/tmpbQ9j5V/ 2 1.00 1
+19 8594 /tmp/tmpbQ9j5V/ 2 0.80 1
+19 8581 /tmp/tmpbQ9j5V/ 1 0.70 1
+19 8596 /tmp/tmpbQ9j5V/ 2 1.00 1
+19 8580 /tmp/tmpbQ9j5V/ 1 0.70 1
+19 8583 /tmp/tmpbQ9j5V/ 1 0.80 1
+19 8584 /tmp/tmpbQ9j5V/ 1 0.70 1
+19 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+19 8598 /tmp/tmpbQ9j5V/ 3 0.90 1
+19 8597 /tmp/tmpbQ9j5V/ 2 1.00 1
+19 8582 /tmp/tmpbQ9j5V/ 1 0.60 1
+19 8586 /tmp/tmpbQ9j5V/ 2 0.80 1
+19 8592 /tmp/tmpbQ9j5V/ 3 0.90 1
+19 8587 /tmp/tmpbQ9j5V/ 1 0.80 1
+19 8593 /tmp/tmpbQ9j5V/ 1 0.60 1
+19 8668 /tmp/tmpbQ9j5V/ 0 0.00 1
+
+20 8595 /tmp/tmpbQ9j5V/ 2 1.00 1
+20 8594 /tmp/tmpbQ9j5V/ 3 1.20 1
+20 8581 /tmp/tmpbQ9j5V/ 1 0.70 1
+20 8596 /tmp/tmpbQ9j5V/ 2 1.00 1
+20 8580 /tmp/tmpbQ9j5V/ 1 0.70 1
+20 8583 /tmp/tmpbQ9j5V/ 1 0.80 1
+20 8584 /tmp/tmpbQ9j5V/ 1 0.70 1
+20 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+20 8598 /tmp/tmpbQ9j5V/ 3 0.90 1
+20 8597 /tmp/tmpbQ9j5V/ 2 1.00 1
+20 8582 /tmp/tmpbQ9j5V/ 2 1.20 1
+20 8586 /tmp/tmpbQ9j5V/ 2 0.80 1
+20 8592 /tmp/tmpbQ9j5V/ 3 0.90 1
+20 8587 /tmp/tmpbQ9j5V/ 1 0.80 1
+20 8593 /tmp/tmpbQ9j5V/ 2 1.20 1
+20 8668 /tmp/tmpbQ9j5V/ 1 0.40 1
+
+21 8595 /tmp/tmpbQ9j5V/ 2 1.00 1
+21 8594 /tmp/tmpbQ9j5V/ 3 1.20 1
+21 8581 /tmp/tmpbQ9j5V/ 2 1.40 1
+21 8596 /tmp/tmpbQ9j5V/ 2 1.00 1
+21 8580 /tmp/tmpbQ9j5V/ 1 0.70 1
+21 8583 /tmp/tmpbQ9j5V/ 1 0.80 1
+21 8584 /tmp/tmpbQ9j5V/ 2 1.40 1
+21 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+21 8598 /tmp/tmpbQ9j5V/ 3 0.90 1
+21 8597 /tmp/tmpbQ9j5V/ 2 1.00 1
+21 8582 /tmp/tmpbQ9j5V/ 2 1.20 1
+21 8586 /tmp/tmpbQ9j5V/ 3 1.20 1
+21 8592 /tmp/tmpbQ9j5V/ 3 0.90 1
+21 8587 /tmp/tmpbQ9j5V/ 1 0.80 1
+21 8593 /tmp/tmpbQ9j5V/ 2 1.20 1
+21 8668 /tmp/tmpbQ9j5V/ 1 0.40 1
+
+22 8595 /tmp/tmpbQ9j5V/ 2 1.00 1
+22 8594 /tmp/tmpbQ9j5V/ 3 1.20 1
+22 8581 /tmp/tmpbQ9j5V/ 2 1.40 1
+22 8596 /tmp/tmpbQ9j5V/ 2 1.00 1
+22 8580 /tmp/tmpbQ9j5V/ 2 1.40 1
+22 8583 /tmp/tmpbQ9j5V/ 1 0.80 1
+22 8584 /tmp/tmpbQ9j5V/ 2 1.40 1
+22 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+22 8598 /tmp/tmpbQ9j5V/ 4 1.20 1
+22 8597 /tmp/tmpbQ9j5V/ 2 1.00 1
+22 8582 /tmp/tmpbQ9j5V/ 2 1.20 1
+22 8586 /tmp/tmpbQ9j5V/ 3 1.20 1
+22 8592 /tmp/tmpbQ9j5V/ 4 1.20 1
+22 8587 /tmp/tmpbQ9j5V/ 1 0.80 1
+22 8593 /tmp/tmpbQ9j5V/ 2 1.20 1
+22 8668 /tmp/tmpbQ9j5V/ 1 0.40 1
+
+23 8595 /tmp/tmpbQ9j5V/ 3 1.50 1
+23 8594 /tmp/tmpbQ9j5V/ 3 1.20 1
+23 8581 /tmp/tmpbQ9j5V/ 2 1.40 1
+23 8596 /tmp/tmpbQ9j5V/ 3 1.50 1
+23 8580 /tmp/tmpbQ9j5V/ 2 1.40 1
+23 8583 /tmp/tmpbQ9j5V/ 2 1.60 1
+23 8584 /tmp/tmpbQ9j5V/ 2 1.40 1
+23 8585 /tmp/tmpbQ9j5V/ 1 0.80 1
+23 8598 /tmp/tmpbQ9j5V/ 4 1.20 1
+23 8597 /tmp/tmpbQ9j5V/ 2 1.00 1
+23 8582 /tmp/tmpbQ9j5V/ 2 1.20 1
+23 8586 /tmp/tmpbQ9j5V/ 3 1.20 1
+23 8592 /tmp/tmpbQ9j5V/ 4 1.20 1
+23 8587 /tmp/tmpbQ9j5V/ 1 0.80 1
+23 8593 /tmp/tmpbQ9j5V/ 2 1.20 1
+23 8668 /tmp/tmpbQ9j5V/ 1 0.40 1
+
+24 8595 /tmp/tmpbQ9j5V/ 3 1.50 1
+24 8594 /tmp/tmpbQ9j5V/ 3 1.20 1
+24 8581 /tmp/tmpbQ9j5V/ 2 1.40 1
+24 8596 /tmp/tmpbQ9j5V/ 3 1.50 1
+24 8580 /tmp/tmpbQ9j5V/ 2 1.40 1
+24 8583 /tmp/tmpbQ9j5V/ 2 1.60 1
+24 8584 /tmp/tmpbQ9j5V/ 2 1.40 1
+24 8585 /tmp/tmpbQ9j5V/ 2 1.60 1
+24 8598 /tmp/tmpbQ9j5V/ 4 1.20 1
+24 8597 /tmp/tmpbQ9j5V/ 3 1.50 1
+24 8582 /tmp/tmpbQ9j5V/ 2 1.20 1
+24 8586 /tmp/tmpbQ9j5V/ 3 1.20 1
+24 8592 /tmp/tmpbQ9j5V/ 4 1.20 1
+24 8587 /tmp/tmpbQ9j5V/ 2 1.60 1
+24 8593 /tmp/tmpbQ9j5V/ 2 1.20 1
+24 8668 /tmp/tmpbQ9j5V/ 1 0.40 1
+
+25 8595 /tmp/tmpbQ9j5V/ 3 1.50 1
+25 8594 /tmp/tmpbQ9j5V/ 4 1.60 1
+25 8581 /tmp/tmpbQ9j5V/ 2 1.40 1
+25 8596 /tmp/tmpbQ9j5V/ 3 1.50 1
+25 8580 /tmp/tmpbQ9j5V/ 2 1.40 1
+25 8583 /tmp/tmpbQ9j5V/ 2 1.60 1
+25 8584 /tmp/tmpbQ9j5V/ 2 1.40 1
+25 8585 /tmp/tmpbQ9j5V/ 2 1.60 1
+25 8598 /tmp/tmpbQ9j5V/ 4 1.20 1
+25 8597 /tmp/tmpbQ9j5V/ 3 1.50 1
+25 8582 /tmp/tmpbQ9j5V/ 2 1.20 1
+25 8586 /tmp/tmpbQ9j5V/ 3 1.20 1
+25 8592 /tmp/tmpbQ9j5V/ 4 1.20 1
+25 8587 /tmp/tmpbQ9j5V/ 2 1.60 1
+25 8593 /tmp/tmpbQ9j5V/ 2 1.20 1
+25 8668 /tmp/tmpbQ9j5V/ 2 0.80 1
+
+26 8595 /tmp/tmpbQ9j5V/ 3 1.50 1
+26 8594 /tmp/tmpbQ9j5V/ 4 1.60 1
+26 8581 /tmp/tmpbQ9j5V/ 2 1.40 1
+26 8596 /tmp/tmpbQ9j5V/ 3 1.50 1
+26 8580 /tmp/tmpbQ9j5V/ 2 1.40 1
+26 8583 /tmp/tmpbQ9j5V/ 2 1.60 1
+26 8584 /tmp/tmpbQ9j5V/ 2 1.40 1
+26 8585 /tmp/tmpbQ9j5V/ 2 1.60 1
+26 8598 /tmp/tmpbQ9j5V/ 5 1.50 1
+26 8597 /tmp/tmpbQ9j5V/ 3 1.50 1
+26 8582 /tmp/tmpbQ9j5V/ 2 1.20 1
+26 8586 /tmp/tmpbQ9j5V/ 4 1.60 1
+26 8592 /tmp/tmpbQ9j5V/ 5 1.50 1
+26 8587 /tmp/tmpbQ9j5V/ 2 1.60 1
+26 8593 /tmp/tmpbQ9j5V/ 2 1.20 1
+26 8668 /tmp/tmpbQ9j5V/ 2 0.80 1
+
+27 8595 /tmp/tmpbQ9j5V/ 3 1.50 1
+27 8594 /tmp/tmpbQ9j5V/ 4 1.60 1
+27 8581 /tmp/tmpbQ9j5V/ 2 1.40 1
+27 8596 /tmp/tmpbQ9j5V/ 3 1.50 1
+27 8580 /tmp/tmpbQ9j5V/ 2 1.40 1
+27 8583 /tmp/tmpbQ9j5V/ 2 1.60 1
+27 8584 /tmp/tmpbQ9j5V/ 2 1.40 1
+27 8585 /tmp/tmpbQ9j5V/ 2 1.60 1
+27 8598 /tmp/tmpbQ9j5V/ 5 1.50 1
+27 8597 /tmp/tmpbQ9j5V/ 3 1.50 1
+27 8582 /tmp/tmpbQ9j5V/ 3 1.80 1
+27 8586 /tmp/tmpbQ9j5V/ 4 1.60 1
+27 8592 /tmp/tmpbQ9j5V/ 5 1.50 1
+27 8587 /tmp/tmpbQ9j5V/ 2 1.60 1
+27 8593 /tmp/tmpbQ9j5V/ 3 1.80 1
+27 8668 /tmp/tmpbQ9j5V/ 2 0.80 1
+
+28 8595 /tmp/tmpbQ9j5V/ 4 2.00 1
+28 8594 /tmp/tmpbQ9j5V/ 5 2.00 1
+28 8581 /tmp/tmpbQ9j5V/ 2 1.40 1
+28 8596 /tmp/tmpbQ9j5V/ 3 1.50 1
+28 8580 /tmp/tmpbQ9j5V/ 2 1.40 1
+28 8583 /tmp/tmpbQ9j5V/ 2 1.60 1
+28 8584 /tmp/tmpbQ9j5V/ 2 1.40 1
+28 8585 /tmp/tmpbQ9j5V/ 2 1.60 1
+28 8598 /tmp/tmpbQ9j5V/ 5 1.50 1
+28 8597 /tmp/tmpbQ9j5V/ 3 1.50 1
+28 8582 /tmp/tmpbQ9j5V/ 3 1.80 1
+28 8586 /tmp/tmpbQ9j5V/ 4 1.60 1
+28 8592 /tmp/tmpbQ9j5V/ 6 1.80 1
+28 8587 /tmp/tmpbQ9j5V/ 2 1.60 1
+28 8593 /tmp/tmpbQ9j5V/ 3 1.80 1
+28 8668 /tmp/tmpbQ9j5V/ 3 1.20 1
+
+29 8595 /tmp/tmpbQ9j5V/ 4 2.00 1
+29 8594 /tmp/tmpbQ9j5V/ 5 2.00 1
+29 8581 /tmp/tmpbQ9j5V/ 3 2.10 1
+29 8596 /tmp/tmpbQ9j5V/ 4 2.00 1
+29 8580 /tmp/tmpbQ9j5V/ 3 2.10 1
+29 8583 /tmp/tmpbQ9j5V/ 2 1.60 1
+29 8584 /tmp/tmpbQ9j5V/ 3 2.10 1
+29 8585 /tmp/tmpbQ9j5V/ 2 1.60 1
+29 8598 /tmp/tmpbQ9j5V/ 5 1.50 1
+29 8597 /tmp/tmpbQ9j5V/ 4 2.00 1
+29 8582 /tmp/tmpbQ9j5V/ 3 1.80 1
+29 8586 /tmp/tmpbQ9j5V/ 4 1.60 1
+29 8592 /tmp/tmpbQ9j5V/ 6 1.80 1
+29 8587 /tmp/tmpbQ9j5V/ 2 1.60 1
+29 8593 /tmp/tmpbQ9j5V/ 3 1.80 1
+29 8668 /tmp/tmpbQ9j5V/ 3 1.20 1
+
+30 8595 /tmp/tmpbQ9j5V/ 4 2.00 1
+30 8594 /tmp/tmpbQ9j5V/ 5 2.00 1
+30 8581 /tmp/tmpbQ9j5V/ 3 2.10 1
+30 8596 /tmp/tmpbQ9j5V/ 4 2.00 1
+30 8580 /tmp/tmpbQ9j5V/ 3 2.10 1
+30 8583 /tmp/tmpbQ9j5V/ 2 1.60 1
+30 8584 /tmp/tmpbQ9j5V/ 3 2.10 1
+30 8585 /tmp/tmpbQ9j5V/ 2 1.60 1
+30 8598 /tmp/tmpbQ9j5V/ 6 1.80 1
+30 8597 /tmp/tmpbQ9j5V/ 4 2.00 1
+30 8582 /tmp/tmpbQ9j5V/ 3 1.80 1
+30 8586 /tmp/tmpbQ9j5V/ 5 2.00 1
+30 8592 /tmp/tmpbQ9j5V/ 6 1.80 1
+30 8587 /tmp/tmpbQ9j5V/ 2 1.60 1
+30 8593 /tmp/tmpbQ9j5V/ 3 1.80 1
+30 8668 /tmp/tmpbQ9j5V/ 3 1.20 1
+
+31 8595 /tmp/tmpbQ9j5V/ 5 2.50 1
+31 8594 /tmp/tmpbQ9j5V/ 5 2.00 1
+31 8581 /tmp/tmpbQ9j5V/ 3 2.10 1
+31 8596 /tmp/tmpbQ9j5V/ 4 2.00 1
+31 8580 /tmp/tmpbQ9j5V/ 3 2.10 1
+31 8583 /tmp/tmpbQ9j5V/ 2 1.60 1
+31 8584 /tmp/tmpbQ9j5V/ 3 2.10 1
+31 8585 /tmp/tmpbQ9j5V/ 2 1.60 1
+31 8598 /tmp/tmpbQ9j5V/ 6 1.80 1
+31 8597 /tmp/tmpbQ9j5V/ 4 2.00 1
+31 8582 /tmp/tmpbQ9j5V/ 4 2.40 1
+31 8586 /tmp/tmpbQ9j5V/ 5 2.00 1
+31 8592 /tmp/tmpbQ9j5V/ 6 1.80 1
+31 8587 /tmp/tmpbQ9j5V/ 2 1.60 1
+31 8593 /tmp/tmpbQ9j5V/ 3 1.80 1
+31 8668 /tmp/tmpbQ9j5V/ 4 1.60 1
+
+32 8595 /tmp/tmpbQ9j5V/ 5 2.50 1
+32 8594 /tmp/tmpbQ9j5V/ 6 2.40 1
+32 8581 /tmp/tmpbQ9j5V/ 3 2.10 1
+32 8596 /tmp/tmpbQ9j5V/ 4 2.00 1
+32 8580 /tmp/tmpbQ9j5V/ 3 2.10 1
+32 8583 /tmp/tmpbQ9j5V/ 3 2.40 1
+32 8584 /tmp/tmpbQ9j5V/ 3 2.10 1
+32 8585 /tmp/tmpbQ9j5V/ 3 2.40 1
+32 8598 /tmp/tmpbQ9j5V/ 6 1.80 1
+32 8597 /tmp/tmpbQ9j5V/ 4 2.00 1
+32 8582 /tmp/tmpbQ9j5V/ 4 2.40 1
+32 8586 /tmp/tmpbQ9j5V/ 5 2.00 1
+32 8592 /tmp/tmpbQ9j5V/ 7 2.10 1
+32 8587 /tmp/tmpbQ9j5V/ 3 2.40 1
+32 8593 /tmp/tmpbQ9j5V/ 3 1.80 1
+32 8668 /tmp/tmpbQ9j5V/ 4 1.60 1
+
+33 8595 /tmp/tmpbQ9j5V/ 5 2.50 1
+33 8594 /tmp/tmpbQ9j5V/ 6 2.40 1
+33 8581 /tmp/tmpbQ9j5V/ 3 2.10 1
+33 8596 /tmp/tmpbQ9j5V/ 4 2.00 1
+33 8580 /tmp/tmpbQ9j5V/ 3 2.10 1
+33 8583 /tmp/tmpbQ9j5V/ 3 2.40 1
+33 8584 /tmp/tmpbQ9j5V/ 3 2.10 1
+33 8585 /tmp/tmpbQ9j5V/ 3 2.40 1
+33 8598 /tmp/tmpbQ9j5V/ 6 1.80 1
+33 8597 /tmp/tmpbQ9j5V/ 5 2.50 1
+33 8582 /tmp/tmpbQ9j5V/ 4 2.40 1
+33 8586 /tmp/tmpbQ9j5V/ 5 2.00 1
+33 8592 /tmp/tmpbQ9j5V/ 7 2.10 1
+33 8587 /tmp/tmpbQ9j5V/ 3 2.40 1
+33 8593 /tmp/tmpbQ9j5V/ 4 2.40 1
+33 8668 /tmp/tmpbQ9j5V/ 4 1.60 1
+
+34 8595 /tmp/tmpbQ9j5V/ 5 2.50 1
+34 8594 /tmp/tmpbQ9j5V/ 6 2.40 1
+34 8581 /tmp/tmpbQ9j5V/ 3 2.10 1
+34 8596 /tmp/tmpbQ9j5V/ 4 2.00 1
+34 8580 /tmp/tmpbQ9j5V/ 3 2.10 1
+34 8583 /tmp/tmpbQ9j5V/ 3 2.40 1
+34 8584 /tmp/tmpbQ9j5V/ 3 2.10 1
+34 8585 /tmp/tmpbQ9j5V/ 3 2.40 1
+34 8598 /tmp/tmpbQ9j5V/ 7 2.10 1
+34 8597 /tmp/tmpbQ9j5V/ 5 2.50 1
+34 8582 /tmp/tmpbQ9j5V/ 4 2.40 1
+34 8586 /tmp/tmpbQ9j5V/ 5 2.00 1
+34 8592 /tmp/tmpbQ9j5V/ 7 2.10 1
+34 8587 /tmp/tmpbQ9j5V/ 3 2.40 1
+34 8593 /tmp/tmpbQ9j5V/ 4 2.40 1
+34 8668 /tmp/tmpbQ9j5V/ 4 1.60 1
+
+35 8595 /tmp/tmpbQ9j5V/ 5 2.50 1
+35 8594 /tmp/tmpbQ9j5V/ 6 2.40 1
+35 8581 /tmp/tmpbQ9j5V/ 3 2.10 1
+35 8596 /tmp/tmpbQ9j5V/ 5 2.50 1
+35 8580 /tmp/tmpbQ9j5V/ 3 2.10 1
+35 8583 /tmp/tmpbQ9j5V/ 3 2.40 1
+35 8584 /tmp/tmpbQ9j5V/ 3 2.10 1
+35 8585 /tmp/tmpbQ9j5V/ 3 2.40 1
+35 8598 /tmp/tmpbQ9j5V/ 7 2.10 1
+35 8597 /tmp/tmpbQ9j5V/ 5 2.50 1
+35 8582 /tmp/tmpbQ9j5V/ 4 2.40 1
+35 8586 /tmp/tmpbQ9j5V/ 6 2.40 1
+35 8592 /tmp/tmpbQ9j5V/ 7 2.10 1
+35 8587 /tmp/tmpbQ9j5V/ 3 2.40 1
+35 8593 /tmp/tmpbQ9j5V/ 4 2.40 1
+35 8668 /tmp/tmpbQ9j5V/ 4 1.60 1
+
+36 8595 /tmp/tmpbQ9j5V/ 5 2.50 1
+36 8594 /tmp/tmpbQ9j5V/ 6 2.40 1
+36 8581 /tmp/tmpbQ9j5V/ 3 2.10 1
+36 8596 /tmp/tmpbQ9j5V/ 5 2.50 1
+36 8580 /tmp/tmpbQ9j5V/ 4 2.80 1
+36 8583 /tmp/tmpbQ9j5V/ 3 2.40 1
+36 8584 /tmp/tmpbQ9j5V/ 3 2.10 1
+36 8585 /tmp/tmpbQ9j5V/ 3 2.40 1
+36 8598 /tmp/tmpbQ9j5V/ 7 2.10 1
+36 8597 /tmp/tmpbQ9j5V/ 5 2.50 1
+36 8582 /tmp/tmpbQ9j5V/ 4 2.40 1
+36 8586 /tmp/tmpbQ9j5V/ 6 2.40 1
+36 8592 /tmp/tmpbQ9j5V/ 8 2.40 1
+36 8587 /tmp/tmpbQ9j5V/ 3 2.40 1
+36 8593 /tmp/tmpbQ9j5V/ 4 2.40 1
+36 8668 /tmp/tmpbQ9j5V/ 5 2.00 1
+
+37 8595 /tmp/tmpbQ9j5V/ 5 2.50 1
+37 8594 /tmp/tmpbQ9j5V/ 7 2.80 1
+37 8581 /tmp/tmpbQ9j5V/ 4 2.80 1
+37 8596 /tmp/tmpbQ9j5V/ 5 2.50 1
+37 8580 /tmp/tmpbQ9j5V/ 4 2.80 1
+37 8583 /tmp/tmpbQ9j5V/ 3 2.40 1
+37 8584 /tmp/tmpbQ9j5V/ 4 2.80 1
+37 8585 /tmp/tmpbQ9j5V/ 3 2.40 1
+37 8598 /tmp/tmpbQ9j5V/ 7 2.10 1
+37 8597 /tmp/tmpbQ9j5V/ 5 2.50 1
+37 8582 /tmp/tmpbQ9j5V/ 4 2.40 1
+37 8586 /tmp/tmpbQ9j5V/ 6 2.40 1
+37 8592 /tmp/tmpbQ9j5V/ 8 2.40 1
+37 8587 /tmp/tmpbQ9j5V/ 3 2.40 1
+37 8593 /tmp/tmpbQ9j5V/ 4 2.40 1
+37 8668 /tmp/tmpbQ9j5V/ 5 2.00 1
+
+38 8595 /tmp/tmpbQ9j5V/ 6 3.00 1
+38 8594 /tmp/tmpbQ9j5V/ 7 2.80 1
+38 8581 /tmp/tmpbQ9j5V/ 4 2.80 1
+38 8596 /tmp/tmpbQ9j5V/ 5 2.50 1
+38 8580 /tmp/tmpbQ9j5V/ 4 2.80 1
+38 8583 /tmp/tmpbQ9j5V/ 3 2.40 1
+38 8584 /tmp/tmpbQ9j5V/ 4 2.80 1
+38 8585 /tmp/tmpbQ9j5V/ 3 2.40 1
+38 8598 /tmp/tmpbQ9j5V/ 8 2.40 1
+38 8597 /tmp/tmpbQ9j5V/ 5 2.50 1
+38 8582 /tmp/tmpbQ9j5V/ 5 3.00 1
+38 8586 /tmp/tmpbQ9j5V/ 6 2.40 1
+38 8592 /tmp/tmpbQ9j5V/ 8 2.40 1
+38 8587 /tmp/tmpbQ9j5V/ 3 2.40 1
+38 8593 /tmp/tmpbQ9j5V/ 4 2.40 1
+38 8668 /tmp/tmpbQ9j5V/ 5 2.00 1
+
+39 8595 /tmp/tmpbQ9j5V/ 6 3.00 1
+39 8594 /tmp/tmpbQ9j5V/ 7 2.80 1
+39 8581 /tmp/tmpbQ9j5V/ 4 2.80 1
+39 8596 /tmp/tmpbQ9j5V/ 5 2.50 1
+39 8580 /tmp/tmpbQ9j5V/ 4 2.80 1
+39 8583 /tmp/tmpbQ9j5V/ 3 2.40 1
+39 8584 /tmp/tmpbQ9j5V/ 4 2.80 1
+39 8585 /tmp/tmpbQ9j5V/ 3 2.40 1
+39 8598 /tmp/tmpbQ9j5V/ 8 2.40 1
+39 8597 /tmp/tmpbQ9j5V/ 6 3.00 1
+39 8582 /tmp/tmpbQ9j5V/ 5 3.00 1
+39 8586 /tmp/tmpbQ9j5V/ 6 2.40 1
+39 8592 /tmp/tmpbQ9j5V/ 9 2.70 1
+39 8587 /tmp/tmpbQ9j5V/ 3 2.40 1
+39 8593 /tmp/tmpbQ9j5V/ 4 2.40 1
+39 8668 /tmp/tmpbQ9j5V/ 5 2.00 1
+
+40 8595 /tmp/tmpbQ9j5V/ 6 3.00 1
+40 8594 /tmp/tmpbQ9j5V/ 7 2.80 1
+40 8581 /tmp/tmpbQ9j5V/ 4 2.80 1
+40 8596 /tmp/tmpbQ9j5V/ 5 2.50 1
+40 8580 /tmp/tmpbQ9j5V/ 4 2.80 1
+40 8583 /tmp/tmpbQ9j5V/ 3 2.40 1
+40 8584 /tmp/tmpbQ9j5V/ 4 2.80 1
+40 8585 /tmp/tmpbQ9j5V/ 3 2.40 1
+40 8598 /tmp/tmpbQ9j5V/ 8 2.40 1
+40 8597 /tmp/tmpbQ9j5V/ 6 3.00 1
+40 8582 /tmp/tmpbQ9j5V/ 5 3.00 1
+40 8586 /tmp/tmpbQ9j5V/ 7 2.80 1
+40 8592 /tmp/tmpbQ9j5V/ 9 2.70 1
+40 8587 /tmp/tmpbQ9j5V/ 3 2.40 1
+40 8593 /tmp/tmpbQ9j5V/ 5 3.00 1
+40 8668 /tmp/tmpbQ9j5V/ 5 2.00 1
+
+41 8595 /tmp/tmpbQ9j5V/ 6 3.00 1
+41 8594 /tmp/tmpbQ9j5V/ 7 2.80 1
+41 8581 /tmp/tmpbQ9j5V/ 4 2.80 1
+41 8596 /tmp/tmpbQ9j5V/ 6 3.00 1
+41 8580 /tmp/tmpbQ9j5V/ 4 2.80 1
+41 8583 /tmp/tmpbQ9j5V/ 4 3.20 1
+41 8584 /tmp/tmpbQ9j5V/ 4 2.80 1
+41 8585 /tmp/tmpbQ9j5V/ 4 3.20 1
+41 8598 /tmp/tmpbQ9j5V/ 8 2.40 1
+41 8597 /tmp/tmpbQ9j5V/ 6 3.00 1
+41 8582 /tmp/tmpbQ9j5V/ 5 3.00 1
+41 8586 /tmp/tmpbQ9j5V/ 7 2.80 1
+41 8592 /tmp/tmpbQ9j5V/ 9 2.70 1
+41 8587 /tmp/tmpbQ9j5V/ 4 3.20 1
+41 8593 /tmp/tmpbQ9j5V/ 5 3.00 1
+41 8668 /tmp/tmpbQ9j5V/ 6 2.40 1
+
+42 8595 /tmp/tmpbQ9j5V/ 6 3.00 1
+42 8594 /tmp/tmpbQ9j5V/ 8 3.20 1
+42 8581 /tmp/tmpbQ9j5V/ 4 2.80 1
+42 8596 /tmp/tmpbQ9j5V/ 6 3.00 1
+42 8580 /tmp/tmpbQ9j5V/ 4 2.80 1
+42 8583 /tmp/tmpbQ9j5V/ 4 3.20 1
+42 8584 /tmp/tmpbQ9j5V/ 4 2.80 1
+42 8585 /tmp/tmpbQ9j5V/ 4 3.20 1
+42 8598 /tmp/tmpbQ9j5V/ 9 2.70 1
+42 8597 /tmp/tmpbQ9j5V/ 6 3.00 1
+42 8582 /tmp/tmpbQ9j5V/ 5 3.00 1
+42 8586 /tmp/tmpbQ9j5V/ 7 2.80 1
+42 8592 /tmp/tmpbQ9j5V/ 9 2.70 1
+42 8587 /tmp/tmpbQ9j5V/ 4 3.20 1
+42 8593 /tmp/tmpbQ9j5V/ 5 3.00 1
+42 8668 /tmp/tmpbQ9j5V/ 6 2.40 1
+
+43 8595 /tmp/tmpbQ9j5V/ 6 3.00 1
+43 8594 /tmp/tmpbQ9j5V/ 8 3.20 1
+43 8581 /tmp/tmpbQ9j5V/ 4 2.80 1
+43 8596 /tmp/tmpbQ9j5V/ 6 3.00 1
+43 8580 /tmp/tmpbQ9j5V/ 4 2.80 1
+43 8583 /tmp/tmpbQ9j5V/ 4 3.20 1
+43 8584 /tmp/tmpbQ9j5V/ 4 2.80 1
+43 8585 /tmp/tmpbQ9j5V/ 4 3.20 1
+43 8598 /tmp/tmpbQ9j5V/ 9 2.70 1
+43 8597 /tmp/tmpbQ9j5V/ 6 3.00 1
+43 8582 /tmp/tmpbQ9j5V/ 5 3.00 1
+43 8586 /tmp/tmpbQ9j5V/ 7 2.80 1
+43 8592 /tmp/tmpbQ9j5V/ 10 3.00 1
+43 8587 /tmp/tmpbQ9j5V/ 4 3.20 1
+43 8593 /tmp/tmpbQ9j5V/ 5 3.00 1
+43 8668 /tmp/tmpbQ9j5V/ 6 2.40 1
+
+44 8595 /tmp/tmpbQ9j5V/ 7 3.50 1
+44 8594 /tmp/tmpbQ9j5V/ 8 3.20 1
+44 8581 /tmp/tmpbQ9j5V/ 4 2.80 1
+44 8596 /tmp/tmpbQ9j5V/ 6 3.00 1
+44 8580 /tmp/tmpbQ9j5V/ 5 3.50 1
+44 8583 /tmp/tmpbQ9j5V/ 4 3.20 1
+44 8584 /tmp/tmpbQ9j5V/ 4 2.80 1
+44 8585 /tmp/tmpbQ9j5V/ 4 3.20 1
+44 8598 /tmp/tmpbQ9j5V/ 9 2.70 1
+44 8597 /tmp/tmpbQ9j5V/ 6 3.00 1
+44 8582 /tmp/tmpbQ9j5V/ 5 3.00 1
+44 8586 /tmp/tmpbQ9j5V/ 7 2.80 1
+44 8592 /tmp/tmpbQ9j5V/ 10 3.00 1
+44 8587 /tmp/tmpbQ9j5V/ 4 3.20 1
+44 8593 /tmp/tmpbQ9j5V/ 5 3.00 1
+44 8668 /tmp/tmpbQ9j5V/ 6 2.40 1
+
+45 8595 /tmp/tmpbQ9j5V/ 7 3.50 1
+45 8594 /tmp/tmpbQ9j5V/ 8 3.20 1
+45 8581 /tmp/tmpbQ9j5V/ 5 3.50 1
+45 8596 /tmp/tmpbQ9j5V/ 6 3.00 1
+45 8580 /tmp/tmpbQ9j5V/ 5 3.50 1
+45 8583 /tmp/tmpbQ9j5V/ 4 3.20 1
+45 8584 /tmp/tmpbQ9j5V/ 5 3.50 1
+45 8585 /tmp/tmpbQ9j5V/ 4 3.20 1
+45 8598 /tmp/tmpbQ9j5V/ 9 2.70 1
+45 8597 /tmp/tmpbQ9j5V/ 7 3.50 1
+45 8582 /tmp/tmpbQ9j5V/ 6 3.60 1
+45 8586 /tmp/tmpbQ9j5V/ 8 3.20 1
+45 8592 /tmp/tmpbQ9j5V/ 10 3.00 1
+45 8587 /tmp/tmpbQ9j5V/ 4 3.20 1
+45 8593 /tmp/tmpbQ9j5V/ 5 3.00 1
+45 8668 /tmp/tmpbQ9j5V/ 6 2.40 1
+
+46 8595 /tmp/tmpbQ9j5V/ 7 3.50 1
+46 8594 /tmp/tmpbQ9j5V/ 9 3.60 1
+46 8581 /tmp/tmpbQ9j5V/ 5 3.50 1
+46 8596 /tmp/tmpbQ9j5V/ 7 3.50 1
+46 8580 /tmp/tmpbQ9j5V/ 5 3.50 1
+46 8583 /tmp/tmpbQ9j5V/ 4 3.20 1
+46 8584 /tmp/tmpbQ9j5V/ 5 3.50 1
+46 8585 /tmp/tmpbQ9j5V/ 4 3.20 1
+46 8598 /tmp/tmpbQ9j5V/ 10 3.00 1
+46 8597 /tmp/tmpbQ9j5V/ 7 3.50 1
+46 8582 /tmp/tmpbQ9j5V/ 6 3.60 1
+46 8586 /tmp/tmpbQ9j5V/ 8 3.20 1
+46 8592 /tmp/tmpbQ9j5V/ 10 3.00 1
+46 8587 /tmp/tmpbQ9j5V/ 4 3.20 1
+46 8593 /tmp/tmpbQ9j5V/ 5 3.00 1
+46 8668 /tmp/tmpbQ9j5V/ 7 2.80 1
+
+47 8595 /tmp/tmpbQ9j5V/ 7 3.50 1
+47 8594 /tmp/tmpbQ9j5V/ 9 3.60 1
+47 8581 /tmp/tmpbQ9j5V/ 5 3.50 1
+47 8596 /tmp/tmpbQ9j5V/ 7 3.50 1
+47 8580 /tmp/tmpbQ9j5V/ 5 3.50 1
+47 8583 /tmp/tmpbQ9j5V/ 4 3.20 1
+47 8584 /tmp/tmpbQ9j5V/ 5 3.50 1
+47 8585 /tmp/tmpbQ9j5V/ 4 3.20 1
+47 8598 /tmp/tmpbQ9j5V/ 10 3.00 1
+47 8597 /tmp/tmpbQ9j5V/ 7 3.50 1
+47 8582 /tmp/tmpbQ9j5V/ 6 3.60 1
+47 8586 /tmp/tmpbQ9j5V/ 8 3.20 1
+47 8592 /tmp/tmpbQ9j5V/ 11 3.30 1
+47 8587 /tmp/tmpbQ9j5V/ 4 3.20 1
+47 8593 /tmp/tmpbQ9j5V/ 6 3.60 1
+47 8668 /tmp/tmpbQ9j5V/ 7 2.80 1
+
+48 8595 /tmp/tmpbQ9j5V/ 7 3.50 1
+48 8594 /tmp/tmpbQ9j5V/ 9 3.60 1
+48 8581 /tmp/tmpbQ9j5V/ 5 3.50 1
+48 8596 /tmp/tmpbQ9j5V/ 7 3.50 1
+48 8580 /tmp/tmpbQ9j5V/ 5 3.50 1
+48 8583 /tmp/tmpbQ9j5V/ 4 3.20 1
+48 8584 /tmp/tmpbQ9j5V/ 5 3.50 1
+48 8585 /tmp/tmpbQ9j5V/ 4 3.20 1
+48 8598 /tmp/tmpbQ9j5V/ 10 3.00 1
+48 8597 /tmp/tmpbQ9j5V/ 7 3.50 1
+48 8582 /tmp/tmpbQ9j5V/ 6 3.60 1
+48 8586 /tmp/tmpbQ9j5V/ 8 3.20 1
+48 8592 /tmp/tmpbQ9j5V/ 11 3.30 1
+48 8587 /tmp/tmpbQ9j5V/ 4 3.20 1
+48 8593 /tmp/tmpbQ9j5V/ 6 3.60 1
+48 8668 /tmp/tmpbQ9j5V/ 7 2.80 1
+
+49 8595 /tmp/tmpbQ9j5V/ 8 4.00 1
+49 8594 /tmp/tmpbQ9j5V/ 9 3.60 1
+49 8581 /tmp/tmpbQ9j5V/ 5 3.50 1
+49 8596 /tmp/tmpbQ9j5V/ 7 3.50 1
+49 8580 /tmp/tmpbQ9j5V/ 5 3.50 1
+49 8583 /tmp/tmpbQ9j5V/ 4 3.20 1
+49 8584 /tmp/tmpbQ9j5V/ 5 3.50 1
+49 8585 /tmp/tmpbQ9j5V/ 4 3.20 1
+49 8598 /tmp/tmpbQ9j5V/ 11 3.30 1
+49 8597 /tmp/tmpbQ9j5V/ 7 3.50 1
+49 8582 /tmp/tmpbQ9j5V/ 6 3.60 1
+49 8586 /tmp/tmpbQ9j5V/ 8 3.20 1
+49 8592 /tmp/tmpbQ9j5V/ 11 3.30 1
+49 8587 /tmp/tmpbQ9j5V/ 4 3.20 1
+49 8593 /tmp/tmpbQ9j5V/ 6 3.60 1
+49 8668 /tmp/tmpbQ9j5V/ 7 2.80 1
+
+50 8595 /tmp/tmpbQ9j5V/ 8 4.00 1
+50 8594 /tmp/tmpbQ9j5V/ 9 3.60 1
+50 8581 /tmp/tmpbQ9j5V/ 5 3.50 1
+50 8596 /tmp/tmpbQ9j5V/ 7 3.50 1
+50 8580 /tmp/tmpbQ9j5V/ 5 3.50 1
+50 8583 /tmp/tmpbQ9j5V/ 5 4.00 1
+50 8584 /tmp/tmpbQ9j5V/ 5 3.50 1
+50 8585 /tmp/tmpbQ9j5V/ 5 4.00 1
+50 8598 /tmp/tmpbQ9j5V/ 11 3.30 1
+50 8597 /tmp/tmpbQ9j5V/ 8 4.00 1
+50 8582 /tmp/tmpbQ9j5V/ 6 3.60 1
+50 8586 /tmp/tmpbQ9j5V/ 9 3.60 1
+50 8592 /tmp/tmpbQ9j5V/ 11 3.30 1
+50 8587 /tmp/tmpbQ9j5V/ 5 4.00 1
+50 8593 /tmp/tmpbQ9j5V/ 6 3.60 1
+50 8668 /tmp/tmpbQ9j5V/ 7 2.80 1
+
+51 8595 /tmp/tmpbQ9j5V/ 8 4.00 1
+51 8594 /tmp/tmpbQ9j5V/ 10 4.00 1
+51 8581 /tmp/tmpbQ9j5V/ 5 3.50 1
+51 8596 /tmp/tmpbQ9j5V/ 7 3.50 1
+51 8580 /tmp/tmpbQ9j5V/ 5 3.50 1
+51 8583 /tmp/tmpbQ9j5V/ 5 4.00 1
+51 8584 /tmp/tmpbQ9j5V/ 5 3.50 1
+51 8585 /tmp/tmpbQ9j5V/ 5 4.00 1
+51 8598 /tmp/tmpbQ9j5V/ 11 3.30 1
+51 8597 /tmp/tmpbQ9j5V/ 8 4.00 1
+51 8582 /tmp/tmpbQ9j5V/ 6 3.60 1
+51 8586 /tmp/tmpbQ9j5V/ 9 3.60 1
+51 8592 /tmp/tmpbQ9j5V/ 11 3.30 1
+51 8587 /tmp/tmpbQ9j5V/ 5 4.00 1
+51 8593 /tmp/tmpbQ9j5V/ 6 3.60 1
+51 8668 /tmp/tmpbQ9j5V/ 8 3.20 1
+
+
+
+test valgrind PASSED (6 of 6)
+ (essentially, manyclients2 run for longer and with valgrind)
+
+**********************************************************************
+Summary:
+test build PASSED
+ (build project using make)
+
+test linttest PASSED (6 of 6)
+ (Lint test for C programming style)
+
+test clientnoservertest PASSED (6 of 6)
+ (Client should exit gracefully if no server is running)
+
+test defaultargstest PASSED (6 of 6)
+ (Test that client chooses default values for unspecified args)
+
+test clientservertest PASSED (6 of 6)
+ (Test basic functionality for one client & server)
+
+test twoservers1 PASSED (6 of 6)
+ (Check that two servers can run with different keys)
+
+test twoservers2 PASSED (6 of 6)
+ (Check that two servers with same key can't run concurrently)
+
+test twoservers3 PASSED (6 of 6)
+ (Check that two servers with same key can run in sequence)
+
+test manyclients PASSED (6 of 6)
+ (Check that up to 16 clients can run concurrently)
+
+test manyclients2 PASSED (6 of 6)
+ (Check that when a client leaves, another can enter)
+
+test valgrind PASSED (6 of 6)
+ (essentially, manyclients2 run for longer and with valgrind)
+
+Passed 11 of 11 tests.
+Overall 11 of 11
+Points 60 of 60

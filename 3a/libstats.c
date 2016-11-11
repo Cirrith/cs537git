@@ -9,12 +9,12 @@
 scaff* getMem(key_t);
 
 char name[] = "bambrough";
+scaff *shm;
+sem_t *sem;
+char semKey[128];
 
 stats_t* stats_init(key_t key) {
-  scaff *shm;
   stats_t *stat;
-  sem_t *sem;
-  char semKey[128];
 
   sprintf(semKey, "%s%d", name, (int)key);
   if ((sem = sem_open(semKey, O_RDWR)) == SEM_FAILED) {
@@ -25,7 +25,10 @@ stats_t* stats_init(key_t key) {
     return NULL;
   }
 
-  sem_wait(sem);
+  if (sem_wait(sem) < 0) {
+    shmdt(shm);
+    return NULL;
+  }
 
   for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
     if (stat->inUse == 0) {
@@ -39,33 +42,26 @@ stats_t* stats_init(key_t key) {
 }
 
 int stats_unlink(key_t key) {
-  scaff *shm;
   stats_t *stat;
   int pid = getpid();
-  sem_t *sem;
-  char semKey[128];
 
-  printf("Unlink\n");
-  sprintf(semKey, "%s%d", name, (int)key);
-  if ((sem = sem_open(semKey, O_RDWR)) == SEM_FAILED) {
+  if (sem_wait(sem) < 0) {
+    shmdt(shm);
+    sem_close(sem);
     return -1;
   }
 
-  if (sem_close(sem) < 0) {
-    return -1;
-  }
-
-  if ((shm = getMem(key)) == NULL) {
-    return -1;
-  }
-    
   for (stat = shm->stats; stat < &shm->stats[numProc]; stat++) {
     if (stat->pid == pid) {
-      stat->inUse = 0;
+      // stat->inUse = 0;
       shmdt(shm);  // Remove shm from Address Space
+      sem_post(sem);
+      sem_close(sem);
       return 0;
     }
   }
+  sem_post(sem);
+  sem_close(sem);
   return -1;
 }
 
@@ -75,13 +71,13 @@ scaff* getMem(key_t key) {
   int shmid;
   scaff *shm;
 
-  printf("key: %d\n", (int)key);
-  if ((shmid = shmget(key, pgSize, 0644)) == -1) {  // Get shared memory id
+// Get shared memory id
+  if ((shmid = shmget(key, pgSize, S_IWUSR | S_IRUSR)) == -1) {
     printf("shmget fail\n");
     return NULL;
   }
 
-  // Get pointer to memory segment
+// Get pointer to memory segment
   if ((shm = shmat(shmid, NULL, 0)) == (scaff *) -1) {
     printf("shmat fail\n");
     return NULL;
@@ -90,9 +86,6 @@ scaff* getMem(key_t key) {
 }
 
 int semInit(key_t key) {
-  sem_t *sem;
-  char semKey[128];
-
   sprintf(semKey, "%s%d", name, (int)key);
   if ((sem = sem_open(semKey, O_CREAT, 0644, 1)) == SEM_FAILED) {
     return -1;
@@ -101,14 +94,7 @@ int semInit(key_t key) {
 }
 
 int semDel(key_t key) {
-  sem_t *sem;
-  char semKey[128];
-
-  sprintf(semKey, "%s%d", name, (int)key);
-  if ((sem = sem_open(semKey, O_RDWR)) == SEM_FAILED) {
-    return -1;
-  }
-
+  sem_post(sem);
   if (sem_close(sem) < 0) {
       return -1;
   }

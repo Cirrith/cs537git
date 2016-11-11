@@ -7,6 +7,7 @@
     typedef struct {
     // You may add any new fields that you believe are necessary
     int inUse; 
+    int valid;
     int pid;        // Do not remove or change
     int counter;    // Do not remove or change
     int priority;   // Do not remove or change
