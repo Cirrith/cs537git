@@ -2,6 +2,7 @@
 #include "stat.h"
 #include "user.h"
 #include "param.h"
+#include "x86.h"
 
 // Memory allocator by Kernighan and Ritchie,
 // The C programming Language, 2nd ed.  Section 8.7.
@@ -87,4 +88,40 @@ malloc(uint nbytes)
       if((p = morecore(nunits)) == 0)
         return 0;
   }
+}
+
+void
+lock_init(lock_t *lock) {
+  *lock = 0;
+}
+
+void
+lock_acquire(lock_t *lock) {
+  while(xchg(lock, 1) != 0);  
+}
+
+void
+lock_release(lock_t *lock) {
+  *lock = 0;
+}
+
+int
+thread_create(void (*start_routine)(void*), void *arg) {
+  void *stack;  
+  
+  if( (stack = malloc(4096)) < 0)
+     return -1;
+
+  return clone(start_routine, arg, stack);
+}
+
+int
+thread_join(void) {
+  void *stack;
+  int returnValue;
+
+  returnValue = join(&stack);
+  free(stack);
+
+  return returnValue;
 }
