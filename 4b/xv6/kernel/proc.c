@@ -44,7 +44,7 @@ allocproc(void)
 
 found:
   p->state = EMBRYO;
-  p->isThread = 0;
+  p->checkThread = 0;
   p->stackBase = 0;
   p->pid = nextpid++;
   release(&ptable.lock);
@@ -191,7 +191,7 @@ clone(void(*fcn)(void*), void *arg, void *stack)
   np->tf->eip = (int) fcn;
 
   // Label proccess as thread
-  np->isThread = 1;
+  np->checkThread = 1;
 
   // Setup base stack pointer
   np->stackBase = stack;
@@ -280,7 +280,7 @@ wait(void)
     havekids = 0;
     free = 1;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != proc || p->isThread)
+      if(p->parent != proc || p->checkThread)
         continue;
       havekids = 1;
       if(p->state == ZOMBIE){
@@ -329,7 +329,7 @@ join(void **stack)
     // Scan through table looking for zombie children.
     havethread = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != proc || !p->isThread)
+      if(p->parent != proc || !p->checkThread)
         continue;
       havethread = 1;
       if(p->state == ZOMBIE){
