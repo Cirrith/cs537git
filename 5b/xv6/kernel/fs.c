@@ -323,8 +323,14 @@ bmap(struct inode *ip, uint bn)
   struct buf *bp;
 
   if(bn < NDIRECT){
-    if((addr = ip->addrs[bn]) == 0)
-      ip->addrs[bn] = addr = balloc(ip->dev);
+    if((addr = ip->addrs[bn]) == 0) {
+      if(ip->type == T_CHECKED) {
+        addr = balloc(ip->dev) & 0xFFFFFF;
+        ip->addrs[bn] = calcCheck(addr)<<24 | addr; 
+      } else {
+        ip->addrs[bn] = addr = balloc(ip->dev);
+      }
+    }
     return addr;
   }
   bn -= NDIRECT;
@@ -336,7 +342,12 @@ bmap(struct inode *ip, uint bn)
     bp = bread(ip->dev, addr);
     a = (uint*)bp->data;
     if((addr = a[bn]) == 0){
-      a[bn] = addr = balloc(ip->dev);
+      if(ip->type == T_CHECKED) {
+        addr = balloc(ip->dev) & 0xFFFFFF;
+        a[bn] = calcCheck(addr)<<24 | addr;
+      } else {
+        a[bn] = addr = balloc(ip->dev);
+      }
       bwrite(bp);
     }
     brelse(bp);
@@ -439,6 +450,8 @@ writei(struct inode *ip, char *src, uint off, uint n)
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
     m = min(n - tot, BSIZE - off%BSIZE);
     memmove(bp->data + off%BSIZE, src, m);
+    // Check efficiency
+    
     bwrite(bp);
     brelse(bp);
   }
@@ -610,4 +623,15 @@ struct inode*
 nameiparent(char *path, char *name)
 {
   return namex(path, 1, name);
+}
+
+uchar
+calcCheck(uint blockNum) {
+  uchar check = 0;
+  uchar i;
+
+  for(i = 0; i < BSIZE; i++) {
+    check ^= 
+  }
+
 }
