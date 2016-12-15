@@ -24,6 +24,17 @@
 #define min(a, b) ((a) < (b) ? (a) : (b))
 static void itrunc(struct inode*);
 
+uchar
+calcCheck(struct buf *bp) {
+  uchar check = 0;
+  uint i;
+
+  for(i = 0; i < BSIZE; i++) {
+    check ^= bp->data[i];
+  }
+  return check;
+}
+
 // Read the super block.
 static void
 readsb(int dev, struct superblock *sb)
@@ -128,6 +139,9 @@ bfree(int dev, uint b)
 // return pointers to *unlocked* inodes.  It is the callers'
 // responsibility to lock them before using them.  A non-zero
 // ip->ref keeps these unlocked inodes in the cache.
+
+#define addrFlag 0x00FFFFFF
+#define checkSumFlag 0xFF000000
 
 struct {
   struct spinlock lock;
@@ -323,40 +337,49 @@ bmap(struct inode *ip, uint bn)
   struct buf *bp;
 
   if(bn < NDIRECT){
-    if((addr = ip->addrs[bn]) == 0) {
-      if(ip->type == T_CHECKED) {
-        addr = balloc(ip->dev) & 0xFFFFFF;
-        ip->addrs[bn] = calcCheck(addr)<<24 | addr; 
-      } else {
-        ip->addrs[bn] = addr = balloc(ip->dev);
-      }
-    }
-    return addr;
+	if(ip->type == T_CHECKED) {
+		if((addr = (ip->addrs[bn] & addrFlag)) == 0) {
+			ip->addrs[bn] = addr = balloc(ip->dev) & addrFlag;
+		}
+	} else {
+		if((addr = ip->addrs[bn]) == 0) {
+			ip->addrs[bn] = addr = balloc(ip->dev);
+		}
+	}
+	return addr;
   }
   bn -= NDIRECT;
 
   if(bn < NINDIRECT){
     // Load indirect block, allocating if necessary.
-    if((addr = ip->addrs[NDIRECT]) == 0)
-      ip->addrs[NDIRECT] = addr = balloc(ip->dev);
-    bp = bread(ip->dev, addr);
-    a = (uint*)bp->data;
-    if((addr = a[bn]) == 0){
-      if(ip->type == T_CHECKED) {
-        addr = balloc(ip->dev) & 0xFFFFFF;
-        a[bn] = calcCheck(addr)<<24 | addr;
-      } else {
-        a[bn] = addr = balloc(ip->dev);
-      }
-      bwrite(bp);
-    }
-    brelse(bp);
-    return addr;
+	if(ip->type == T_CHECKED) {
+		if((addr = (ip->addrs[NDIRECT] & addrFlag)) == 0)
+			ip->addrs[NDIRECT] = addr = (balloc(ip->dev) & addrFlag);
+		bp = bread(ip->dev, addr);
+		a = (uint*)bp->data;
+		if((addr = (a[bn] & addrFlag)) == 0){
+			a[bn] = addr = (balloc(ip->dev) & addrFlag);
+			bwrite(bp);
+		}
+		brelse(bp);
+		return addr;
+	} else {
+		if((addr = ip->addrs[NDIRECT]) == 0)
+			ip->addrs[NDIRECT] = addr = balloc(ip->dev);
+		bp = bread(ip->dev, addr);
+		a = (uint*)bp->data;
+		if((addr = a[bn]) == 0){
+			a[bn] = addr = balloc(ip->dev);
+			bwrite(bp);
+		}
+		brelse(bp);
+		return addr;
+	}
+
   }
-
+ 
   panic("bmap: out of range");
-}
-
+}   
 // Truncate inode (discard contents).
 // Only called after the last dirent referring
 // to this inode has been erased on disk.
@@ -394,6 +417,28 @@ itrunc(struct inode *ip)
 void
 stati(struct inode *ip, struct stat *st)
 {
+  uint i, *a;
+  struct buf *bp;
+
+  if(ip->type == T_CHECKED) {
+	st->checksum = 0;
+	for(i = 0; i < NDIRECT; i++) {
+	  if(ip->addrs[i] == 0)
+		break;
+	  st->checksum ^= ((ip->addrs[i] & checkSumFlag)>>24);
+	}
+	if(ip->addrs[NDIRECT] != 0) {
+	  bp = bread(ip->dev, ip->addrs[NDIRECT]);
+	  a = (uint*)bp->data;
+	  for(i = 0; i < BSIZE; i++) {
+		if(a[i] == 0)
+		  break;
+		st->checksum ^= ((a[i] & checkSumFlag)>>24);
+	  }
+	  brelse(bp);
+	}
+  }
+
   st->dev = ip->dev;
   st->ino = ip->inum;
   st->type = ip->type;
@@ -405,9 +450,12 @@ stati(struct inode *ip, struct stat *st)
 int
 readi(struct inode *ip, char *dst, uint off, uint n)
 {
-  uint tot, m;
-  struct buf *bp;
+  uint tot, m, bn, *a;
+  uchar check;
+  struct buf *bp, *in;
 
+  
+  
   if(ip->type == T_DEV){
     if(ip->major < 0 || ip->major >= NDEV || !devsw[ip->major].read)
       return -1;
@@ -423,7 +471,32 @@ readi(struct inode *ip, char *dst, uint off, uint n)
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
     m = min(n - tot, BSIZE - off%BSIZE);
     memmove(dst, bp->data + off%BSIZE, m);
-    brelse(bp);
+    if(ip->type == T_CHECKED) {
+      check = calcCheck(bp);
+      bn = off/BSIZE;
+      if(bn < NDIRECT) {
+
+        if(((ip->addrs[bn] & checkSumFlag)>>24) != check) {
+		  brelse(bp);
+          return -1;
+        }
+      } else {
+        bn -= NDIRECT;
+
+        in = bread(ip->dev, (ip->addrs[NDIRECT]&addrFlag));
+        a = (uint*)in->data;
+
+        if(((a[bn] & checkSumFlag)>>24) != check) {
+		  brelse(in);
+		  brelse(bp);
+          return -1;
+        }
+		
+        brelse(in);
+      }
+    }
+
+   brelse(bp);
   }
   return n;
 }
@@ -432,8 +505,9 @@ readi(struct inode *ip, char *dst, uint off, uint n)
 int
 writei(struct inode *ip, char *src, uint off, uint n)
 {
-  uint tot, m;
-  struct buf *bp;
+  uint tot, m, bn, *a;
+  uchar check;
+  struct buf *bp, *in;
 
   if(ip->type == T_DEV){
     if(ip->major < 0 || ip->major >= NDEV || !devsw[ip->major].write)
@@ -450,16 +524,31 @@ writei(struct inode *ip, char *src, uint off, uint n)
     bp = bread(ip->dev, bmap(ip, off/BSIZE));
     m = min(n - tot, BSIZE - off%BSIZE);
     memmove(bp->data + off%BSIZE, src, m);
-    // Check efficiency
-    
     bwrite(bp);
+    if(ip->type == T_CHECKED) {
+      check = calcCheck(bp);
+      bn = off/BSIZE;
+      if(bn < NDIRECT) {
+        ip->addrs[bn] = (check<<24) | (ip->addrs[bn] & addrFlag);
+      } else {
+        bn -= NDIRECT;
+
+        in = bread(ip->dev, ip->addrs[NDIRECT]);
+        a = (uint*)in->data;
+        a[bn] = (check<<24) | (a[bn] & addrFlag);
+        bwrite(in);
+        brelse(in);
+      }
+    }
+
     brelse(bp);
   }
 
   if(n > 0 && off > ip->size){
     ip->size = off;
-    iupdate(ip);
+	iupdate(ip);
   }
+  
   return n;
 }
 
@@ -625,13 +714,4 @@ nameiparent(char *path, char *name)
   return namex(path, 1, name);
 }
 
-uchar
-calcCheck(uint blockNum) {
-  uchar check = 0;
-  uchar i;
 
-  for(i = 0; i < BSIZE; i++) {
-    check ^= 
-  }
-
-}
