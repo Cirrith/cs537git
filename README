@@ -1,0 +1,9 @@
+README.txt
+
+We weren't able to complete all the tests. We had problems going throug the
+file system and parsing out the inodes for different directory usage. We attempted
+one method but were unable to get it working proplerly. However, we were able to 
+complete the other tests in the suite. We tried our best to finish the unfinished tests,
+with no luck :(.
+
+Thanks for a great year!
