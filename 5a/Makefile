@@ -1,7 +1,7 @@
 #Makefile for CS537
 
 CC=gcc
-EXFLAGS= -Wall -Werror
+EXFLAGS= -Wall -Werror -lm
 
 all: FSCHECK
 
